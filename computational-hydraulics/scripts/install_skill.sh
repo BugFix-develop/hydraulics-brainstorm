@@ -52,31 +52,17 @@ install_claude() {
 install_cursor() {
     local project_dir="${1:-.}"
     echo "-> 🖱️ Настройка для Cursor AI в каталоге: ${project_dir}..."
-    local rules_dir="${project_dir}/.cursor/rules"
-    mkdir -p "${rules_dir}"
-    cat << 'EOF' > "${rules_dir}/hydraulics.mdc"
----
-description: Computational hydraulics, Eigen linear systems, and strict 3-stage agentic workflow
-globs: src/**/*.cpp, src/**/*.h, tests/**/*.cpp, docs/**/*.md
----
-
-# Computational Hydraulics & Agentic Development Protocol
-Strictly adhere to the following rules:
-1. Always follow the 3-stage protocol: ТЗ (docs/<n>_<topic>.md) -> Architecture (docs/<n>_<topic>_architecture.md) -> Plan (docs/<n>_<topic>_plan.md).
-2. Never vibe-code C++ without approved ТЗ and Architecture.
-3. Eigen: NEVER use `A.inverse() * b`. Always use `PartialPivLU` or `FullPivLU`.
-4. Git: NEVER execute `git commit` or `git push` automatically. The developer commits manually.
-5. Code style: snake_case, structs end with `_t`, concise 1-line Doxygen comments with SI units in brackets.
-6. Verify against GoogleTest with non-tautological analytical benchmarks.
-EOF
-    echo "   [OK] Создан файл правил: ${rules_dir}/hydraulics.mdc"
+    if [ -f "${SKILL_DIR}/SKILL.md" ]; then
+        cp "${SKILL_DIR}/SKILL.md" "${project_dir}/.cursorrules"
+        echo "   [OK] Создан файл правил: ${project_dir}/.cursorrules"
+    fi
 }
 
 install_windsurf() {
     local project_dir="${1:-.}"
     echo "-> 🏄 Настройка для Windsurf (Codeium) в: ${project_dir}..."
-    if [ -f "${SKILL_DIR}/templates/AGENTS.md" ]; then
-        cp "${SKILL_DIR}/templates/AGENTS.md" "${project_dir}/.windsurfrules"
+    if [ -f "${SKILL_DIR}/SKILL.md" ]; then
+        cp "${SKILL_DIR}/SKILL.md" "${project_dir}/.windsurfrules"
         echo "   [OK] Создан файл: ${project_dir}/.windsurfrules"
     fi
 }
@@ -84,8 +70,8 @@ install_windsurf() {
 install_cline() {
     local project_dir="${1:-.}"
     echo "-> 🦘 Настройка для Roo Code & 🧩 Cline в: ${project_dir}..."
-    if [ -f "${SKILL_DIR}/templates/AGENTS.md" ]; then
-        cp "${SKILL_DIR}/templates/AGENTS.md" "${project_dir}/.clinerules"
+    if [ -f "${SKILL_DIR}/SKILL.md" ]; then
+        cp "${SKILL_DIR}/SKILL.md" "${project_dir}/.clinerules"
         echo "   [OK] Создан файл: ${project_dir}/.clinerules"
     fi
 }
@@ -107,8 +93,8 @@ install_copilot() {
     local project_dir="${1:-.}"
     echo "-> 🐙 Настройка для GitHub Copilot в: ${project_dir}..."
     mkdir -p "${project_dir}/.github"
-    if [ -f "${SKILL_DIR}/templates/AGENTS.md" ]; then
-        cp "${SKILL_DIR}/templates/AGENTS.md" "${project_dir}/.github/copilot-instructions.md"
+    if [ -f "${SKILL_DIR}/SKILL.md" ]; then
+        cp "${SKILL_DIR}/SKILL.md" "${project_dir}/.github/copilot-instructions.md"
         echo "   [OK] Создан файл: ${project_dir}/.github/copilot-instructions.md"
     fi
 }

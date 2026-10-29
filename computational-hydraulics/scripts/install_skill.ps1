@@ -52,31 +52,19 @@ function Install-Claude {
 function Install-Cursor {
     param([string]$ProjectDir = ".")
     Write-Host "-> Настройка для Cursor AI..." -ForegroundColor Magenta
-    $rulesDir = Join-Path $ProjectDir ".cursor\rules"
-    New-Item -ItemType Directory -Force -Path $rulesDir | Out-Null
-    $content = @"
----
-description: Computational hydraulics, Eigen linear systems, and strict 3-stage agentic workflow
-globs: src/**/*.cpp, src/**/*.h, tests/**/*.cpp, docs/**/*.md
----
-
-# Computational Hydraulics & Agentic Protocol
-Strictly follow rules in ~/.agents/skills/computational-hydraulics/SKILL.md:
-1. Follow 3-stage protocol: ТЗ -> Architecture -> Plan -> GoogleTests.
-2. Eigen: NEVER use `A.inverse() * b`. Use PartialPivLU or FullPivLU.
-3. Git: NEVER commit or push automatically. Developer commits manually.
-4. Code style: snake_case, structs end with `_t`, concise 1-line Doxygen comments with SI units.
-"@
-    Set-Content -Path (Join-Path $rulesDir "hydraulics.mdc") -Value $content -Encoding UTF8
-    Write-Host "   [OK] Создан файл: $rulesDir\hydraulics.mdc" -ForegroundColor Green
+    $skillMd = Join-Path $SkillDir "SKILL.md"
+    if (Test-Path $skillMd) {
+        Copy-Item -Force $skillMd (Join-Path $ProjectDir ".cursorrules")
+        Write-Host "   [OK] Создан файл: $ProjectDir\.cursorrules" -ForegroundColor Green
+    }
 }
 
 function Install-Windsurf {
     param([string]$ProjectDir = ".")
     Write-Host "-> Настройка для Windsurf (Codeium)..." -ForegroundColor Cyan
-    $agentsMd = Join-Path $SkillDir "templates\AGENTS.md"
-    if (Test-Path $agentsMd) {
-        Copy-Item -Force $agentsMd (Join-Path $ProjectDir ".windsurfrules")
+    $skillMd = Join-Path $SkillDir "SKILL.md"
+    if (Test-Path $skillMd) {
+        Copy-Item -Force $skillMd (Join-Path $ProjectDir ".windsurfrules")
         Write-Host "   [OK] Создан файл: $ProjectDir\.windsurfrules" -ForegroundColor Green
     }
 }
@@ -84,9 +72,9 @@ function Install-Windsurf {
 function Install-Cline {
     param([string]$ProjectDir = ".")
     Write-Host "-> Настройка для Roo Code & Cline..." -ForegroundColor Blue
-    $agentsMd = Join-Path $SkillDir "templates\AGENTS.md"
-    if (Test-Path $agentsMd) {
-        Copy-Item -Force $agentsMd (Join-Path $ProjectDir ".clinerules")
+    $skillMd = Join-Path $SkillDir "SKILL.md"
+    if (Test-Path $skillMd) {
+        Copy-Item -Force $skillMd (Join-Path $ProjectDir ".clinerules")
         Write-Host "   [OK] Создан файл: $ProjectDir\.clinerules" -ForegroundColor Green
     }
 }
@@ -108,9 +96,9 @@ function Install-Copilot {
     Write-Host "-> Настройка для GitHub Copilot..." -ForegroundColor White
     $githubDir = Join-Path $ProjectDir ".github"
     New-Item -ItemType Directory -Force -Path $githubDir | Out-Null
-    $agentsMd = Join-Path $SkillDir "templates\AGENTS.md"
-    if (Test-Path $agentsMd) {
-        Copy-Item -Force $agentsMd (Join-Path $githubDir "copilot-instructions.md")
+    $skillMd = Join-Path $SkillDir "SKILL.md"
+    if (Test-Path $skillMd) {
+        Copy-Item -Force $skillMd (Join-Path $githubDir "copilot-instructions.md")
         Write-Host "   [OK] Создан файл: $githubDir\copilot-instructions.md" -ForegroundColor Green
     }
 }

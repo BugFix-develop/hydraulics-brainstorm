@@ -169,16 +169,16 @@ Add-Content -Path "$HOME\.claude\CLAUDE.md" -Value "`n# Computational Hydraulics
 
 <br/>
 
-Скопируйте правила в репозиторий вашей лабораторной:
+Скопируйте навык `SKILL.md` в правила вашего проекта:
 
 <img src="assets/logos/linux.svg" width="18" height="18" align="absmiddle" /> **Linux** / <img src="assets/logos/apple.svg" width="18" height="18" align="absmiddle" /> **macOS**:
 ```bash
-cp computational-hydraulics/templates/AGENTS.md /path/to/my-lab/.cursorrules
+cp computational-hydraulics/SKILL.md /path/to/my-lab/.cursorrules
 ```
 
 <img src="assets/logos/windows.svg" width="18" height="18" align="absmiddle" /> **Windows** (PowerShell):
 ```powershell
-Copy-Item -Force computational-hydraulics\templates\AGENTS.md "C:\path\to\my-lab\.cursorrules"
+Copy-Item -Force computational-hydraulics\SKILL.md "C:\path\to\my-lab\.cursorrules"
 ```
 </details>
 
@@ -187,14 +187,16 @@ Copy-Item -Force computational-hydraulics\templates\AGENTS.md "C:\path\to\my-lab
 
 <br/>
 
+Скопируйте навык `SKILL.md` в правила рабочего пространства:
+
 <img src="assets/logos/linux.svg" width="18" height="18" align="absmiddle" /> **Linux** / <img src="assets/logos/apple.svg" width="18" height="18" align="absmiddle" /> **macOS**:
 ```bash
-cp computational-hydraulics/templates/AGENTS.md /path/to/my-lab/.windsurfrules
+cp computational-hydraulics/SKILL.md /path/to/my-lab/.windsurfrules
 ```
 
 <img src="assets/logos/windows.svg" width="18" height="18" align="absmiddle" /> **Windows** (PowerShell):
 ```powershell
-Copy-Item -Force computational-hydraulics\templates\AGENTS.md "C:\path\to\my-lab\.windsurfrules"
+Copy-Item -Force computational-hydraulics\SKILL.md "C:\path\to\my-lab\.windsurfrules"
 ```
 </details>
 
@@ -203,14 +205,16 @@ Copy-Item -Force computational-hydraulics\templates\AGENTS.md "C:\path\to\my-lab
 
 <br/>
 
+Скопируйте навык `SKILL.md` в системные инструкции:
+
 <img src="assets/logos/linux.svg" width="18" height="18" align="absmiddle" /> **Linux** / <img src="assets/logos/apple.svg" width="18" height="18" align="absmiddle" /> **macOS**:
 ```bash
-cp computational-hydraulics/templates/AGENTS.md /path/to/my-lab/.clinerules
+cp computational-hydraulics/SKILL.md /path/to/my-lab/.clinerules
 ```
 
 <img src="assets/logos/windows.svg" width="18" height="18" align="absmiddle" /> **Windows** (PowerShell):
 ```powershell
-Copy-Item -Force computational-hydraulics\templates\AGENTS.md "C:\path\to\my-lab\.clinerules"
+Copy-Item -Force computational-hydraulics\SKILL.md "C:\path\to\my-lab\.clinerules"
 ```
 </details>
 
@@ -235,16 +239,18 @@ aider --read "$HOME\.agents\skills\computational-hydraulics\SKILL.md"
 
 <br/>
 
+Скопируйте навык `SKILL.md` в инструкции репозитория:
+
 <img src="assets/logos/linux.svg" width="18" height="18" align="absmiddle" /> **Linux** / <img src="assets/logos/apple.svg" width="18" height="18" align="absmiddle" /> **macOS**:
 ```bash
 mkdir -p /path/to/my-lab/.github
-cp computational-hydraulics/templates/AGENTS.md /path/to/my-lab/.github/copilot-instructions.md
+cp computational-hydraulics/SKILL.md /path/to/my-lab/.github/copilot-instructions.md
 ```
 
 <img src="assets/logos/windows.svg" width="18" height="18" align="absmiddle" /> **Windows** (PowerShell):
 ```powershell
 New-Item -ItemType Directory -Force -Path "C:\path\to\my-lab\.github"
-Copy-Item -Force computational-hydraulics\templates\AGENTS.md "C:\path\to\my-lab\.github\copilot-instructions.md"
+Copy-Item -Force computational-hydraulics\SKILL.md "C:\path\to\my-lab\.github\copilot-instructions.md"
 ```
 </details>
 
