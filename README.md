@@ -52,7 +52,18 @@ hydraulics-brain/
 
 ## 🚀 Установка навыка для различных AI-агентов
 
-Навык `computational-hydraulics` разработан по открытому стандарту **Open Agent Skills** и совместим со всеми современными агентскими средами.
+<p align="left">
+  <img src="https://img.shields.io/badge/OpenAI-Codex_%26_ChatGPT-00A67E?style=for-the-badge&logo=openai&logoColor=white" height="26" />
+  <img src="https://img.shields.io/badge/Google-Antigravity_AGY-4285F4?style=for-the-badge&logo=google&logoColor=white" height="26" />
+  <img src="https://img.shields.io/badge/Anthropic-Claude_Code-D97706?style=for-the-badge&logo=anthropic&logoColor=white" height="26" />
+  <img src="https://img.shields.io/badge/Cursor-AI_IDE-000000?style=for-the-badge&logo=cursor&logoColor=white" height="26" />
+  <img src="https://img.shields.io/badge/Windsurf-Codeium-09B6A2?style=for-the-badge&logo=codeium&logoColor=white" height="26" />
+  <img src="https://img.shields.io/badge/Roo_%26_Cline-VS_Code-007ACC?style=for-the-badge&logo=visualstudiocode&logoColor=white" height="26" />
+  <img src="https://img.shields.io/badge/Aider-Terminal_Coder-181717?style=for-the-badge&logo=gnubash&logoColor=white" height="26" />
+  <img src="https://img.shields.io/badge/GitHub-Copilot-000000?style=for-the-badge&logo=githubcopilot&logoColor=white" height="26" />
+</p>
+
+Навык `computational-hydraulics` разработан по открытому стандарту **Open Agent Skills** и нативно поддерживается всеми ведущими средами разработки.
 
 ### ⚡ Быстрая автоматическая установка (One-Click Script)
 
@@ -62,15 +73,15 @@ hydraulics-brain/
 ./computational-hydraulics/scripts/install_skill.sh
 
 # Или прямая установка под конкретную среду:
-./computational-hydraulics/scripts/install_skill.sh --codex         # 🟢 OpenAI Codex Agent
-./computational-hydraulics/scripts/install_skill.sh --antigravity   # 🔵 Google Antigravity & Open Agent Skills
-./computational-hydraulics/scripts/install_skill.sh --claude        # 🟧 Anthropic Claude Code CLI
-./computational-hydraulics/scripts/install_skill.sh --cursor        # 🖱️ Cursor AI IDE
-./computational-hydraulics/scripts/install_skill.sh --windsurf      # 🏄 Windsurf (Codeium)
-./computational-hydraulics/scripts/install_skill.sh --cline         # 🦘 Roo Code & 🧩 Cline
-./computational-hydraulics/scripts/install_skill.sh --aider         # 🧑‍💻 Aider CLI
-./computational-hydraulics/scripts/install_skill.sh --copilot       # 🐙 GitHub Copilot
-./computational-hydraulics/scripts/install_skill.sh --all           # 🚀 Установить для всех сред сразу
+./computational-hydraulics/scripts/install_skill.sh --codex         # OpenAI Codex Agent
+./computational-hydraulics/scripts/install_skill.sh --antigravity   # Google Antigravity & Open Agent Skills
+./computational-hydraulics/scripts/install_skill.sh --claude        # Anthropic Claude Code CLI
+./computational-hydraulics/scripts/install_skill.sh --cursor        # Cursor AI IDE
+./computational-hydraulics/scripts/install_skill.sh --windsurf      # Windsurf (Codeium)
+./computational-hydraulics/scripts/install_skill.sh --cline         # Roo Code & Cline
+./computational-hydraulics/scripts/install_skill.sh --aider         # Aider CLI
+./computational-hydraulics/scripts/install_skill.sh --copilot       # GitHub Copilot
+./computational-hydraulics/scripts/install_skill.sh --all           # Установить для всех сред сразу
 ```
 
 ---
@@ -78,7 +89,7 @@ hydraulics-brain/
 ### 📦 Ручная установка для каждого агента
 
 <details open>
-<summary><b>1. 🟢 OpenAI (Codex Agent & ChatGPT)</b></summary>
+<summary><img src="https://img.shields.io/badge/OpenAI-00A67E?style=flat-square&logo=openai&logoColor=white" height="18" align="center" /> <b>1. OpenAI (Codex Agent & ChatGPT)</b></summary>
 
 - **OpenAI Codex Agent (автономный агент разработки):**
   Codex считывает навыки из стандартного каталога `~/.codex/skills/` или локальной папки `.codex/skills/` в корне проекта:
@@ -92,7 +103,7 @@ hydraulics-brain/
 </details>
 
 <details>
-<summary><b>2. 🔵 Google Antigravity (AGY) & Open Agent Skills</b></summary>
+<summary><img src="https://img.shields.io/badge/Google-4285F4?style=flat-square&logo=google&logoColor=white" height="18" align="center" /> <b>2. Google Antigravity & Open Agent Skills</b></summary>
 
 Google Antigravity автоматически считывает навыки из стандартной глобальной папки `~/.agents/skills/` или локальной папки `.agents/skills/` в корне проекта:
 - **Глобальная установка (для всех проектов пользователя):**
@@ -109,7 +120,7 @@ Google Antigravity автоматически считывает навыки и
 </details>
 
 <details>
-<summary><b>3. 🟧 Anthropic Claude Code (CLI)</b></summary>
+<summary><img src="https://img.shields.io/badge/Anthropic-D97706?style=flat-square&logo=anthropic&logoColor=white" height="18" align="center" /> <b>3. Anthropic Claude Code (CLI)</b></summary>
 
 Claude Code считывает инструкции из глобального файла `~/.claude/CLAUDE.md` или локального `CLAUDE.md`:
 - **Глобальная установка:**
@@ -126,7 +137,7 @@ Claude Code считывает инструкции из глобального 
 </details>
 
 <details>
-<summary><b>4. 🖱️ Cursor AI IDE (Cursor Rules 2.0)</b></summary>
+<summary><img src="https://img.shields.io/badge/Cursor-000000?style=flat-square&logo=cursor&logoColor=white" height="18" align="center" /> <b>4. Cursor AI IDE (Cursor Rules 2.0)</b></summary>
 
 Cursor поддерживает современные проектные правила в каталоге `.cursor/rules/*.mdc`:
 - **В вашем C++ проекте:**
@@ -154,7 +165,7 @@ Cursor поддерживает современные проектные пра
 </details>
 
 <details>
-<summary><b>5. 🏄 Windsurf (Codeium)</b></summary>
+<summary><img src="https://img.shields.io/badge/Codeium-09B6A2?style=flat-square&logo=codeium&logoColor=white" height="18" align="center" /> <b>5. Windsurf (Codeium)</b></summary>
 
 Windsurf использует файл правил `.windsurfrules` в корне проекта или глобальные правила:
 - **В проекте:**
@@ -166,7 +177,7 @@ Windsurf использует файл правил `.windsurfrules` в корн
 </details>
 
 <details>
-<summary><b>6. 🦘 Roo Code & 🧩 Cline (VS Code Extensions)</b></summary>
+<summary><img src="https://img.shields.io/badge/VS_Code-007ACC?style=flat-square&logo=visualstudiocode&logoColor=white" height="18" align="center" /> <b>6. Roo Code & Cline (VS Code Extensions)</b></summary>
 
 Cline и Roo Code используют кастомные инструкции:
 - **В проекте:**
@@ -179,7 +190,7 @@ Cline и Roo Code используют кастомные инструкции:
 </details>
 
 <details>
-<summary><b>7. 🧑‍💻 Aider CLI (Terminal Pair Programmer)</b></summary>
+<summary><img src="https://img.shields.io/badge/Terminal-181717?style=flat-square&logo=gnubash&logoColor=white" height="18" align="center" /> <b>7. Aider CLI (Terminal Pair Programmer)</b></summary>
 
 Aider считывает внешние правила через конфигурационный файл `~/.aider.conf.yml` или флаг `--read`:
 - **В глобальном конфиге `~/.aider.conf.yml`:**
@@ -195,7 +206,7 @@ Aider считывает внешние правила через конфигу
 </details>
 
 <details>
-<summary><b>8. 🐙 GitHub Copilot (VS Code / JetBrains / CLI)</b></summary>
+<summary><img src="https://img.shields.io/badge/GitHub-000000?style=flat-square&logo=githubcopilot&logoColor=white" height="18" align="center" /> <b>8. GitHub Copilot (VS Code / JetBrains / CLI)</b></summary>
 
 GitHub Copilot автоматически считывает проектные инструкции из `.github/copilot-instructions.md`:
 ```bash
