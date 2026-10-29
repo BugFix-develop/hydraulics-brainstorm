@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # ==============================================================================
 # Скрипт автоматической установки навыка computational-hydraulics
-# для различных AI-агентов и сред разработки (Antigravity, Claude, Cursor, etc.)
+# для различных AI-агентов и сред разработки (Codex, Antigravity, Claude, Cursor, etc.)
 # Кафедра ИСИТ / РГУ нефти и газа им. И.М. Губкина
 # ==============================================================================
 
@@ -15,9 +15,18 @@ echo "   Установка AI Skill: computational-hydraulics"
 echo "   Каталог навыка: ${SKILL_DIR}"
 echo "================================================================="
 
+install_codex() {
+    local target_dir="${HOME}/.codex/skills/computational-hydraulics"
+    echo "-> 🟢 Установка для OpenAI Codex Agent..."
+    mkdir -p "${HOME}/.codex/skills"
+    rm -rf "${target_dir}"
+    cp -r "${SKILL_DIR}" "${target_dir}"
+    echo "   [OK] Установлено в: ${target_dir}"
+}
+
 install_antigravity() {
     local target_dir="${HOME}/.agents/skills/computational-hydraulics"
-    echo "-> Установка для Google Antigravity & Open Agent Skills..."
+    echo "-> 🔵 Установка для Google Antigravity & Open Agent Skills..."
     mkdir -p "${HOME}/.agents/skills"
     rm -rf "${target_dir}"
     cp -r "${SKILL_DIR}" "${target_dir}"
@@ -26,7 +35,7 @@ install_antigravity() {
 
 install_claude() {
     local target_dir="${HOME}/.claude/skills/computational-hydraulics"
-    echo "-> Установка для Claude Code (Anthropic CLI)..."
+    echo "-> 🟧 Установка для Anthropic Claude Code CLI..."
     mkdir -p "${HOME}/.claude/skills"
     rm -rf "${target_dir}"
     cp -r "${SKILL_DIR}" "${target_dir}"
@@ -42,7 +51,7 @@ install_claude() {
 
 install_cursor() {
     local project_dir="${1:-.}"
-    echo "-> Настройка для Cursor AI в каталоге: ${project_dir}..."
+    echo "-> 🖱️ Настройка для Cursor AI в каталоге: ${project_dir}..."
     local rules_dir="${project_dir}/.cursor/rules"
     mkdir -p "${rules_dir}"
     cat << 'EOF' > "${rules_dir}/hydraulics.mdc"
@@ -65,7 +74,7 @@ EOF
 
 install_windsurf() {
     local project_dir="${1:-.}"
-    echo "-> Настройка для Windsurf (Codeium) в: ${project_dir}..."
+    echo "-> 🏄 Настройка для Windsurf (Codeium) в: ${project_dir}..."
     if [ -f "${SKILL_DIR}/templates/AGENTS.md" ]; then
         cp "${SKILL_DIR}/templates/AGENTS.md" "${project_dir}/.windsurfrules"
         echo "   [OK] Создан файл: ${project_dir}/.windsurfrules"
@@ -74,7 +83,7 @@ install_windsurf() {
 
 install_cline() {
     local project_dir="${1:-.}"
-    echo "-> Настройка для Cline & Roo Code в: ${project_dir}..."
+    echo "-> 🦘 Настройка для Roo Code & 🧩 Cline в: ${project_dir}..."
     if [ -f "${SKILL_DIR}/templates/AGENTS.md" ]; then
         cp "${SKILL_DIR}/templates/AGENTS.md" "${project_dir}/.clinerules"
         echo "   [OK] Создан файл: ${project_dir}/.clinerules"
@@ -82,7 +91,7 @@ install_cline() {
 }
 
 install_aider() {
-    echo "-> Настройка для Aider CLI..."
+    echo "-> 🧑‍💻 Настройка для Aider CLI..."
     local aider_conf="${HOME}/.aider.conf.yml"
     local skill_path="${HOME}/.agents/skills/computational-hydraulics/SKILL.md"
     if [ ! -f "${skill_path}" ]; then
@@ -96,7 +105,7 @@ install_aider() {
 
 install_copilot() {
     local project_dir="${1:-.}"
-    echo "-> Настройка для GitHub Copilot в: ${project_dir}..."
+    echo "-> 🐙 Настройка для GitHub Copilot в: ${project_dir}..."
     mkdir -p "${project_dir}/.github"
     if [ -f "${SKILL_DIR}/templates/AGENTS.md" ]; then
         cp "${SKILL_DIR}/templates/AGENTS.md" "${project_dir}/.github/copilot-instructions.md"
@@ -106,6 +115,7 @@ install_copilot() {
 
 install_all() {
     echo "-> Установка для всех поддерживаемых сред..."
+    install_codex
     install_antigravity
     install_claude
     install_aider
@@ -124,6 +134,9 @@ TARGET="${1:-menu}"
 case "${TARGET}" in
     --all|all)
         install_all
+        ;;
+    --codex|codex)
+        install_codex
         ;;
     --antigravity|antigravity)
         install_antigravity
@@ -148,26 +161,28 @@ case "${TARGET}" in
         ;;
     menu|*)
         echo "Выберите среду для установки:"
-        echo "  1) Google Antigravity & Open Agent Skills (~/.agents/skills/)"
-        echo "  2) Claude Code CLI (~/.claude/skills/ & CLAUDE.md)"
-        echo "  3) Cursor AI IDE (.cursor/rules/hydraulics.mdc)"
-        echo "  4) Windsurf (.windsurfrules)"
-        echo "  5) Cline & Roo Code (.clinerules)"
-        echo "  6) Aider CLI (~/.aider.conf.yml)"
-        echo "  7) GitHub Copilot (.github/copilot-instructions.md)"
-        echo "  8) Установить для всех сред (All-in-one)"
+        echo "  1) 🟢 OpenAI Codex Agent (~/.codex/skills/)"
+        echo "  2) 🔵 Google Antigravity & Open Agent Skills (~/.agents/skills/)"
+        echo "  3) 🟧 Anthropic Claude Code CLI (~/.claude/skills/ & CLAUDE.md)"
+        echo "  4) 🖱️ Cursor AI IDE (.cursor/rules/hydraulics.mdc)"
+        echo "  5) 🏄 Windsurf (.windsurfrules)"
+        echo "  6) 🦘 Roo Code & 🧩 Cline (.clinerules)"
+        echo "  7) 🧑‍💻 Aider CLI (~/.aider.conf.yml)"
+        echo "  8) 🐙 GitHub Copilot (.github/copilot-instructions.md)"
+        echo "  9) 🚀 Установить для всех сред (All-in-one)"
         echo "  q) Выход"
         echo ""
-        read -rp "Введите номер [1-8]: " choice
+        read -rp "Введите номер [1-9]: " choice
         case "${choice}" in
-            1) install_antigravity ;;
-            2) install_claude ;;
-            3) install_cursor "." ;;
-            4) install_windsurf "." ;;
-            5) install_cline "." ;;
-            6) install_aider ;;
-            7) install_copilot "." ;;
-            8) install_all ;;
+            1) install_codex ;;
+            2) install_antigravity ;;
+            3) install_claude ;;
+            4) install_cursor "." ;;
+            5) install_windsurf "." ;;
+            6) install_cline "." ;;
+            7) install_aider ;;
+            8) install_copilot "." ;;
+            9) install_all ;;
             *) echo "Отмена." ;;
         esac
         ;;
