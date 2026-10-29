@@ -29,7 +29,7 @@ hydraulics-brain/
 ├── README.md                           # Главное руководство и документация
 ├── .gitignore                          # Исключение артефактов сборки и кэшей
 │
-└── .agents/skills/computational-hydraulics/  # Автономный инженерный AI Skill
+└── computational-hydraulics/           # Автономный инженерный AI Skill
     ├── SKILL.md                        # Главные инструкции агента (Сократический диалог, C++, валидация)
     ├── scripts/
     │   └── hydraulics_calculator.py    # Интерактивный CLI-калькулятор единиц, Re, lambda, потерь и гидроудара
@@ -55,17 +55,18 @@ hydraulics-brain/
 Навык совместим с современными агентскими средами: **Google Antigravity**, **Claude Code**, **Cursor**, **Windsurf**, **Cline**, **Roo Code** и др.
 
 ### Вариант 1. Использование в отдельном репозитории лабораторной (локально)
-Скопируйте папку `.agents` в корень вашего репозитория с лабораторной работой:
+Скопируйте папку навыка в ваш репозиторий с лабораторной работой:
 ```bash
-cp -r .agents/skills/computational-hydraulics /path/to/your/lab-repo/.agents/skills/
-cp .agents/skills/computational-hydraulics/templates/AGENTS.md /path/to/your/lab-repo/AGENTS.md
+mkdir -p /path/to/your/lab-repo/.agents/skills
+cp -r computational-hydraulics /path/to/your/lab-repo/.agents/skills/
+cp computational-hydraulics/templates/AGENTS.md /path/to/your/lab-repo/AGENTS.md
 ```
 
 ### Вариант 2. Глобальная установка для всех проектов пользователя
 Скопируйте навык в глобальную директорию навыков агента:
 ```bash
 mkdir -p ~/.agents/skills
-cp -r .agents/skills/computational-hydraulics ~/.agents/skills/
+cp -r computational-hydraulics ~/.agents/skills/
 ```
 *Теперь любой агент в любой директории подхватит системные знания и правила гидравлики!*
 
@@ -121,40 +122,40 @@ flowchart TD
 
 ### Интерактивный режим
 ```bash
-python3 .agents/skills/computational-hydraulics/scripts/hydraulics_calculator.py
+python3 computational-hydraulics/scripts/hydraulics_calculator.py
 ```
 
 ### Командная строка (CLI)
 - **Конвертация единиц:**
   ```bash
-  python3 .agents/skills/computational-hydraulics/scripts/hydraulics_calculator.py unit --val 350 --from_unit "m3/h" --to_unit "m3/s"
-  python3 .agents/skills/computational-hydraulics/scripts/hydraulics_calculator.py unit --val 6.4 --from_unit "MPa" --to_unit "Pa"
-  python3 .agents/skills/computational-hydraulics/scripts/hydraulics_calculator.py unit --val 25 --from_unit "cSt" --to_unit "m2/s"
+  python3 computational-hydraulics/scripts/hydraulics_calculator.py unit --val 350 --from_unit "m3/h" --to_unit "m3/s"
+  python3 computational-hydraulics/scripts/hydraulics_calculator.py unit --val 6.4 --from_unit "MPa" --to_unit "Pa"
+  python3 computational-hydraulics/scripts/hydraulics_calculator.py unit --val 25 --from_unit "cSt" --to_unit "m2/s"
   ```
 
 - **Расчет числа Рейнольдса ($Re$):**
   ```bash
-  python3 .agents/skills/computational-hydraulics/scripts/hydraulics_calculator.py reynolds -v 1.85 -d 0.5 -nu 1.5e-5
+  python3 computational-hydraulics/scripts/hydraulics_calculator.py reynolds -v 1.85 -d 0.5 -nu 1.5e-5
   ```
 
 - **Коэффициент гидравлического сопротивления ($\lambda$ по Альтшулю/Блазиусу/Шифринсону):**
   ```bash
-  python3 .agents/skills/computational-hydraulics/scripts/hydraulics_calculator.py lambda -re 61666 -d 0.5 -k 0.0001
+  python3 computational-hydraulics/scripts/hydraulics_calculator.py lambda -re 61666 -d 0.5 -k 0.0001
   ```
 
 - **Потери напора по Дарси-Вейсбаху:**
   ```bash
-  python3 .agents/skills/computational-hydraulics/scripts/hydraulics_calculator.py loss -l 10000 -d 0.5 -v 1.85 -re 61666 -k 0.0001
+  python3 computational-hydraulics/scripts/hydraulics_calculator.py loss -l 10000 -d 0.5 -v 1.85 -re 61666 -k 0.0001
   ```
 
 - **Плотность нефти/нефтепродукта $\rho(T, p)$:**
   ```bash
-  python3 .agents/skills/computational-hydraulics/scripts/hydraulics_calculator.py density --rho20 850 --t 15 --p 5000000
+  python3 computational-hydraulics/scripts/hydraulics_calculator.py density --rho20 850 --t 15 --p 5000000
   ```
 
 - **Гидравлический удар по Жуковскому:**
   ```bash
-  python3 .agents/skills/computational-hydraulics/scripts/hydraulics_calculator.py hammer -l 5000 -d 0.5 -e 0.01 -v 1.85 -rho 850 -ef 1.5e9 -ep 2.0e11 -ts 1.2
+  python3 computational-hydraulics/scripts/hydraulics_calculator.py hammer -l 5000 -d 0.5 -e 0.01 -v 1.85 -rho 850 -ef 1.5e9 -ep 2.0e11 -ts 1.2
   ```
 
 ---
