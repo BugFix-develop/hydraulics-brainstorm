@@ -356,8 +356,9 @@ public:
 * [Шаблон плана реализации и тестов (`plan_template.md`)](./templates/plan_template.md)
 * [Эталонный регламент качества кода (`AGENTS.md`)](./templates/AGENTS.md)
 
-### Вспомогательные скрипты и утилиты (в каталоге `./scripts/`):
-* [Инженерный калькулятор единиц и физики (`hydraulics_calculator.py`)](./scripts/hydraulics_calculator.py)
+### Вспомогательные скрипты установки (в каталоге `./scripts/`):
+* [Скрипт автоустановки для Linux / macOS (`install_skill.sh`)](./scripts/install_skill.sh)
+* [Скрипт автоустановки для Windows PowerShell (`install_skill.ps1`)](./scripts/install_skill.ps1)
 
 ### Теоретические и инженерные справочники (в каталоге `./references/`):
 * [Протокол интерактивной предзащиты (`mock_defense_protocol.md`)](./references/mock_defense_protocol.md)

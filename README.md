@@ -4,7 +4,6 @@
 [![C++20](https://img.shields.io/badge/C%2B%2B-20-blue.svg)](https://en.cppreference.com/w/cpp/20)
 [![Eigen](https://img.shields.io/badge/Eigen-3.4%2B-green.svg)](https://gitlab.com/libeigen/eigen)
 [![GoogleTest](https://img.shields.io/badge/GoogleTest-v1.14%2B-red.svg)](https://github.com/google/googletest)
-[![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-yellow.svg)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-lightgrey.svg)](LICENSE)
 
 ---
@@ -32,7 +31,8 @@ hydraulics-brain/
 └── computational-hydraulics/           # Автономный инженерный AI Skill
     ├── SKILL.md                        # Главные инструкции агента (Сократический диалог, C++, валидация)
     ├── scripts/
-    │   └── hydraulics_calculator.py    # Интерактивный CLI-калькулятор единиц, Re, lambda, потерь и гидроудара
+    │   ├── install_skill.sh            # Автоматическая установка для Linux и macOS
+    │   └── install_skill.ps1           # Автоматическая установка для Windows PowerShell
     ├── templates/                      # Готовые шаблоны артефактов для лабораторных
     │   ├── AGENTS.md                   # Правила проекта для корня репозитория студента (Doxygen, Code Style, Git)
     │   ├── tz_template.md              # Шаблон ТЗ и физико-математической постановки
@@ -303,50 +303,6 @@ flowchart TD
 - Раунд 2: Численные методы (почему $PA=LU$, а не `A.inverse()`, сходимость МУД).
 - Раунд 3: C++ & Архитектура (Move-семантика, шаблоны выражений Eigen `const auto&`, cache-locality).
 - Раунд 4: Анализ кода и разбор ошибок.
-
----
-
-## 🧮 Инженерный калькулятор (`hydraulics_calculator.py`)
-
-В репозиторий встроен автономный инструмент верификации гидравлических расчетов без сторонних зависимостей (чистый Python 3).
-
-### Интерактивный режим
-```bash
-python3 computational-hydraulics/scripts/hydraulics_calculator.py
-```
-
-### Командная строка (CLI)
-- **Конвертация единиц:**
-  ```bash
-  python3 computational-hydraulics/scripts/hydraulics_calculator.py unit --val 350 --from_unit "m3/h" --to_unit "m3/s"
-  python3 computational-hydraulics/scripts/hydraulics_calculator.py unit --val 6.4 --from_unit "MPa" --to_unit "Pa"
-  python3 computational-hydraulics/scripts/hydraulics_calculator.py unit --val 25 --from_unit "cSt" --to_unit "m2/s"
-  ```
-
-- **Расчет числа Рейнольдса ($Re$):**
-  ```bash
-  python3 computational-hydraulics/scripts/hydraulics_calculator.py reynolds -v 1.85 -d 0.5 -nu 1.5e-5
-  ```
-
-- **Коэффициент гидравлического сопротивления ($\lambda$ по Альтшулю/Блазиусу/Шифринсону):**
-  ```bash
-  python3 computational-hydraulics/scripts/hydraulics_calculator.py lambda -re 61666 -d 0.5 -k 0.0001
-  ```
-
-- **Потери напора по Дарси-Вейсбаху:**
-  ```bash
-  python3 computational-hydraulics/scripts/hydraulics_calculator.py loss -l 10000 -d 0.5 -v 1.85 -re 61666 -k 0.0001
-  ```
-
-- **Плотность нефти/нефтепродукта $\rho(T, p)$:**
-  ```bash
-  python3 computational-hydraulics/scripts/hydraulics_calculator.py density --rho20 850 --t 15 --p 5000000
-  ```
-
-- **Гидравлический удар по Жуковскому:**
-  ```bash
-  python3 computational-hydraulics/scripts/hydraulics_calculator.py hammer -l 5000 -d 0.5 -e 0.01 -v 1.85 -rho 850 -ef 1.5e9 -ep 2.0e11 -ts 1.2
-  ```
 
 ---
 
