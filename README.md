@@ -52,15 +52,15 @@ hydraulics-brain/
 
 ## 🚀 Установка навыка для различных AI-агентов
 
-<p align="left">
-  <img src="https://img.shields.io/badge/OpenAI-Codex_%26_ChatGPT-00A67E?style=for-the-badge&logo=openai&logoColor=white" height="26" />
-  <img src="https://img.shields.io/badge/Google-Antigravity_AGY-4285F4?style=for-the-badge&logo=google&logoColor=white" height="26" />
-  <img src="https://img.shields.io/badge/Anthropic-Claude_Code-D97706?style=for-the-badge&logo=anthropic&logoColor=white" height="26" />
-  <img src="https://img.shields.io/badge/Cursor-AI_IDE-000000?style=for-the-badge&logo=cursor&logoColor=white" height="26" />
-  <img src="https://img.shields.io/badge/Windsurf-Codeium-09B6A2?style=for-the-badge&logo=codeium&logoColor=white" height="26" />
-  <img src="https://img.shields.io/badge/Roo_%26_Cline-VS_Code-007ACC?style=for-the-badge&logo=visualstudiocode&logoColor=white" height="26" />
-  <img src="https://img.shields.io/badge/Aider-Terminal_Coder-181717?style=for-the-badge&logo=gnubash&logoColor=white" height="26" />
-  <img src="https://img.shields.io/badge/GitHub-Copilot-000000?style=for-the-badge&logo=githubcopilot&logoColor=white" height="26" />
+<p align="center">
+  <img src="assets/logos/openai.svg" width="36" height="36" alt="OpenAI" title="OpenAI Codex & ChatGPT" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="assets/logos/google.svg" width="36" height="36" alt="Google" title="Google Antigravity & Open Agent Skills" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="assets/logos/claude.svg" width="36" height="36" alt="Anthropic Claude" title="Anthropic Claude Code" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="assets/logos/cursor.svg" width="36" height="36" alt="Cursor AI" title="Cursor AI IDE" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="assets/logos/windsurf.svg" width="36" height="36" alt="Windsurf Codeium" title="Windsurf (Codeium)" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="assets/logos/vscode.svg" width="36" height="36" alt="Roo Code & Cline" title="Roo Code & Cline" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="assets/logos/copilot.svg" width="36" height="36" alt="GitHub Copilot" title="GitHub Copilot" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="assets/logos/terminal.svg" width="36" height="36" alt="Aider CLI" title="Aider Terminal CLI" />
 </p>
 
 Навык `computational-hydraulics` разработан по открытому стандарту **Open Agent Skills** и нативно поддерживается всеми ведущими средами разработки.
@@ -89,7 +89,7 @@ hydraulics-brain/
 ### 📦 Ручная установка для каждого агента
 
 <details open>
-<summary><img src="https://img.shields.io/badge/OpenAI-00A67E?style=flat-square&logo=openai&logoColor=white" height="18" align="center" /> <b>1. OpenAI (Codex Agent & ChatGPT)</b></summary>
+<summary><img src="assets/logos/openai.svg" width="18" height="18" align="center" /> <b>1. OpenAI (Codex Agent & ChatGPT)</b></summary>
 
 - **OpenAI Codex Agent (автономный агент разработки):**
   Codex считывает навыки из стандартного каталога `~/.codex/skills/` или локальной папки `.codex/skills/` в корне проекта:
@@ -103,7 +103,7 @@ hydraulics-brain/
 </details>
 
 <details>
-<summary><img src="https://img.shields.io/badge/Google-4285F4?style=flat-square&logo=google&logoColor=white" height="18" align="center" /> <b>2. Google Antigravity & Open Agent Skills</b></summary>
+<summary><img src="assets/logos/google.svg" width="18" height="18" align="center" /> <b>2. Google Antigravity & Open Agent Skills</b></summary>
 
 Google Antigravity автоматически считывает навыки из стандартной глобальной папки `~/.agents/skills/` или локальной папки `.agents/skills/` в корне проекта:
 - **Глобальная установка (для всех проектов пользователя):**
@@ -120,7 +120,7 @@ Google Antigravity автоматически считывает навыки и
 </details>
 
 <details>
-<summary><img src="https://img.shields.io/badge/Anthropic-D97706?style=flat-square&logo=anthropic&logoColor=white" height="18" align="center" /> <b>3. Anthropic Claude Code (CLI)</b></summary>
+<summary><img src="assets/logos/claude.svg" width="18" height="18" align="center" /> <b>3. Anthropic Claude Code (CLI)</b></summary>
 
 Claude Code считывает инструкции из глобального файла `~/.claude/CLAUDE.md` или локального `CLAUDE.md`:
 - **Глобальная установка:**
@@ -137,7 +137,7 @@ Claude Code считывает инструкции из глобального 
 </details>
 
 <details>
-<summary><img src="https://img.shields.io/badge/Cursor-000000?style=flat-square&logo=cursor&logoColor=white" height="18" align="center" /> <b>4. Cursor AI IDE (Cursor Rules 2.0)</b></summary>
+<summary><img src="assets/logos/cursor.svg" width="18" height="18" align="center" /> <b>4. Cursor AI IDE (Cursor Rules 2.0)</b></summary>
 
 Cursor поддерживает современные проектные правила в каталоге `.cursor/rules/*.mdc`:
 - **В вашем C++ проекте:**
@@ -165,7 +165,7 @@ Cursor поддерживает современные проектные пра
 </details>
 
 <details>
-<summary><img src="https://img.shields.io/badge/Codeium-09B6A2?style=flat-square&logo=codeium&logoColor=white" height="18" align="center" /> <b>5. Windsurf (Codeium)</b></summary>
+<summary><img src="assets/logos/windsurf.svg" width="18" height="18" align="center" /> <b>5. Windsurf (Codeium)</b></summary>
 
 Windsurf использует файл правил `.windsurfrules` в корне проекта или глобальные правила:
 - **В проекте:**
@@ -177,7 +177,7 @@ Windsurf использует файл правил `.windsurfrules` в корн
 </details>
 
 <details>
-<summary><img src="https://img.shields.io/badge/VS_Code-007ACC?style=flat-square&logo=visualstudiocode&logoColor=white" height="18" align="center" /> <b>6. Roo Code & Cline (VS Code Extensions)</b></summary>
+<summary><img src="assets/logos/vscode.svg" width="18" height="18" align="center" /> <b>6. Roo Code & Cline (VS Code Extensions)</b></summary>
 
 Cline и Roo Code используют кастомные инструкции:
 - **В проекте:**
@@ -190,7 +190,7 @@ Cline и Roo Code используют кастомные инструкции:
 </details>
 
 <details>
-<summary><img src="https://img.shields.io/badge/Terminal-181717?style=flat-square&logo=gnubash&logoColor=white" height="18" align="center" /> <b>7. Aider CLI (Terminal Pair Programmer)</b></summary>
+<summary><img src="assets/logos/terminal.svg" width="18" height="18" align="center" /> <b>7. Aider CLI (Terminal Pair Programmer)</b></summary>
 
 Aider считывает внешние правила через конфигурационный файл `~/.aider.conf.yml` или флаг `--read`:
 - **В глобальном конфиге `~/.aider.conf.yml`:**
@@ -206,7 +206,7 @@ Aider считывает внешние правила через конфигу
 </details>
 
 <details>
-<summary><img src="https://img.shields.io/badge/GitHub-000000?style=flat-square&logo=githubcopilot&logoColor=white" height="18" align="center" /> <b>8. GitHub Copilot (VS Code / JetBrains / CLI)</b></summary>
+<summary><img src="assets/logos/copilot.svg" width="18" height="18" align="center" /> <b>8. GitHub Copilot (VS Code / JetBrains / CLI)</b></summary>
 
 GitHub Copilot автоматически считывает проектные инструкции из `.github/copilot-instructions.md`:
 ```bash
