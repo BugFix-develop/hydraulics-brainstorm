@@ -85,14 +85,15 @@ cd hydraulics-brainstorm
 
 Скрипт сам определит системные пути вашей ОС и настроит окружение:
 
-- <img src="assets/logos/linux.svg" width="16" height="16" align="center" /> **Linux** / <img src="assets/logos/apple.svg" width="16" height="16" align="center" /> **macOS** (Bash / Zsh):
-  ```bash
-  ./computational-hydraulics/scripts/install_skill.sh
-  ```
-- <img src="assets/logos/windows.svg" width="16" height="16" align="center" /> **Windows** (PowerShell):
-  ```powershell
-  .\computational-hydraulics\scripts\install_skill.ps1
-  ```
+<img src="assets/logos/linux.svg" width="18" height="18" align="absmiddle" /> **Linux** / <img src="assets/logos/apple.svg" width="18" height="18" align="absmiddle" /> **macOS** (Bash / Zsh):
+```bash
+./computational-hydraulics/scripts/install_skill.sh
+```
+
+<img src="assets/logos/windows.svg" width="18" height="18" align="absmiddle" /> **Windows** (PowerShell):
+```powershell
+.\computational-hydraulics\scripts\install_skill.ps1
+```
 
 *(В появившемся меню введите номер нужного агента или `9` для установки всем сразу).*
 
@@ -103,122 +104,148 @@ cd hydraulics-brainstorm
 Если вы предпочитаете скопировать файлы вручную без скрипта, выберите вашу среду:
 
 <details open>
-<summary><img src="assets/logos/openai.svg" width="24" height="24" align="center" /> &nbsp;<b><font size="+1">OpenAI (Codex Agent & ChatGPT)</font></b></summary>
+<summary><img src="assets/logos/openai.svg" width="24" height="24" align="absmiddle" /> &nbsp;<b><font size="+1">OpenAI (Codex Agent & ChatGPT)</font></b></summary>
+
+<br/>
 
 **Codex Agent:**
-- <img src="assets/logos/linux.svg" width="16" height="16" align="center" /> **Linux** / <img src="assets/logos/apple.svg" width="16" height="16" align="center" /> **macOS**:
-  ```bash
-  mkdir -p ~/.codex/skills
-  cp -r computational-hydraulics ~/.codex/skills/
-  ```
-- <img src="assets/logos/windows.svg" width="16" height="16" align="center" /> **Windows** (PowerShell):
-  ```powershell
-  New-Item -ItemType Directory -Force -Path "$HOME\.codex\skills"
-  Copy-Item -Recurse -Force computational-hydraulics "$HOME\.codex\skills\"
-  ```
+
+<img src="assets/logos/linux.svg" width="18" height="18" align="absmiddle" /> **Linux** / <img src="assets/logos/apple.svg" width="18" height="18" align="absmiddle" /> **macOS**:
+```bash
+mkdir -p ~/.codex/skills
+cp -r computational-hydraulics ~/.codex/skills/
+```
+
+<img src="assets/logos/windows.svg" width="18" height="18" align="absmiddle" /> **Windows** (PowerShell):
+```powershell
+New-Item -ItemType Directory -Force -Path "$HOME\.codex\skills"
+Copy-Item -Recurse -Force computational-hydraulics "$HOME\.codex\skills\"
+```
 
 **ChatGPT (Web / Projects / Custom GPT):**
-- В [ChatGPT Projects](https://chatgpt.com): в поле *Custom Instructions* вставьте текст из `computational-hydraulics/SKILL.md`, а в *Knowledge* прикрепите файлы из `computational-hydraulics/references/`.
+В [ChatGPT Projects](https://chatgpt.com): в поле *Custom Instructions* вставьте текст из `computational-hydraulics/SKILL.md`, а в *Knowledge* прикрепите файлы из `computational-hydraulics/references/`.
 </details>
 
 <details>
-<summary><img src="assets/logos/google.svg" width="24" height="24" align="center" /> &nbsp;<b><font size="+1">Google Antigravity & Open Agent Skills</font></b></summary>
+<summary><img src="assets/logos/google.svg" width="24" height="24" align="absmiddle" /> &nbsp;<b><font size="+1">Google Antigravity & Open Agent Skills</font></b></summary>
 
-- <img src="assets/logos/linux.svg" width="16" height="16" align="center" /> **Linux** / <img src="assets/logos/apple.svg" width="16" height="16" align="center" /> **macOS**:
-  ```bash
-  mkdir -p ~/.agents/skills
-  cp -r computational-hydraulics ~/.agents/skills/
-  ```
-- <img src="assets/logos/windows.svg" width="16" height="16" align="center" /> **Windows** (PowerShell):
-  ```powershell
-  New-Item -ItemType Directory -Force -Path "$HOME\.agents\skills"
-  Copy-Item -Recurse -Force computational-hydraulics "$HOME\.agents\skills\"
-  ```
+<br/>
+
+<img src="assets/logos/linux.svg" width="18" height="18" align="absmiddle" /> **Linux** / <img src="assets/logos/apple.svg" width="18" height="18" align="absmiddle" /> **macOS**:
+```bash
+mkdir -p ~/.agents/skills
+cp -r computational-hydraulics ~/.agents/skills/
+```
+
+<img src="assets/logos/windows.svg" width="18" height="18" align="absmiddle" /> **Windows** (PowerShell):
+```powershell
+New-Item -ItemType Directory -Force -Path "$HOME\.agents\skills"
+Copy-Item -Recurse -Force computational-hydraulics "$HOME\.agents\skills\"
+```
 </details>
 
 <details>
-<summary><img src="assets/logos/claude.svg" width="24" height="24" align="center" /> &nbsp;<b><font size="+1">Anthropic Claude Code (CLI)</font></b></summary>
+<summary><img src="assets/logos/claude.svg" width="24" height="24" align="absmiddle" /> &nbsp;<b><font size="+1">Anthropic Claude Code (CLI)</font></b></summary>
 
-- <img src="assets/logos/linux.svg" width="16" height="16" align="center" /> **Linux** / <img src="assets/logos/apple.svg" width="16" height="16" align="center" /> **macOS**:
-  ```bash
-  mkdir -p ~/.claude/skills
-  cp -r computational-hydraulics ~/.claude/skills/
-  echo -e "\n# Computational Hydraulics Skill\nAlways refer to ~/.claude/skills/computational-hydraulics/SKILL.md when solving hydraulics tasks.\n" >> ~/.claude/CLAUDE.md
-  ```
-- <img src="assets/logos/windows.svg" width="16" height="16" align="center" /> **Windows** (PowerShell):
-  ```powershell
-  New-Item -ItemType Directory -Force -Path "$HOME\.claude\skills"
-  Copy-Item -Recurse -Force computational-hydraulics "$HOME\.claude\skills\"
-  Add-Content -Path "$HOME\.claude\CLAUDE.md" -Value "`n# Computational Hydraulics Skill`nAlways refer to $HOME\.claude\skills\computational-hydraulics\SKILL.md when solving hydraulics tasks.`n"
-  ```
+<br/>
+
+<img src="assets/logos/linux.svg" width="18" height="18" align="absmiddle" /> **Linux** / <img src="assets/logos/apple.svg" width="18" height="18" align="absmiddle" /> **macOS**:
+```bash
+mkdir -p ~/.claude/skills
+cp -r computational-hydraulics ~/.claude/skills/
+echo -e "\n# Computational Hydraulics Skill\nAlways refer to ~/.claude/skills/computational-hydraulics/SKILL.md when solving hydraulics tasks.\n" >> ~/.claude/CLAUDE.md
+```
+
+<img src="assets/logos/windows.svg" width="18" height="18" align="absmiddle" /> **Windows** (PowerShell):
+```powershell
+New-Item -ItemType Directory -Force -Path "$HOME\.claude\skills"
+Copy-Item -Recurse -Force computational-hydraulics "$HOME\.claude\skills\"
+Add-Content -Path "$HOME\.claude\CLAUDE.md" -Value "`n# Computational Hydraulics Skill`nAlways refer to $HOME\.claude\skills\computational-hydraulics\SKILL.md when solving hydraulics tasks.`n"
+```
 </details>
 
 <details>
-<summary><img src="assets/logos/cursor.svg" width="24" height="24" align="center" /> &nbsp;<b><font size="+1">Cursor AI IDE (Cursor Rules 2.0)</font></b></summary>
+<summary><img src="assets/logos/cursor.svg" width="24" height="24" align="absmiddle" /> &nbsp;<b><font size="+1">Cursor AI IDE (Cursor Rules 2.0)</font></b></summary>
+
+<br/>
 
 Скопируйте правила в репозиторий вашей лабораторной:
-- <img src="assets/logos/linux.svg" width="16" height="16" align="center" /> **Linux** / <img src="assets/logos/apple.svg" width="16" height="16" align="center" /> **macOS**:
-  ```bash
-  cp computational-hydraulics/templates/AGENTS.md /path/to/my-lab/.cursorrules
-  ```
-- <img src="assets/logos/windows.svg" width="16" height="16" align="center" /> **Windows** (PowerShell):
-  ```powershell
-  Copy-Item -Force computational-hydraulics\templates\AGENTS.md "C:\path\to\my-lab\.cursorrules"
-  ```
+
+<img src="assets/logos/linux.svg" width="18" height="18" align="absmiddle" /> **Linux** / <img src="assets/logos/apple.svg" width="18" height="18" align="absmiddle" /> **macOS**:
+```bash
+cp computational-hydraulics/templates/AGENTS.md /path/to/my-lab/.cursorrules
+```
+
+<img src="assets/logos/windows.svg" width="18" height="18" align="absmiddle" /> **Windows** (PowerShell):
+```powershell
+Copy-Item -Force computational-hydraulics\templates\AGENTS.md "C:\path\to\my-lab\.cursorrules"
+```
 </details>
 
 <details>
-<summary><img src="assets/logos/windsurf.svg" width="24" height="24" align="center" /> &nbsp;<b><font size="+1">Windsurf (Codeium)</font></b></summary>
+<summary><img src="assets/logos/windsurf.svg" width="24" height="24" align="absmiddle" /> &nbsp;<b><font size="+1">Windsurf (Codeium)</font></b></summary>
 
-- <img src="assets/logos/linux.svg" width="16" height="16" align="center" /> **Linux** / <img src="assets/logos/apple.svg" width="16" height="16" align="center" /> **macOS**:
-  ```bash
-  cp computational-hydraulics/templates/AGENTS.md /path/to/my-lab/.windsurfrules
-  ```
-- <img src="assets/logos/windows.svg" width="16" height="16" align="center" /> **Windows** (PowerShell):
-  ```powershell
-  Copy-Item -Force computational-hydraulics\templates\AGENTS.md "C:\path\to\my-lab\.windsurfrules"
-  ```
+<br/>
+
+<img src="assets/logos/linux.svg" width="18" height="18" align="absmiddle" /> **Linux** / <img src="assets/logos/apple.svg" width="18" height="18" align="absmiddle" /> **macOS**:
+```bash
+cp computational-hydraulics/templates/AGENTS.md /path/to/my-lab/.windsurfrules
+```
+
+<img src="assets/logos/windows.svg" width="18" height="18" align="absmiddle" /> **Windows** (PowerShell):
+```powershell
+Copy-Item -Force computational-hydraulics\templates\AGENTS.md "C:\path\to\my-lab\.windsurfrules"
+```
 </details>
 
 <details>
-<summary><img src="assets/logos/vscode.svg" width="24" height="24" align="center" /> &nbsp;<b><font size="+1">Roo Code & Cline (VS Code Extensions)</font></b></summary>
+<summary><img src="assets/logos/vscode.svg" width="24" height="24" align="absmiddle" /> &nbsp;<b><font size="+1">Roo Code & Cline (VS Code Extensions)</font></b></summary>
 
-- <img src="assets/logos/linux.svg" width="16" height="16" align="center" /> **Linux** / <img src="assets/logos/apple.svg" width="16" height="16" align="center" /> **macOS**:
-  ```bash
-  cp computational-hydraulics/templates/AGENTS.md /path/to/my-lab/.clinerules
-  ```
-- <img src="assets/logos/windows.svg" width="16" height="16" align="center" /> **Windows** (PowerShell):
-  ```powershell
-  Copy-Item -Force computational-hydraulics\templates\AGENTS.md "C:\path\to\my-lab\.clinerules"
-  ```
+<br/>
+
+<img src="assets/logos/linux.svg" width="18" height="18" align="absmiddle" /> **Linux** / <img src="assets/logos/apple.svg" width="18" height="18" align="absmiddle" /> **macOS**:
+```bash
+cp computational-hydraulics/templates/AGENTS.md /path/to/my-lab/.clinerules
+```
+
+<img src="assets/logos/windows.svg" width="18" height="18" align="absmiddle" /> **Windows** (PowerShell):
+```powershell
+Copy-Item -Force computational-hydraulics\templates\AGENTS.md "C:\path\to\my-lab\.clinerules"
+```
 </details>
 
 <details>
-<summary><img src="assets/logos/terminal.svg" width="24" height="24" align="center" /> &nbsp;<b><font size="+1">Aider CLI (Terminal Pair Programmer)</font></b></summary>
+<summary><img src="assets/logos/terminal.svg" width="24" height="24" align="absmiddle" /> &nbsp;<b><font size="+1">Aider CLI (Terminal Pair Programmer)</font></b></summary>
 
-- <img src="assets/logos/linux.svg" width="16" height="16" align="center" /> **Linux** / <img src="assets/logos/apple.svg" width="16" height="16" align="center" /> **macOS**:
-  ```bash
-  aider --read ~/.agents/skills/computational-hydraulics/SKILL.md
-  ```
-- <img src="assets/logos/windows.svg" width="16" height="16" align="center" /> **Windows** (PowerShell):
-  ```powershell
-  aider --read "$HOME\.agents\skills\computational-hydraulics\SKILL.md"
-  ```
+<br/>
+
+<img src="assets/logos/linux.svg" width="18" height="18" align="absmiddle" /> **Linux** / <img src="assets/logos/apple.svg" width="18" height="18" align="absmiddle" /> **macOS**:
+```bash
+aider --read ~/.agents/skills/computational-hydraulics/SKILL.md
+```
+
+<img src="assets/logos/windows.svg" width="18" height="18" align="absmiddle" /> **Windows** (PowerShell):
+```powershell
+aider --read "$HOME\.agents\skills\computational-hydraulics\SKILL.md"
+```
 </details>
 
 <details>
-<summary><img src="assets/logos/copilot.svg" width="24" height="24" align="center" /> &nbsp;<b><font size="+1">GitHub Copilot (VS Code / JetBrains / CLI)</font></b></summary>
+<summary><img src="assets/logos/copilot.svg" width="24" height="24" align="absmiddle" /> &nbsp;<b><font size="+1">GitHub Copilot (VS Code / JetBrains / CLI)</font></b></summary>
 
-- <img src="assets/logos/linux.svg" width="16" height="16" align="center" /> **Linux** / <img src="assets/logos/apple.svg" width="16" height="16" align="center" /> **macOS**:
-  ```bash
-  mkdir -p /path/to/my-lab/.github
-  cp computational-hydraulics/templates/AGENTS.md /path/to/my-lab/.github/copilot-instructions.md
-  ```
-- <img src="assets/logos/windows.svg" width="16" height="16" align="center" /> **Windows** (PowerShell):
-  ```powershell
-  New-Item -ItemType Directory -Force -Path "C:\path\to\my-lab\.github"
-  Copy-Item -Force computational-hydraulics\templates\AGENTS.md "C:\path\to\my-lab\.github\copilot-instructions.md"
-  ```
+<br/>
+
+<img src="assets/logos/linux.svg" width="18" height="18" align="absmiddle" /> **Linux** / <img src="assets/logos/apple.svg" width="18" height="18" align="absmiddle" /> **macOS**:
+```bash
+mkdir -p /path/to/my-lab/.github
+cp computational-hydraulics/templates/AGENTS.md /path/to/my-lab/.github/copilot-instructions.md
+```
+
+<img src="assets/logos/windows.svg" width="18" height="18" align="absmiddle" /> **Windows** (PowerShell):
+```powershell
+New-Item -ItemType Directory -Force -Path "C:\path\to\my-lab\.github"
+Copy-Item -Force computational-hydraulics\templates\AGENTS.md "C:\path\to\my-lab\.github\copilot-instructions.md"
+```
 </details>
 
 ---
