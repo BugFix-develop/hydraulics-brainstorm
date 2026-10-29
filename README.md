@@ -63,220 +63,145 @@ hydraulics-brain/
   <img src="assets/logos/terminal.svg" width="40" height="40" alt="Aider CLI" title="Aider Terminal CLI" />
 </p>
 
-Навык `computational-hydraulics` разработан по открытому стандарту **Open Agent Skills** и нативно поддерживается всеми ведущими средами разработки на **Linux**, **macOS** и **Windows**.
-
 ---
 
-### 📥 Шаг 1. Получите репозиторий на свой компьютер
+### 📥 Шаг 1. Склонируйте репозиторий в любую папку
 
-#### Вариант А. Через Git (рекомендуется)
-Откройте терминал и выполните:
+Склонируйте репозиторий в **любое удобное место на диске** (например, `D:\Study\`, `C:\Dev\` или `~/projects`):
+
 ```bash
 git clone https://github.com/BugFix-develop/hydraulics-brainstorm.git
 cd hydraulics-brainstorm
 ```
 
-#### Вариант Б. Скачать ZIP-архив (без Git)
-1. Вверху этой страницы нажмите зеленую кнопку **Code** → **Download ZIP**.
-2. Распакуйте скачанный архив на свой компьютер.
-3. Откройте терминал внутри распакованной папки `hydraulics-brainstorm`:
-   - 🪟 **Windows**: зажмите клавишу `Shift` + правый клик внутри папки → выберите *«Открыть окно PowerShell здесь»*.
-   - 🐧 **Linux** / 🍏 **macOS**: правый клик в папке → выберите *«Открыть в терминале»* (или выполните команду `cd путь/к/папке`).
+*(Если у вас не установлен Git: нажмите вверху **Code → Download ZIP**, распакуйте архив в любую папку и откройте терминал внутри неё).*
 
-> [!TIP]
-> Главное условие: перед переходом к Шагу 2 ваш терминал (PowerShell или Bash) должен быть открыт в папке **`hydraulics-brainstorm`**.
+> [!NOTE]
+> Все дальнейшие команды запускаются **прямо из этой папки** `hydraulics-brainstorm`, где бы она ни находилась на вашем диске.
 
 ---
 
-### Шаг 2. Выберите способ установки
+### ⚡ Шаг 2. Запустите автоматическую установку (в 1 клик)
 
-Выберите, как вам удобнее подключить навык: **автоматически в 1 команду** или **вручную под вашу любимую ИИ-модель**.
+Скрипт сам определит системные пути вашей ОС и настроит окружение:
 
-#### ⚡ Способ А. Автоматическая установка (в 1 клик через скрипт)
-Находясь в папке `hydraulics-brainstorm`, просто запустите готовый скрипт:
-
-- 🐧 **Linux** / 🍏 **macOS** (Bash / Zsh):
+- <img src="assets/logos/linux.svg" width="16" height="16" align="center" /> **Linux** / <img src="assets/logos/apple.svg" width="16" height="16" align="center" /> **macOS** (Bash / Zsh):
   ```bash
   ./computational-hydraulics/scripts/install_skill.sh
   ```
-- 🪟 **Windows** (PowerShell):
+- <img src="assets/logos/windows.svg" width="16" height="16" align="center" /> **Windows** (PowerShell):
   ```powershell
   .\computational-hydraulics\scripts\install_skill.ps1
   ```
-*Скрипт откроет интерактивное меню: введите номер нужного агента (или `9`, чтобы настроить всё и сразу).*
 
-*(Также поддерживаются флаги тихого режима: `--codex`, `--antigravity`, `--claude`, `--cursor`, `--windsurf`, `--cline`, `--aider`, `--copilot`, `--all`).*
+*(В появившемся меню введите номер нужного агента или `9` для установки всем сразу).*
 
 ---
 
-#### 📦 Способ Б. Ручная установка под каждого агента
+### 📦 Ручная установка (по желанию)
 
-Каждый ИИ-агент хранит навыки в своей системной папке на вашем компьютере. Разверните спойлер нужной программы и скопируйте команды для вашей ОС:
+Если вы предпочитаете скопировать файлы вручную без скрипта, выберите вашу среду:
 
 <details open>
 <summary><img src="assets/logos/openai.svg" width="24" height="24" align="center" /> &nbsp;<b><font size="+1">OpenAI (Codex Agent & ChatGPT)</font></b></summary>
 
-#### OpenAI Codex Agent (автономный агент разработки)
-Копирует папку навыка в системный каталог `.codex/skills/`:
-
-- 🐧 **Linux** / 🍏 **macOS** (Bash / Zsh):
+**Codex Agent:**
+- <img src="assets/logos/linux.svg" width="16" height="16" align="center" /> **Linux** / <img src="assets/logos/apple.svg" width="16" height="16" align="center" /> **macOS**:
   ```bash
   mkdir -p ~/.codex/skills
   cp -r computational-hydraulics ~/.codex/skills/
   ```
-- 🪟 **Windows** (PowerShell):
+- <img src="assets/logos/windows.svg" width="16" height="16" align="center" /> **Windows** (PowerShell):
   ```powershell
   New-Item -ItemType Directory -Force -Path "$HOME\.codex\skills"
   Copy-Item -Recurse -Force computational-hydraulics "$HOME\.codex\skills\"
   ```
 
-#### OpenAI ChatGPT (Web / Plus / Team / Projects / Custom GPTs)
-- **В ChatGPT Projects (на chatgpt.com):** создайте проект *«Вычислительная гидравлика»*, вставьте в поле *Custom Instructions* текст из [`computational-hydraulics/SKILL.md`](computational-hydraulics/SKILL.md), а в раздел *Files / Knowledge* загрузите файлы из [`computational-hydraulics/references/`](computational-hydraulics/references/).
-- **В Custom GPT (GPT Builder):** укажите имя «Губкинский Гидравлик», вставьте инструкции из `SKILL.md` и прикрепите файлы базы знаний и калькулятор `hydraulics_calculator.py`.
+**ChatGPT (Web / Projects / Custom GPT):**
+- В [ChatGPT Projects](https://chatgpt.com): в поле *Custom Instructions* вставьте текст из `computational-hydraulics/SKILL.md`, а в *Knowledge* прикрепите файлы из `computational-hydraulics/references/`.
 </details>
 
 <details>
 <summary><img src="assets/logos/google.svg" width="24" height="24" align="center" /> &nbsp;<b><font size="+1">Google Antigravity & Open Agent Skills</font></b></summary>
 
-Автоматически считывает навыки из стандартной глобальной папки `~/.agents/skills/`:
-
-- 🐧 **Linux** / 🍏 **macOS** (Bash / Zsh):
+- <img src="assets/logos/linux.svg" width="16" height="16" align="center" /> **Linux** / <img src="assets/logos/apple.svg" width="16" height="16" align="center" /> **macOS**:
   ```bash
-  # Глобально для всех проектов пользователя
   mkdir -p ~/.agents/skills
   cp -r computational-hydraulics ~/.agents/skills/
-
-  # Или локально в репозиторий с лабораторной
-  mkdir -p /path/to/my-lab/.agents/skills
-  cp -r computational-hydraulics /path/to/my-lab/.agents/skills/
-  cp computational-hydraulics/templates/AGENTS.md /path/to/my-lab/AGENTS.md
   ```
-- 🪟 **Windows** (PowerShell):
+- <img src="assets/logos/windows.svg" width="16" height="16" align="center" /> **Windows** (PowerShell):
   ```powershell
-  # Глобально для всех проектов пользователя
   New-Item -ItemType Directory -Force -Path "$HOME\.agents\skills"
   Copy-Item -Recurse -Force computational-hydraulics "$HOME\.agents\skills\"
-
-  # Или локально в репозиторий с лабораторной
-  New-Item -ItemType Directory -Force -Path "C:\path\to\my-lab\.agents\skills"
-  Copy-Item -Recurse -Force computational-hydraulics "C:\path\to\my-lab\.agents\skills\"
-  Copy-Item -Force computational-hydraulics\templates\AGENTS.md "C:\path\to\my-lab\AGENTS.md"
   ```
 </details>
 
 <details>
 <summary><img src="assets/logos/claude.svg" width="24" height="24" align="center" /> &nbsp;<b><font size="+1">Anthropic Claude Code (CLI)</font></b></summary>
 
-Считывает инструкции из глобального файла `CLAUDE.md` или локального файла проекта:
-
-- 🐧 **Linux** / 🍏 **macOS** (Bash / Zsh):
+- <img src="assets/logos/linux.svg" width="16" height="16" align="center" /> **Linux** / <img src="assets/logos/apple.svg" width="16" height="16" align="center" /> **macOS**:
   ```bash
-  # Глобальная установка
   mkdir -p ~/.claude/skills
   cp -r computational-hydraulics ~/.claude/skills/
-  echo -e "\n# Computational Hydraulics Skill\nAlways refer to ~/.claude/skills/computational-hydraulics/SKILL.md when solving pipeline hydraulics, TGC circuits, and C++ numerical tasks.\n" >> ~/.claude/CLAUDE.md
-
-  # Или в проект с лабораторной
-  cp computational-hydraulics/templates/AGENTS.md /path/to/my-lab/CLAUDE.md
+  echo -e "\n# Computational Hydraulics Skill\nAlways refer to ~/.claude/skills/computational-hydraulics/SKILL.md when solving hydraulics tasks.\n" >> ~/.claude/CLAUDE.md
   ```
-- 🪟 **Windows** (PowerShell):
+- <img src="assets/logos/windows.svg" width="16" height="16" align="center" /> **Windows** (PowerShell):
   ```powershell
-  # Глобальная установка
   New-Item -ItemType Directory -Force -Path "$HOME\.claude\skills"
   Copy-Item -Recurse -Force computational-hydraulics "$HOME\.claude\skills\"
   Add-Content -Path "$HOME\.claude\CLAUDE.md" -Value "`n# Computational Hydraulics Skill`nAlways refer to $HOME\.claude\skills\computational-hydraulics\SKILL.md when solving hydraulics tasks.`n"
-
-  # Или в проект с лабораторной
-  Copy-Item -Force computational-hydraulics\templates\AGENTS.md "C:\path\to\my-lab\CLAUDE.md"
   ```
 </details>
 
 <details>
 <summary><img src="assets/logos/cursor.svg" width="24" height="24" align="center" /> &nbsp;<b><font size="+1">Cursor AI IDE (Cursor Rules 2.0)</font></b></summary>
 
-Поддерживает современные проектные правила в каталоге `.cursor/rules/*.mdc`:
-
-- 🐧 **Linux** / 🍏 **macOS** (Bash / Zsh):
+Скопируйте правила в репозиторий вашей лабораторной:
+- <img src="assets/logos/linux.svg" width="16" height="16" align="center" /> **Linux** / <img src="assets/logos/apple.svg" width="16" height="16" align="center" /> **macOS**:
   ```bash
-  mkdir -p /path/to/my-lab/.cursor/rules
+  cp computational-hydraulics/templates/AGENTS.md /path/to/my-lab/.cursorrules
   ```
-- 🪟 **Windows** (PowerShell):
+- <img src="assets/logos/windows.svg" width="16" height="16" align="center" /> **Windows** (PowerShell):
   ```powershell
-  New-Item -ItemType Directory -Force -Path "C:\path\to\my-lab\.cursor\rules"
+  Copy-Item -Force computational-hydraulics\templates\AGENTS.md "C:\path\to\my-lab\.cursorrules"
   ```
-
-Создайте файл `.cursor/rules/hydraulics.mdc`:
-```yaml
----
-description: Computational hydraulics, Eigen linear systems, and strict 3-stage agentic workflow
-globs: src/**/*.cpp, src/**/*.h, tests/**/*.cpp, docs/**/*.md
----
-
-# Computational Hydraulics & Agentic Protocol
-Strictly follow rules in ~/.agents/skills/computational-hydraulics/SKILL.md:
-1. Follow the 3-stage protocol: ТЗ -> Architecture -> Plan -> GoogleTests.
-2. Eigen: NEVER use `A.inverse() * b`. Use PartialPivLU or FullPivLU.
-3. Git: NEVER commit or push automatically. Developer commits manually.
-4. Code style: snake_case, structs end with `_t`, concise 1-line Doxygen comments with SI units.
-```
-
-*(Или скопируйте файл правил `computational-hydraulics/templates/AGENTS.md` как `.cursorrules` в корень репозитория).*
 </details>
 
 <details>
 <summary><img src="assets/logos/windsurf.svg" width="24" height="24" align="center" /> &nbsp;<b><font size="+1">Windsurf (Codeium)</font></b></summary>
 
-- 🐧 **Linux** / 🍏 **macOS** (Bash / Zsh):
+- <img src="assets/logos/linux.svg" width="16" height="16" align="center" /> **Linux** / <img src="assets/logos/apple.svg" width="16" height="16" align="center" /> **macOS**:
   ```bash
-  # В проект с лабораторной
   cp computational-hydraulics/templates/AGENTS.md /path/to/my-lab/.windsurfrules
-
-  # Или глобально для всех проектов
-  echo -e "\nInclude and strictly obey instructions from ~/.agents/skills/computational-hydraulics/SKILL.md\n" >> ~/.codeium/windsurf/memories/global_rules.md
   ```
-- 🪟 **Windows** (PowerShell):
+- <img src="assets/logos/windows.svg" width="16" height="16" align="center" /> **Windows** (PowerShell):
   ```powershell
-  # В проект с лабораторной
   Copy-Item -Force computational-hydraulics\templates\AGENTS.md "C:\path\to\my-lab\.windsurfrules"
-
-  # Или глобально для всех проектов
-  Add-Content -Path "$HOME\.codeium\windsurf\memories\global_rules.md" -Value "`nInclude and strictly obey instructions from $HOME\.agents\skills\computational-hydraulics\SKILL.md`n"
   ```
 </details>
 
 <details>
 <summary><img src="assets/logos/vscode.svg" width="24" height="24" align="center" /> &nbsp;<b><font size="+1">Roo Code & Cline (VS Code Extensions)</font></b></summary>
 
-- 🐧 **Linux** / 🍏 **macOS** (Bash / Zsh):
+- <img src="assets/logos/linux.svg" width="16" height="16" align="center" /> **Linux** / <img src="assets/logos/apple.svg" width="16" height="16" align="center" /> **macOS**:
   ```bash
   cp computational-hydraulics/templates/AGENTS.md /path/to/my-lab/.clinerules
   ```
-- 🪟 **Windows** (PowerShell):
+- <img src="assets/logos/windows.svg" width="16" height="16" align="center" /> **Windows** (PowerShell):
   ```powershell
   Copy-Item -Force computational-hydraulics\templates\AGENTS.md "C:\path\to\my-lab\.clinerules"
   ```
-- **Глобально (на любой ОС в настройках VS Code):**
-  Откройте настройки расширения Cline/Roo Code $\to$ *Custom Instructions for All Prompts* $\to$ вставьте:
-  `Read and strictly follow rules in ~/.agents/skills/computational-hydraulics/SKILL.md`
 </details>
 
 <details>
 <summary><img src="assets/logos/terminal.svg" width="24" height="24" align="center" /> &nbsp;<b><font size="+1">Aider CLI (Terminal Pair Programmer)</font></b></summary>
 
-- 🐧 **Linux** / 🍏 **macOS** (Bash / Zsh):
+- <img src="assets/logos/linux.svg" width="16" height="16" align="center" /> **Linux** / <img src="assets/logos/apple.svg" width="16" height="16" align="center" /> **macOS**:
   ```bash
-  # В глобальный конфиг ~/.aider.conf.yml
-  echo -e "\nread:\n  - ~/.agents/skills/computational-hydraulics/SKILL.md\n  - ~/.agents/skills/computational-hydraulics/references/pitfalls_and_antipatterns.md" >> ~/.aider.conf.yml
-
-  # Или запуск из терминала
   aider --read ~/.agents/skills/computational-hydraulics/SKILL.md
   ```
-- 🪟 **Windows** (PowerShell):
+- <img src="assets/logos/windows.svg" width="16" height="16" align="center" /> **Windows** (PowerShell):
   ```powershell
-  # В глобальный конфиг $HOME\.aider.conf.yml
-  Add-Content -Path "$HOME\.aider.conf.yml" -Value "`nread:`n  - $HOME\.agents\skills\computational-hydraulics\SKILL.md`n  - $HOME\.agents\skills\computational-hydraulics\references\pitfalls_and_antipatterns.md"
-
-  # Или запуск из PowerShell
   aider --read "$HOME\.agents\skills\computational-hydraulics\SKILL.md"
   ```
 </details>
@@ -284,14 +209,12 @@ Strictly follow rules in ~/.agents/skills/computational-hydraulics/SKILL.md:
 <details>
 <summary><img src="assets/logos/copilot.svg" width="24" height="24" align="center" /> &nbsp;<b><font size="+1">GitHub Copilot (VS Code / JetBrains / CLI)</font></b></summary>
 
-Автоматически считывает проектные инструкции из `.github/copilot-instructions.md`:
-
-- 🐧 **Linux** / 🍏 **macOS** (Bash / Zsh):
+- <img src="assets/logos/linux.svg" width="16" height="16" align="center" /> **Linux** / <img src="assets/logos/apple.svg" width="16" height="16" align="center" /> **macOS**:
   ```bash
   mkdir -p /path/to/my-lab/.github
   cp computational-hydraulics/templates/AGENTS.md /path/to/my-lab/.github/copilot-instructions.md
   ```
-- 🪟 **Windows** (PowerShell):
+- <img src="assets/logos/windows.svg" width="16" height="16" align="center" /> **Windows** (PowerShell):
   ```powershell
   New-Item -ItemType Directory -Force -Path "C:\path\to\my-lab\.github"
   Copy-Item -Force computational-hydraulics\templates\AGENTS.md "C:\path\to\my-lab\.github\copilot-instructions.md"
@@ -300,17 +223,15 @@ Strictly follow rules in ~/.agents/skills/computational-hydraulics/SKILL.md:
 
 ---
 
-### Шаг 3. Как проверить, что навык успешно активирован
+### ✅ Шаг 3. Как проверить активацию навыка
 
-1. Откройте вашего ИИ-ассистента (Codex, Antigravity, Claude, Cursor, Windsurf и т.д.).
-2. Создайте новый диалог или откройте проект с лабораторной работой.
-3. Напишите агенту:
-   > *«Привет! Помоги мне решить задачу 1 из лабораторной работы по гидравлике.»*
-4. **Признаки того, что навык работает:**
-   - Агент **НЕ начинает сразу писать голый код**.
-   - Агент мягко вступает в диалог (Сократический метод), спрашивает тип задачи (QP или PP), режим течения ($Re$) и помогает составить текстовую схему/граф.
-   - Агент следует строгому 3-стадийному протоколу кафедры ИСИТ (`ТЗ` $\to$ `Архитектура` $\to$ `План`).
-   - Агент напоминает, что коммиты в Git вы делаете **самостоятельно** после личной проверки кода.
+1. Откройте вашего ИИ-агента и напишите:
+   > *«Привет! Помоги решить задачу по гидравлике.»*
+2. **Если навык активен:**
+   - Агент **не пишет код вслепую**, а начинает Сократический диалог (уточняет $Re$, режим течения, граничные условия).
+   - Предлагает нарисовать схему сети/графа.
+   - Строит разработку по 3-стадийному протоколу: `ТЗ` → `Архитектура` → `План` → `GoogleTests`.
+   - Напоминает, что коммиты в Git вы делаете **лично**.
 
 ---
 
