@@ -366,3 +366,39 @@ flowchart TD
 2. Создайте тематическую ветку (`git checkout -b feature/new-hydraulic-case`).
 3. Сделайте коммит (`git commit -m "feat: add local resistance calculation for venturi nozzle"`).
 4. Отправьте **Pull Request** на рассмотрение. Прямой пуш в ветку `main` закрыт: все изменения попадают в основную ветку только после личной проверки и аппрува мейнтейнером.
+
+---
+
+## 📄 Лицензия
+
+Данный проект распространяется под открытой и свободной лицензией **[MIT License](LICENSE)**.
+
+Вы можете свободно использовать базу знаний, шаблоны C++ и агентский навык в учебных, исследовательских и коммерческих целях, модифицировать их и включать в свои проекты с сохранением авторских прав.
+
+<details>
+<summary><b>Показать полный текст лицензии MIT</b></summary>
+
+```text
+MIT License
+
+Copyright (c) 2026 BugFix-develop (Muslim) and Hydraulics Brainstorm Contributors
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
+</details>
