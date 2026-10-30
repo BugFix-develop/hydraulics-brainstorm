@@ -19,8 +19,7 @@
   - [ ] Создать `src/[task_name]_solver.cpp`.
   - [ ] Реализовать валидацию входных параметров в конструкторе (проверка размеров, $r_i > 0$, наличие $P$-узлов).
   - [ ] Реализовать приватный метод `assemble_system`: сборка матрицы инцидентности $A$, $A_p$, диагонали сопротивлений $R$, блочной матрицы $\mathcal{A}$ и вектора правой части $b$.
-  - [ ] Реализовать метод `compute_matrix_rank` через `Eigen::FullPivLU`.
-  - [ ] Реализовать метод `solve`: проверка ранга $\implies$ решение через `Eigen::PartialPivLU::solve` $\implies$ расчет невязок $\Vert \mathcal{A}z - b \Vert_\infty$ и $\Vert Ax - Q \Vert_\infty$.
+  - [ ] Реализовать метод `solve` через однократное разложение `Eigen::FullPivLU`: проверка `lu.isInvertible()` $\implies$ вычисление `lu.solve(b)` $\implies$ расчет нормированной невязки $\Vert \mathcal{A}z - b \Vert_\infty$ и баланса $\Vert Ax - Q \Vert_\infty$.
   - [ ] Убедиться в полном отсутствии вызовов `matrix.inverse() * b`.
 
 - [ ] **Этап 3: Количественная верификация (Автотесты точности)**

@@ -91,9 +91,10 @@ $$z = \begin{pmatrix} P \\ x \end{pmatrix}, \qquad r(z) = \begin{pmatrix} A x - 
 
 * Симметричный блочный якобиан:
   $$J_r(z) = \begin{pmatrix} 0 & A \\ A^T & -D(x) \end{pmatrix}$$
-  где $D(x) = \operatorname{diag}\left( \frac{d F_i}{d x_i} \right)$ — диагональная матрица производных сопротивлений дуг.
+  где $D(x) = \operatorname{diag}\left( \frac{d F_i}{d x_i} \right)$ — диагональная матрица производных сопротивлений дуг ($d_i = 2 s_i |x_i|$).
 * **Матрица Максвелла $M(x)$:**
   $$M(x_k) = A D^{-1}(x_k) A^T$$
+* **Регуляризация деления на ноль:** При нулевом расходе ($x_i \to 0$) диагональный элемент $d_i \to 0$, поэтому обращение $D^{-1}$ дает деление на ноль (`NaN`). Реализация МГГ обязана использовать регуляризацию диагонали $d_i = \max(2 s_i |x_i|,\, d_{\min})$ с $d_{\min} \sim 10^{-6}\dots 10^{-8}$ и стартовать с ненулевого начального вектора скоростей ($v_0 \approx 1{,}0\text{ м/с}$).
 * Итерация шага МГГ:
   $$\Delta P_{\text{gga}} = - M^{-1}(x_k) \left( A D^{-1}(x_k) w(P_k, x_k) - u(x_k) \right)$$
   $$\Delta x_{\text{gga}} = D^{-1}(x_k) \left( w(P_k, x_k) + A^T \Delta P_{\text{gga}} \right)$$
