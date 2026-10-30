@@ -486,7 +486,8 @@ public:
 * [Скрипт автоустановки для Linux / macOS (`install_skill.sh`)](./scripts/install_skill.sh)
 * [Скрипт автоустановки для Windows PowerShell (`install_skill.ps1`)](./scripts/install_skill.ps1)
 
-### Теоретические и инженерные справочники (в каталоге `./references/`):
+### Теоретические и инженерные справочники:
+* [Практическое руководство пользователя для студента (`USER_GUIDE.md`)](./USER_GUIDE.md)
 * [Протокол интерактивной предзащиты (`mock_defense_protocol.md`)](./references/mock_defense_protocol.md)
 * [Стандарты верификации и тестирования на GoogleTest](./references/googletest_verification_guide.md)
 * [База типовых ловушек и анти-паттернов в гидравлике и ТГЦ](./references/pitfalls_and_antipatterns.md)
