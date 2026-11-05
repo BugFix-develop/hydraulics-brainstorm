@@ -1,50 +1,51 @@
-# План реализации и верификации: [Название задачи]
+# Implementation and Verification Plan: [Task Name]
 
-> **Документ:** `docs/<n>_<topic>_plan.md`  
-> **Опирается на:**  
-> * ТЗ: `docs/<n>_<topic>.md`  
-> * Архитектура: `docs/<n>_<topic>_architecture.md`  
-> * Регламент агентов: `AGENTS.md`  
+> **Document:** `docs/<n>_<topic>_plan.md`  
+> **Based on:**  
+> * Requirements: `docs/<n>_<topic>.md`  
+> * Architecture: `docs/<n>_<topic>_architecture.md`  
+> * Quality Protocol: `AGENTS.md`  
 
 ---
 
-## Чек-лист реализации
+## Implementation Checklist
 
-- [ ] **Этап 1: Подготовка типов данных и интерфейсов**
-  - [ ] Создать файл заголовков `include/[task_name]_types.h` со структурами `*_properties_t` и `*_result_t`.
-  - [ ] Создать файл заголовков `include/[task_name]_solver.h` с объявлениями методов и Doxygen-документацией.
-  - [ ] Проверить соблюдение code-style (`snake_case`, суффикс `_t`, полные имена параметров).
+- [ ] **Stage 1: Domain Types and Interfaces Setup**
+  - [ ] Inspect existing codebase for reusable types; do not re-implement existing components.
+  - [ ] Create header file `include/[task_name]_types.h` with new `*_properties_t` and `*_result_t` structures.
+  - [ ] Create header file `include/[task_name]_solver.h` with method declarations and concise Doxygen contracts.
+  - [ ] Verify adherence to code style (`snake_case`, `_t` suffix, explicit SI parameter names).
 
-- [ ] **Этап 2: Реализация логики солвера**
-  - [ ] Создать `src/[task_name]_solver.cpp`.
-  - [ ] Реализовать валидацию входных параметров в конструкторе (проверка размеров, $r_i > 0$, наличие $P$-узлов).
-  - [ ] Реализовать приватный метод `assemble_system`: сборка матрицы инцидентности $A$, $A_p$, диагонали сопротивлений $R$, блочной матрицы $\mathcal{A}$ и вектора правой части $b$.
-  - [ ] Реализовать метод `solve` через однократное разложение `Eigen::FullPivLU`: проверка `lu.isInvertible()` $\implies$ вычисление `lu.solve(b)` $\implies$ расчет нормированной невязки $\Vert \mathcal{A}z - b \Vert_\infty$ и баланса $\Vert Ax - Q \Vert_\infty$.
-  - [ ] Убедиться в полном отсутствии вызовов `matrix.inverse() * b`.
+- [ ] **Stage 2: Solver Implementation Logic**
+  - [ ] Create `src/[task_name]_solver.cpp`.
+  - [ ] Implement fail-fast constructor validation (dimension matching, $r_i > 0$, reference $P$-node presence).
+  - [ ] Implement private `assemble_system` method: build incidence matrices $A, A_p$, diagonal resistance $R$, block KKT matrix $\mathcal{A}$, and vector $b$.
+  - [ ] Implement `solve` method via single-pass `Eigen::FullPivLU`: check `lu.isInvertible()` $\implies$ solve `lu.solve(b)` $\implies$ compute normalized residual $\Vert \mathcal{A}z - b \Vert_\infty$ and mass balance $\Vert Ax - Q \Vert_\infty$.
+  - [ ] Verify complete absence of `matrix.inverse() * b`.
 
-- [ ] **Этап 3: Количественная верификация (Автотесты точности)**
-  - [ ] Создать `tests/test_[task_name]_numerical.cpp`.
-  - [ ] Реализовать тестовый случай на простом ручном контрольном примере ($2 \times 2$ или $3 \times 3$).
-  - [ ] Реализовать тестовый случай на полном варианте лабораторной работы:
-    - Сверка расходов дуг $x$ с эталоном (`EXPECT_NEAR(x[i], x_ref[i], 1e-8)`);
-    - Сверка давлений в узлах $P$ с эталоном по относительной погрешности (`EXPECT_LT(rel_err, 1e-4)`);
-    - Проверка нормализованной невязки СЛАУ (`EXPECT_LT(norm_residual, 1e-12)`);
-    - Проверка узлового баланса Кирхгофа (`EXPECT_LT(result.max_kirchhoff_residual, 1e-8)`).
+- [ ] **Stage 3: Quantitative Verification (GoogleTest Accuracy Benchmarks)**
+  - [ ] Create `tests/test_[task_name]_numerical.cpp`.
+  - [ ] Implement benchmark test case on simple analytical verification model ($2 \times 2$ or $3 \times 3$).
+  - [ ] Implement benchmark test case for complete laboratory variant:
+    - Compare branch flow rates $x$ against benchmark (`EXPECT_NEAR(x[i], x_ref[i], 1e-8)`);
+    - Compare nodal pressures $P$ against benchmark using relative tolerance (`EXPECT_LT(rel_err, 1e-4)`);
+    - Check normalized linear system residual (`EXPECT_LT(norm_residual, 1e-12)`);
+    - Check Kirchhoff nodal mass balance (`EXPECT_LT(result.max_kirchhoff_residual, 1e-8)`).
 
-- [ ] **Этап 4: Качественная верификация (Тесты физических инвариантов и ошибок)**
-  - [ ] Создать `tests/test_[task_name]_invariants.cpp`.
-  - [ ] Тест на вырожденность сети: при удалении единственного $P$-узла солвер обязан выбросить исключение `std::runtime_error`.
-  - [ ] Тест на некорректные входные данные: отрицательное сопротивление $r_i < 0$ вызывает `std::invalid_argument`.
-  - [ ] Тест направления потока: на пассивных ветвях поток направлен от большего давления к меньшему.
+- [ ] **Stage 4: Qualitative Verification (Physical Invariants and Edge Cases)**
+  - [ ] Create `tests/test_[task_name]_invariants.cpp`.
+  - [ ] Network singularity test: removing the single $P$-node must cause solver to throw `std::runtime_error`.
+  - [ ] Input contract assertion: non-positive resistance $r_i \le 0$ throws `std::invalid_argument`.
+  - [ ] Flow direction invariant: on passive branches, flow travels strictly along the pressure drop gradient.
 
-- [ ] **Этап 5: Сборка и прогон в CTest**
-  - [ ] Обновить `CMakeLists.txt` для включения новых исходников и тестовых исполняемых файлов.
-  - [ ] Выполнить чистую out-of-source сборку.
-  - [ ] Запустить `ctest --output-on-failure` и убедиться, что 100% тестов проходят успешно.
+- [ ] **Stage 5: Build and CTest Execution**
+  - [ ] Update `CMakeLists.txt` to register new source files and test targets.
+  - [ ] Execute clean out-of-source build (`cmake -B build && cmake --build build`).
+  - [ ] Run `ctest --test-dir build --output-on-failure` and ensure 100% test pass rate.
 
-- [ ] **Этап 6: Рецензирование и ручной Git Commit (Выполняет разработчик!)**
-  - [ ] Разработчик выполняет `git status` и `git diff`, проверяя чистоту правок.
-  - [ ] Разработчик делает осмысленный коммит в ветку: `git commit -m "feat(solver): implement linear nodal flow distribution solver with gtest verification"`.
+- [ ] **Stage 6: Review and Manual Git Commit (Performed by Developer)**
+  - [ ] Developer runs `git status` and `git diff` to review all code changes.
+  - [ ] Developer crafts a clean commit: `git commit -m "feat(solver): implement linear nodal flow distribution solver with gtest verification"`.
 
-- [ ] **Этап 7: Имитационная предзащита (Mock Defense Drill)**
-  - [ ] Запустить опрос с агентом по контрольным вопросам к защите лабораторной работы.
+- [ ] **Stage 7: Pre-Defense Exam Drill (/mock-defense)**
+  - [ ] Trigger `/mock-defense` to undergo an interactive exam rehearsal with the agent.

@@ -1,92 +1,94 @@
-# База типовых ловушек и анти-паттернов в гидравлике и ТГЦ
-## Руководство по предотвращению ошибок для разработчиков и ИИ-агентов (Pitfalls & Anti-Patterns)
+# Repository of Common Pitfalls & Anti-Patterns in Hydraulics & TGC
+## Error Prevention Guide for Developers & AI Agents (`pitfalls_and_antipatterns.md`)
 
-Данное руководство аккумулирует практический опыт выполнения лабораторных работ и устранения наиболее коварных ошибок при моделировании трубопроводных систем, расчетных модулей на C++ и теории гидравлических цепей (ТГЦ).
-
----
-
-## 1. Физические и гидродинамические ловушки
-
-### Ловушка 1.1: Использование $Q^2$ вместо $Q |Q|$ (Ловушка обратного тока)
-* **В чём суть:** В формуле Дарси — Вейсбаха и Вейсбаха потери давления часто записывают как $\Delta p = s Q^2$. Если в замкнутом контуре или при изменении граничных условий поток меняет направление на противоположное ($Q < 0$), то $Q^2 > 0$.
-* **К чему приводит:** Гидравлические потери на трение вместо того, чтобы тормозить поток, начинают добавлять ему энергию (возникает физически абсурдный «вечный двигатель»), что мгновенно разваливает сходимость любого численного метода (Ньютона или МГГ).
-* **Как правильно:** ВСЕГДА учитывать знак скорости и расхода:
-  $$\Delta p_{\text{тр}} = s \cdot Q |Q| \qquad \text{или} \qquad \Delta h_{\text{тр}} = \lambda \frac{L}{d} \frac{v |v|}{2g}$$
+This guide accumulates practical lessons and troubleshooting patterns from pipeline hydraulic modeling, C++ numerical solver implementations, and the Theory of Hydraulic Circuits (TGC).
 
 ---
 
-### Ловушка 1.2: Путаница размерности действующего напора $H$ в ТГЦ
-* **В чём суть:** В классической общей гидравлике напор $H$ измеряется в **метрах столба жидкости** [м]. Однако в теории гидравлических цепей (монография Меренкова, доклад Южанина) действующий напор дуги $H_i$ измеряется в **Паскалях** [Па]!
-* **К чему приводит:** Если подставить напор насоса $a$ [м] напрямую в уравнение второго закона Кирхгофа $A^T P = F(x)$ без умножения на $\rho g$, то перепад давлений окажется занижен в $\sim 8500 - 9800$ раз ($\rho g$). Вся система давлений окажется полностью разрушена.
-* **Как правильно:**
-  $$H_{\text{ТГЦ}} = \rho \cdot g \cdot H_{\text{насоса, м}} \quad [\text{Па}]$$
+## 1. Physical and Hydrodynamic Pitfalls
+
+### Pitfall 1.1: Using $Q^2$ Instead of $Q |Q|$ (Reverse Flow Pitfall)
+* **The Root Cause:** In Darcy–Weisbach and minor loss formulations, head drop is often colloquially written as $\Delta p = s Q^2$. In closed loops or under shifting boundary heads, flow can reverse direction ($Q < 0$), but $Q^2 > 0$.
+* **The Consequence:** Friction losses begin injecting energy into the fluid instead of dissipating it (creating an unphysical "perpetual motion machine"), causing Newton or GGM solvers to instantly diverge.
+* **The Fix:** ALWAYS preserve the sign of velocity and discharge:
+  $$\Delta p_f = s \cdot Q |Q| \qquad \text{or} \qquad \Delta h_f = \lambda \frac{L}{d} \frac{v |v|}{2g}$$
 
 ---
 
-### Ловушка 1.3: Путаница знаков геодезических отметок ($\Delta z$)
-* **В чём суть:** В уравнении Бернулли при движении жидкости от узла 1 к узлу 2:
-  $$p_1 - p_2 = \rho g (z_2 - z_1) + \Delta p_{\text{тр}}$$
-  Если труба идет вверх ($z_2 > z_1$), давление на выходе $p_2$ падает, а перепад давлений $p_1 - p_2$ растет.
-* **К чему приводит:** Ошибка в знаке приводит к тому, что жидкость якобы течет «в гору» без затрат потенциальной энергии.
-* **Как правильно:** В формуле замыкающего соотношения $y_i = f_i(x_i) - H_i$:
-  $$H_i = \rho g (z_{\text{вх}} - z_{\text{вых}})$$
-  Если труба поднимается ($z_{\text{вх}} < z_{\text{вых}}$), то $H_i < 0$, и перепад $y_i = f_i - (-|H|) = f_i + |H|$ увеличивается.
+### Pitfall 1.2: Confusing Active Head Dimensions ($H$) in TGC
+* **The Root Cause:** In classical hydraulics, head $H$ is measured in **meters of liquid column** [$\text{m}$]. In the Theory of Hydraulic Circuits (Merenkov, Yuzhanin), active branch head $H_i$ is expressed in **Pascals** [$\text{Pa}$].
+* **The Consequence:** Substituting pump head $a$ [$\text{m}$] directly into Kirchhoff's Second Law $A^T P = F(x)$ without multiplying by $\rho g$ underestimates pressure rise by a factor of $\sim 8500 - 9800$ ($\rho g$).
+* **The Fix:**
+  $$H_{\text{TGC}} = \rho \cdot g \cdot H_{\text{pump, m}} \quad [\text{Pa}]$$
 
 ---
 
-### Ловушка 1.4: Путаница динамической ($\mu$) и кинематической ($\nu$) вязкости
-* **В чём суть:** Динамическая вязкость $\mu$ измеряется в $[\text{Па}\cdot\text{с}]$ (или сантипуазах, сП). Кинематическая вязкость $\nu = \mu / \rho$ измеряется в $[\text{м}^2/\text{с}]$ (или сантистоксах, сСт).
-* **К чему приводит:** Подстановка динамической вязкости вместо кинематической в число Рейнольдса $Re = \frac{v d}{\nu}$ занижает число Рейнольдса в $\rho$ раз (примерно в 800–1000 раз!). В результате турбулентный поток с $Re = 50\,000$ программа считает строго ламинарным ($Re = 50$) и применяет закон Пуазейля вместо Альтшуля.
-* **Как правильно:**
-  $$\nu = \frac{\mu}{\rho}, \qquad 1\text{ сСт} = 10^{-6}\text{ м}^2/\text{с}, \qquad 1\text{ сП} = 10^{-3}\text{ Па}\cdot\text{с}$$
+### Pitfall 1.3: Elevation Difference Sign Reversal ($\Delta z$)
+* **The Root Cause:** In the Bernoulli equation from upstream node 1 to downstream node 2:
+  $$p_1 - p_2 = \rho g (z_2 - z_1) + \Delta p_f$$
+  When fluid moves uphill ($z_2 > z_1$), outlet pressure $p_2$ drops, increasing required differential $p_1 - p_2$.
+* **The Consequence:** Sign errors cause fluid to flow "uphill" without potential energy expenditure.
+* **The Fix:** In branch closure relation $y_i = f_i(x_i) - H_i$:
+  $$H_i = \rho g (z_{\text{inlet}} - z_{\text{outlet}})$$
+  When the pipe ascends ($z_{\text{inlet}} < z_{\text{outlet}}$), $H_i < 0$, and required pressure drop $y_i = f_i - (-|H|) = f_i + |H|$ increases.
 
 ---
 
-### Ловушка 1.5: Неприменимость формул трения вне своих зон Рейнольдса
-* **В чём суть:** Использование формулы Блазиуса $\lambda = 0{,}3164 / Re^{0{,}25}$ для старых корродированных труб с большой шероховатостью $k_e / d$.
-* **К чему приводит:** Формула Блазиуса выведена строго для **гидравлически гладких труб** ($Re < 10 d/k_e$). Для промышленных нефтепроводов сопротивление находится в зоне смешанного или квадратичного трения, и ошибка расчета $\lambda$ по Блазиусу может достигать $30 - 50\%$.
-* **Как правильно:** Строго проверять зону $Re$ и использовать универсальную формулу Альтшуля или Свами — Джайна:
-  $$\lambda = 0{,}11 \left(\frac{k_e}{d} + \frac{68}{Re}\right)^{0{,}25}$$
+### Pitfall 1.4: Confusing Dynamic ($\mu$) and Kinematic ($\nu$) Viscosity
+* **The Root Cause:** Dynamic viscosity $\mu$ is measured in $[\text{Pa}\cdot\text{s}]$ (or centipoise, $\text{cP}$). Kinematic viscosity $\nu = \mu / \rho$ is measured in $[\text{m}^2/\text{s}]$ (or centistokes, $\text{cSt}$).
+* **The Consequence:** Passing dynamic viscosity into the Reynolds formula $\text{Re} = \frac{v d}{\nu}$ underestimates Reynolds number by a factor of $\rho$ ($\approx 800 - 1000\times$). A turbulent stream with $\text{Re} = 50\,000$ gets misclassified as laminar ($\text{Re} = 50$), invoking Poiseuille instead of Altshul.
+* **The Fix:**
+  $$\nu = \frac{\mu}{\rho}, \qquad 1\text{ cSt} = 10^{-6}\text{ m}^2/\text{s}, \qquad 1\text{ cP} = 10^{-3}\text{ Pa}\cdot\text{s}$$
 
 ---
 
-## 2. Топологические и графовые ловушки в ТГЦ
-
-### Ловушка 2.1: Гидростатическая незакрепленность (Забытый $P$-узел)
-* **В чём суть:** Попытка рассчитать потокораспределение в сети, где заданы только притоки и отборы в узлах ($Q$-узлы), и нет ни одного узла с зафиксированным давлением ($m_P = 0$).
-* **К чему приводит:** Матрица инцидентности замкнутой сети имеет ранг $m - 1$. Давления определены с точностью до произвольной аддитивной константы $P + C$. В матрице СЛАУ возникает вырожденность ($\operatorname{rank} < N$), детерминант равен 0, солвер падает или выдает `NaN`.
-* **Как правильно:** В любой физически реализуемой сети должен быть задан **как минимум один** опорный $P$-узел ($m_P \ge 1$), фиксирующий абсолютный уровень давления (резервуар, открытая емкость, точка врезки в магистраль).
-
----
-
-### Ловушка 2.2: Путаница направлений дуг в матрице инцидентности $\bar{A}$
-* **В чём суть:** Несогласованность знаков $+1$ и $-1$.
-* **Стандарт курса АТП / ТГЦ:**
-  $$\bar{A}_{j, i} = \begin{cases}
-  +1, & \text{дуга } i \text{ ВЫХОДИТ из узла } j \text{ (отбор из узла)}; \\
-  -1, & \text{дуга } i \text{ ВХОДИТ в узел } j \text{ (приток в узел)}.
-  \end{cases}$$
-* **К чему приводит:** Если перепутать знаки, то уравнение 1-го закона Кирхгофа $\bar{A} x = Q$ превратит источники жидкости в потребителей, а притоки — в утечки.
-* **Как проверить:** Сумма каждого столбца полной матрицы инцидентности обязана быть строго равна нулю:
-  $$\sum_{j=1}^m \bar{A}_{j, i} = 0 \quad \text{для любого столбца } i$$
+### Pitfall 1.5: Using Friction Formulas Outside Valid Reynolds Ranges
+* **The Root Cause:** Applying the Blasius formula $\lambda = 0.3164 / \text{Re}^{0.25}$ to aged, corroded commercial steel pipes with large relative roughness $k_e / d$.
+* **The Consequence:** Blasius is valid strictly for **hydraulically smooth pipes** ($\text{Re} < 10 d/k_e$). In commercial pipelines, flow is in the mixed or fully rough regime, where Blasius underestimates friction by $30 - 50\%$.
+* **The Fix:** Check $\text{Re}$ bounds and apply the Altshul or Swamee–Jain correlation:
+  $$\lambda = 0.11 \left(\frac{k_e}{d} + \frac{68}{\text{Re}}\right)^{0.25}$$
 
 ---
 
-### Ловушка 2.3: Наличие PP-дуг (дуг между двумя узлами фиксированного давления)
-* **В чём суть:** Дуга соединяет узел $A$ и узел $B$, и в *обоих* этих узлах давление жестко зафиксировано внешними условиями ($P_A = P_{p1}$, $P_B = P_{p2}$).
-* **К чему приводит:** Такая ветвь не зависит от остальных внутренних узлов цепи. Если включить ее в стандартную сокращенную матрицу $A$, то размерности сокращенных матриц разойдутся, а при исключении строк возникнет противоречивая система.
-* **Как правильно:** PP-дуги исключаются из системы узловой КЗП на этапе препроцессинга графа. Расход по PP-дуге вычисляется изолированно напрямую по замыкающему соотношению: $x_{pp} = F^{-1}(P_{p1} - P_{p2})$.
+## 2. Topological and Graph Pitfalls in TGC
+
+### Pitfall 2.1: Floating Hydrostatic Datum (Missing $P$-Node)
+* **The Root Cause:** Attempting to solve flow distribution in a network where only inflows/outflows are defined at nodes ($Q$-nodes), with no fixed-pressure node ($m_P = 0$).
+* **The Consequence:** The incidence matrix has rank $m - 1$. Node pressures are determined only up to an arbitrary additive constant $P + C$. The SLAE becomes singular ($\operatorname{rank} < N$), determinant vanishes, and solvers fail or yield `NaN`.
+* **The Fix:** Every physically realizable hydraulic network must specify **at least one** reference $P$-node ($m_P \ge 1$) anchoring absolute pressure datum (storage tank, reservoir, header connection).
 
 ---
 
-## 3. Численные и матричные ловушки в Eigen
+### Pitfall 2.2: Sign Confusion in Incidence Matrix $\bar{A}$
+* **The Root Cause:** Inconsistent definition of $+1$ and $-1$ signs.
+* **ATP / TGC Standard:**
+  $$
+  \bar{A}_{j, i} = \begin{cases}
+  +1, & \text{branch } i \text{ LEAVES node } j \text{ (outflow)}; \\
+  -1, & \text{branch } i \text{ ENTERS node } j \text{ (inflow)}.
+  \end{cases}
+  $$
+* **The Consequence:** Inverting signs in $\bar{A} x = Q$ turns sources into consumers and deliveries into leaks.
+* **The Invariant Check:** Every column sum of the full incidence matrix must equal zero:
+  $$\sum_{j=1}^m \bar{A}_{j, i} = 0 \quad \text{for every column } i$$
 
-### Ловушка 3.1: Явное обращение матрицы `A.inverse() * b`
-* **В чём суть:** Студенты пишут `auto x = A.inverse() * b;` для решения СЛАУ.
-* **Почему это грубейшая ошибка:**
-  1. **Сложность:** вычисление $A^{-1}$ требует $\sim 2 n^3$ операций, в то время как факторизация $PA = LU$ в `PartialPivLU` требует $\sim \frac{2}{3} n^3$ операций (в 3 раза быстрее!).
-  2. **Численная нестабильность:** явное обращение накапливает катастрофические ошибки округления при плохой обусловленности матрицы ($\operatorname{cond}(A) \gg 1$).
-* **Как правильно:**
+---
+
+### Pitfall 2.3: Unhandled $PP$-Branches (Connecting Two Fixed-Pressure Nodes)
+* **The Root Cause:** A branch connects node $A$ and node $B$, where *both* endpoints have fixed pressures ($P_A = P_{p1}$, $P_B = P_{p2}$).
+* **The Consequence:** Such a branch operates independently of interior nodes. Retaining it in standard reduced matrix $A$ creates row/column mismatches and singular sub-blocks.
+* **The Fix:** Decouple $PP$-branches during topological preprocessing. Flow along a $PP$-branch is solved independently: $x_{pp} = F^{-1}(P_{p1} - P_{p2})$.
+
+---
+
+## 3. Numerical and Matrix Pitfalls in Eigen
+
+### Pitfall 3.1: Explicit Matrix Inversion `A.inverse() * b`
+* **The Root Cause:** Writing `auto x = A.inverse() * b;` to solve a system.
+* **Why It Is Prohibited:**
+  1. **Algorithmic Complexity:** Computing $A^{-1}$ takes $\sim 2 n^3$ operations, whereas $PA = LU$ factorization in `PartialPivLU` takes $\sim \frac{2}{3} n^3$ operations ($3\times$ faster).
+  2. **Numerical Instability:** Explicit inversion accumulates round-off error when the condition number is high ($\operatorname{cond}(A) \gg 1$).
+* **The Fix:**
   ```cpp
   Eigen::PartialPivLU<Eigen::MatrixXd> solver(A);
   Eigen::VectorXd x = solver.solve(b);
@@ -94,54 +96,55 @@
 
 ---
 
-### Ловушка 3.2: Проверка ранга через `PartialPivLU` вместо `FullPivLU`
-* **В чём суть:** Попытка вызвать проверку ранга у объекта `PartialPivLU`.
-* **Почему это ошибка:** `PartialPivLU` выполняет выбор ведущего элемента только по столбцам. Он не предназначен для вычисления ранга вырожденных или плохо обусловленных матриц и не имеет надежного порога отсечения малых сингулярных чисел.
-* **Как правильно:**
+### Pitfall 3.2: Checking Rank via `PartialPivLU` Instead of `FullPivLU`
+* **The Root Cause:** Attempting to query rank from a `PartialPivLU` object.
+* **Why It Fails:** `PartialPivLU` pivots only along columns. It cannot reliably determine numerical rank for rank-deficient systems and lacks thresholding for small singular values.
+* **The Fix:**
   ```cpp
-  // Для проверки ранга и вырожденности ВСЕГДА используем FullPivLU:
-  Eigen::FullPivLU<Eigen::MatrixXd> lu_rank(A);
-  if (lu_rank.rank() < matrix_dimension) {
-      throw std::runtime_error("System matrix is singular or rank deficient!");
+  // Rank and invertibility checks ALWAYS use FullPivLU:
+  Eigen::FullPivLU<Eigen::MatrixXd> lu(A);
+  if (!lu.isInvertible()) {
+      throw std::runtime_error("System matrix is singular or rank-deficient!");
   }
+  Eigen::VectorXd x = lu.solve(b);
   ```
 
 ---
 
-### Ловушка 3.3: Применение разложения Холецкого (`LLT` / `LDLT`) к блочной матрице KKT
-* **В чём суть:** Блочная матрица узловой КЗП $\mathcal{A} = \begin{pmatrix} R & A^T \\ A & 0 \end{pmatrix}$ является симметричной, и программист решает применить быстрый солвер `Eigen::LLT`.
-* **Почему это приводит к падению:** Разложение Холецкого (`LLT`) применимо **только к строго положительно-определенным матрицам**. Матрица KKT является **седловой (знаконеопределенной)** — у нее есть как положительные, так и отрицательные собственные числа, а правый нижний блок равен $0$. Метод `LLT` упадет с ошибкой разложения или выдаст мусор.
-* **Как правильно:** Использовать `Eigen::PartialPivLU` или блочные блочные алгоритмы Schur complement (метод глобального градиента).
+### Pitfall 3.3: Applying Cholesky (`LLT` / `LDLT`) to Indefinite KKT Block Matrix
+* **The Root Cause:** The block matrix $\mathcal{A} = \begin{pmatrix} R & A^T \\ A & 0 \end{pmatrix}$ is symmetric, tempting developers to use `Eigen::LLT`.
+* **Why It Fails:** Cholesky factorization requires **strictly positive-definite** matrices. The KKT saddle-point matrix is **indefinite** (possesses both positive and negative eigenvalues, with a zero lower-right block). `LLT` fails or outputs garbage.
+* **The Fix:** Use `Eigen::FullPivLU`, `Eigen::PartialPivLU`, or Schur complement block elimination.
 
 ---
 
-### Ловушка 3.4: Деление на ноль в методе узловых давлений (МУД) при $Q \to 0$
-* **В чём суть:** В МУД используется производная обратной функции:
+### Pitfall 3.4: Division by Zero in Nodal Pressure Method (NPM) when $Q \to 0$
+* **The Root Cause:** In NPM, derivative of inverse characteristic is:
   $$\frac{\partial \psi_i}{\partial \Delta P_i} = \frac{1}{\frac{d f_i}{d x_i}} = \frac{1}{2 s_i |x_i|}$$
-  Если в какой-то ветви расход оказывается близким к нулю ($x_i \approx 0$), производная стремится к бесконечности ($1 / 0 \to \infty$).
-* **К чему приводит:** Деление на ноль, элементы матрицы Якоби становятся `Inf` или `NaN`, метод Ньютона разваливается.
-* **Как правильно:**
-  1. В МУД использовать аналитическую регуляризацию в окрестности нуля: $\frac{d f_i}{d x_i} \approx 2 s_i \sqrt{x_i^2 + \varepsilon^2}$;
-  2. В методе глобального градиента (МГГ) матрица Максвелла $M = A D^{-1} A^T$ также делит на элементы диагонали $D(x)$, поэтому диагональ обязательно регуляризуется: $d_i = \max(2 s_i |x_i|, d_{\min})$, а начальное приближение расходов $x^{(0)}$ задается строго ненулевым ($v_0 = 1$ м/с в каждой ветви).
+  When flow in any branch approaches zero ($x_i \approx 0$), the derivative blows up ($1 / 0 \to \infty$).
+* **The Consequence:** Jacobian matrix entries become `Inf` or `NaN`, causing Newton solvers to fail.
+* **The Fix:**
+  1. In NPM, apply analytical regularization near origin: $\frac{d f_i}{d x_i} \approx 2 s_i \sqrt{x_i^2 + \varepsilon^2}$.
+  2. In GGM, regularize diagonal of resistance Jacobian: $d_i = \max(2 s_i |x_i|, d_{\min})$ with $d_{\min} \sim 10^{-6}\dots 10^{-8}$, and initialize with non-zero flow velocity ($v_0 = 1.0\text{ m/s}$).
 
 ---
 
-## 4. Программные и архитектурные анти-паттерны C++
+## 4. Software & Architectural Anti-Patterns in C++
 
-### Анти-паттерн 4.1: «Солвер владеет состоянием задачи»
-* **Плохо:** Помещать расчетные массивы и параметры трубы в поля класса `solver`, заставляя его хранить историю между запусками.
-* **Хорошо:** Разделение по принципу Task:
-  * Данные хранятся в константной структуре `properties_t`;
-  * Солвер создается легковесно и возвращает чистую структуру `result_t`.
+### Anti-Pattern 4.1: Stateful Solvers ("Solver Owns Problem State")
+* **Bad:** Storing mesh vectors and pipe parameters as mutable fields inside the solver class, retaining state across invocations.
+* **Good:** Follow the stateless Task Pattern:
+  * Input data resides in immutable `*_properties_t` structs;
+  * The solver is lightweight and returns a clean `*_result_t` struct.
 
-### Анти-паттерн 4.2: «Магические числа» в коде
-* **Плохо:** `double h = dp / (850 * 9.81);`
-* **Хорошо:**
+### Anti-Pattern 4.2: Magic Numbers in Calculation Code
+* **Bad:** `double head = dp / (850 * 9.81);`
+* **Good:**
   ```cpp
   constexpr double standard_gravity = 9.80665;
   double head = pressure_drop / (density * standard_gravity);
   ```
 
-### Анти-паттерн 4.3: Нарушение инварианта «Pass only what you need»
-* **Плохо:** Передавать весь граф и всю сеть внутрь функции расчета гидравлического сопротивления одного отвода.
-* **Хорошо:** Функция расчета сопротивления принимает только локальный диаметр, скорость и радиус кривизны.
+### Anti-Pattern 4.3: Violating "Pass Only What You Need"
+* **Bad:** Passing the entire network graph into a local function that computes head loss across a single bend.
+* **Good:** The local resistance function takes only local diameter, velocity, and bend curvature radius.

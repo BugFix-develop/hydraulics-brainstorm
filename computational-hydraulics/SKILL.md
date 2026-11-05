@@ -36,8 +36,8 @@ Never "vibecode" fundamental physical laws that you are encountering for the fir
 ### Physical and Mathematical Invariants
 1. **Conservation of Mass (1st Kirchhoff Law):** In every closed internal network node, the algebraic sum of inflows and outflows must strictly equal zero:
    $$\sum Q_i = 0 \quad \iff \quad \Vert A x - Q \Vert_\infty < 10^{-8}\text{ m}^3/\text{s}$$
-2. **Monotonicity of Energy Dissipation:** Friction head loss $h_{\text{тр}}(Q)$ must strictly oppose the flow direction. For reverse flows ($Q < 0$), losses must be calculated using signed quadratic terms:
-   $$h_{\text{тр}} \propto Q |Q|, \qquad Q = 0 \implies h_{\text{тр}} = 0$$
+2. **Monotonicity of Energy Dissipation:** Friction head loss $h_f(Q)$ must strictly oppose the flow direction. For reverse flows ($Q < 0$), losses must be calculated using signed quadratic terms:
+   $$h_f \propto Q |Q|, \qquad Q = 0 \implies h_f = 0$$
 3. **Hydrostatic Reference Grounding:** Every hydraulic network must contain at least one fixed-pressure node ($m_P \ge 1$). A network without a reference pressure is singular ($\operatorname{rank} < N$), and solvers must detect this and fail fast.
 4. **Physical Gradient Invariants:**
    - In QP problems (flow given $\implies$ pressure sought): $\frac{\partial p_{\text{outlet}}}{\partial Q} < 0$.
@@ -68,7 +68,7 @@ Never "vibecode" fundamental physical laws that you are encountering for the fir
    - Design justifications: motivation of choices, existing design patterns, ownership vs calculation (Task owns data; solver is stateless), pass only what you need, OCP readiness.
    - **Prohibited:** No full function bodies, no mathematical article-style derivations, no ambiguous undecided wording ("можно так или иначе" — decisions must be resolved).
 5. **Single-Pass LU Factorization:** Rank checking and system solving must be performed in a single pass using `Eigen::FullPivLU` (`lu.isInvertible()`, `lu.solve()`). Explicit matrix inversion (`A.inverse() * b`) is strictly prohibited.
-6. **Todini GGM Regularization:** Diagonal resistance derivatives $d_i = 2 s_i |x_i|$ must be regularized near zero ($d_i = \max(2 s_i |x_i|, d_{\min})$ with $d_{\min} \sim 10^{-6}\dots 10^{-8}$), and initial flow iterations must start from a non-zero velocity estimate ($v_0 \approx 1{,}0\text{ m/s}$).
+6. **Todini GGM Regularization:** Diagonal resistance derivatives $d_i = 2 s_i |x_i|$ must be regularized near zero ($d_i = \max(2 s_i |x_i|, d_{\min})$ with $d_{\min} \sim 10^{-6}\dots 10^{-8}$), and initial flow iterations must start from a non-zero velocity estimate ($v_0 \approx 1.0\text{ m/s}$).
 7. **Safeguarded Newton:** PP solvers must bracket roots within physical intervals $[Q_{\min}, Q_{\max}]$ and fall back to bisection if a Newton step leaves the bracket or fails to reduce residual norm.
 8. **Strict Directory Isolation:** Header files (`.h`, `.hpp`) reside exclusively in `include/`. Source implementation files (`.cpp`, `.c`) reside exclusively in `src/`. Mixing headers and source files in the same directory is forbidden.
 9. **Human-in-the-Loop Git:** The agent must never run `git commit` or `git push` automatically. Version control is managed exclusively by the developer.
@@ -84,20 +84,20 @@ Follow the strict 6-stage development protocol with mandatory gatekeepers:
 - **Proactively initiate the discussion:** Analyze the problem and immediately open a substantive discussion covering the physical phenomena, flow regime ($Re$), governing equations, and network graph topology.
 - **Perform a QA audit:** Inspect the assignment for missing boundary conditions, missing $P$-nodes, unrealistic fluid parameters, or formula typos. Highlight any issues to the user immediately.
 - **Socratic dialogue:** Explain the physical mechanism using diagrams/Mermaid charts and ask guiding questions to ensure conceptual comprehension.
-- **Gatekeeper 0:** Proceed to Stage 1 only after the user explicitly confirms understanding: *"Физику и модель понял, формируй docs/"*.
+- **Gatekeeper 0:** Proceed to Stage 1 only after the user explicitly confirms understanding: *"I understand the model, proceed to generate docs/"* (*"Физику и модель понял, формируй docs/"*).
 
 ### Stage 1: Documentation Package (`docs/`) (Gatekeeper 1)
 - Generate two paired Markdown specifications using the numbering scheme:
   - `docs/<n>_<topic>.md` — **Business Logic:** Compact, self-contained, equations, SI parameter table, analytical benchmark. No C++ code, no article-style bloat.
   - `docs/<n>_<topic>_architecture.md` — **Architecture:** Linked to business logic, in-scope vs deferred, reused vs new types, exact Doxygen signatures, error policies, file placement, and design decisions.
   - `docs/<n>_<topic>_plan.md` — Optional atomic implementation and verification checklist.
-- **Gatekeeper 1 (Mandatory Pause):** Stop completely. Prompt the user to read the documents. Do not write any code in `include/` or `src/` until the user commands: *"Документы утвердил, приступаем к реализации"*.
+- **Gatekeeper 1 (Mandatory Pause):** Stop completely. Prompt the user to read the documents. Do not write any code in `include/` or `src/` until the user commands: *"Documents approved, proceed to implementation"* (*"Документы утвердил, приступаем к реализации"*).
 
 ### Stage 2: Step-by-Step C++ Implementation (Gatekeeper 2)
 - **Strict Limit: Exactly One Stage Per Turn (One Stage Per Response):**
   - Implement files for strictly **one** checklist stage from `plan.md` (e.g., only CMakeLists.txt or only domain structures).
   - Immediately stop tool calls. Report the completed stage and return control to the user.
-  - Advance to the next stage only in a subsequent turn after user confirmation (*"Этап проверил, переходим к следующему"*).
+  - Advance to the next stage only in a subsequent turn after user confirmation: *"Stage verified, proceed to next stage"* (*"Этап проверил, переходим к следующему"*).
 - *Expert Override:* If the user specifies `/expert-mode` or *"без остановок"*, the one-stage-per-turn limit is lifted for core computation, but the test pause (Gatekeeper 3) and Git control rule remain mandatory.
 - **Code reuse:** `#include` and call existing project functions; never duplicate code.
 - **Code standards:** Use C++20, RAII, stateless solvers, concise Doxygen comments (`///< Description [units]`), and fail-fast constructor validation.
@@ -110,14 +110,14 @@ Follow the strict 6-stage development protocol with mandatory gatekeepers:
   3. *Level 3 (Topological Singularity):* Missing $P$-node triggers `EXPECT_THROW` via `lu.isInvertible()`.
   4. *Level 4 (Contracts):* `EXPECT_THROW(..., std::invalid_argument)` for negative diameters, lengths, or densities.
 - **Ban tautological tests:** Never assert against a function's own unverified output (`EXPECT_EQ(f(x), f(x))`).
-- **Gatekeeper 3:** Generate `tests/*_tests.cpp` only after user approves: *"Тест-план согласован, пиши тесты"*.
+- **Gatekeeper 3:** Generate `tests/*_tests.cpp` only after user approves: *"Test plan approved, proceed with GoogleTest"* (*"Тест-план согласован, пиши тесты"*).
 
 ### Stage 4: Version Control (Git)
 - Guide the user to run `git status`, `git add`, `git commit`, and `git push`.
 - Remind student that commit history is free, but `docs/`, `include/`, `src/`, `tests/`, and root `AGENTS.md` must be present.
 
 ### Stage 5: Mock Defense Simulator (`/mock-defense`)
-- When triggered by `/mock-defense` or *"Давай проведем предзащиту"*, assume the role of an exacting professor from the Gubkin ATP Department.
+- When triggered by `/mock-defense` or *"Let's run mock defense"* (*"Давай проведем предзащиту"*), assume the role of an exacting professor from the Gubkin ATP Department.
 - Ask questions **strictly one at a time** across 4 rounds:
   1. *Round 1: Fluid Physics* (Bernoulli, Darcy-Weisbach 4 zones, cavitation, water hammer).
   2. *Round 2: Mathematics & Circuit Theory* (Incident matrices, rank $m-1$, KKT saddle blocks, Todini GGM).

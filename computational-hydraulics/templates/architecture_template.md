@@ -1,146 +1,146 @@
-# Описание архитектуры: [Название задачи]
+# Software Architecture Specification: [Task Name]
 
-> **Документ:** `docs/<n>_<topic>_architecture.md`  
-> **Статус:** Черновик / На рецензировании / Утвержден  
-> **Опирается на бизнес-логику / ТЗ:** `docs/<n>_<topic>.md`  
-> **Язык разработки:** C++20 (с библиотекой Eigen)  
-
----
-
-## 1. Назначение и границы ответственности
-
-* **Что проектируется:** Архитектура расчетного модуля для решения [кратко назвать функционал], реализующего бизнес-логику из `docs/<n>_<topic>.md`.
-* **Границы реализации (1 архитектурный документ = 1 законченный функционал):**
-  * **В объеме текущей задачи:**
-    * Структуры параметров входных данных и расчетных результатов;
-    * Класс солвера / расчетной задачи;
-    * Модульные автотесты GoogleTest (точность, инварианты, сингулярность).
-  * **Вне объема (отложено на следующие итерации):**
-    * [Например: расчет нестационарных режимов, неизотермический тепловой расчет].
+> **Document:** `docs/<n>_<topic>_architecture.md`  
+> **Status:** Draft / Under Review / Approved  
+> **Based on Business Logic / Requirements:** `docs/<n>_<topic>.md`  
+> **Target Standard:** C++20 (with Eigen Library)  
 
 ---
 
-## 2. Анализ кодовой базы и повторное использование (Code Reuse)
+## 1. Architectural Scope and Boundaries
+
+* **System Component:** Architecture of the computational module for [concise task name], implementing the business logic defined in `docs/<n>_<topic>.md`.
+* **Implementation Boundaries (1 Architecture Doc = 1 Cohesive Implementation Unit):**
+  * **In Scope:**
+    * Input parameter and calculation result structures;
+    * Solver / task class implementation;
+    * GoogleTest suite (analytical accuracy, physical invariants, boundary singularities).
+  * **Deferred (Out of Scope):**
+    * [e.g., transient water hammer simulation, non-isothermal thermal hydraulics].
+
+---
+
+## 2. Codebase Inspection & Code Reuse (DRY Rule)
 
 > [!IMPORTANT]
-> **Железное правило разработки:** Существующие в репозитории типы, утилиты и функции **категорически запрещено переопределять «с нуля»**. Они переиспользуются напрямую через `#include`.
+> **Mandatory Rule:** Existing types, mathematical utilities, and classes in the repository **must not be recreated from scratch**. They must be reused directly via `#include`.
 
-* **Переиспользуемые сущности из существующей кодовой базы:**
-  * `[например: include/hydraulic_types.h::oil_properties_t]` — структура физических свойств жидкости (плотность, вязкость);
-  * `[например: include/math_utils.h::sign()]` — утилита знакового умножения;
-  * `[например: include/matrix_helpers.h]` — сборка сокращенных матриц инцидентности.
-* **Новые сущности (проектируются в рамках данной задачи):**
-  * Перечислены в разделе 3 ниже.
+* **Reused Entities from Existing Codebase:**
+  * `[e.g., include/hydraulic_types.h::fluid_properties_t]` — fluid physical properties (density, viscosity);
+  * `[e.g., include/math_utils.h::sign()]` — signed flow direction helper;
+  * `[e.g., include/graph_types.h::basic_graph_t]` — network incidence matrix assembly.
+* **New Entities (Designed Specifically for this Task):**
+  * Described in Section 3 below.
 
 ---
 
-## 3. Пользовательские типы данных (C++)
+## 3. User Data Types (C++20)
 
-### 3.1. Структура исходных данных (`[task_name]_properties_t`)
-Хранит неизменяемые физические и топологические параметры, необходимые для расчета. Не содержит методов бизнес-логики.
-* **Контракт:** Размеры векторов строго согласованы с размерностью графа ($n$, $m_Q$, $m_P$); значения сопротивлений строго положительны ($r_i > 0$).
+### 3.1. Input Properties Structure (`[task_name]_properties_t`)
+Stores immutable physical and topological parameters required for computation. Contains no business methods.
+* **Contract:** Vector dimensions must strictly match network graph topology ($n$, $m_Q$, $m_P$); branch resistance values must be strictly positive ($r_i > 0$).
 
 ```cpp
 struct [task_name]_properties_t {
-    basic_graph_t graph;                     ///< Ориентированный граф цепи
-    std::vector<double> branch_resistances;   ///< Коэффициенты сопротивления дуг r_i [Па/(м3/с)]
-    std::vector<double> branch_active_heads;  ///< Активные напоры дуг H_i [Па]
-    std::vector<double> nodal_inflows;        ///< Узловые отборы/притоки Q_j на Q-узлах [м3/с]
-    std::vector<double> boundary_pressures;   ///< Фиксированные давления P_{p, k} на P-узлах [Па]
+    basic_graph_t graph;                     ///< Directed network graph
+    std::vector<double> branch_resistances;   ///< Branch resistance coefficients r_i [Pa/(m3/s)]
+    std::vector<double> branch_active_heads;  ///< Active pump heads H_i [Pa]
+    std::vector<double> nodal_inflows;        ///< Nodal consumption/supply rates Q_j [m3/s]
+    std::vector<double> boundary_pressures;   ///< Fixed reference boundary pressures P_{p, k} [Pa]
 };
 ```
 
-### 3.2. Структура результатов расчета (`[task_name]_result_t`)
-Передает вызывающему коду рассчитанные параметры состояния и диагностические метрики сходимости.
-* **Контракт:** Если `is_converged == false`, результаты содержат `NaN` и не подлежат использованию в технологических расчетах.
+### 3.2. Calculation Result Structure (`[task_name]_result_t`)
+Returns computed flow distributions and diagnostic numerical convergence indicators to the caller.
+* **Contract:** If `is_converged == false`, output arrays contain `NaN` and must not be used in downstream calculations.
 
 ```cpp
 struct [task_name]_result_t {
-    std::vector<double> branch_flow_rates;    ///< Рассчитанные расходы в ветвях x [м3/с]
-    std::vector<double> nodal_pressures;      ///< Рассчитанные давления в Q-узлах P [Па]
-    double max_equation_residual{0.0};        ///< Максимальная нормированная невязка СЛАУ
-    double max_kirchhoff_residual{0.0};       ///< Максимальная невязка узловых балансов [м3/с]
-    bool is_converged{false};                 ///< Флаг успешной сходимости решения
+    std::vector<double> branch_flow_rates;    ///< Calculated branch flow rates x [m3/s]
+    std::vector<double> nodal_pressures;      ///< Calculated nodal pressures P [Pa]
+    double max_equation_residual{0.0};        ///< Maximum normalized linear system residual
+    double max_kirchhoff_residual{0.0};       ///< Maximum nodal mass balance residual [m3/s]
+    bool is_converged{false};                 ///< Numerical convergence flag
 };
 ```
 
 ---
 
-## 4. Интерфейс и контракты классов
+## 4. Class Interfaces & Contracts
 
-### 4.1. Класс солвера (`[task_name]_solver_t`)
-Класс выполняет строго вычислительную функцию и не владеет накапливаемым изменяемым состоянием между вызовами.
+### 4.1. Solver Class (`[task_name]_solver_t`)
+The solver executes pure mathematical computations and holds no mutable state across calls.
 
 ```cpp
 class [task_name]_solver_t {
 public:
     /**
-     * @brief Конструктор солвера с валидацией входных параметров
-     * @param properties Неизменяемая структура параметров задачи
-     * @throw std::invalid_argument при несогласованности размерностей векторов или r_i <= 0
+     * @brief Constructs solver with fail-fast input validation
+     * @param properties Immutable problem parameters
+     * @throw std::invalid_argument on dimension mismatch or r_i <= 0
      */
     explicit [task_name]_solver_t(const [task_name]_properties_t& properties);
 
     /**
-     * @brief Выполнить расчет гидравлического потокораспределения
-     * @return Структура с рассчитанными векторами расходов и давлений
-     * @throw std::runtime_error при сингулярности ранга матрицы СЛАУ
+     * @brief Computes network flow and pressure distribution
+     * @return Computed branch flow rates, nodal pressures, and residuals
+     * @throw std::runtime_error on singular network matrix (rank deficient)
      */
     [task_name]_result_t solve() const;
 
 private:
     const [task_name]_properties_t& properties_;
 
-    /// @brief Сборка блочной матрицы СЛАУ A_block и вектора правой части b_vec
+    /// @brief Assembles block KKT matrix A_block and right-hand side vector b_vec
     void assemble_system(Eigen::MatrixXd& A_block, Eigen::VectorXd& b_vec) const;
 };
 ```
 
-* **Инварианты вызова:**
-  * До вызова `solve()` объект обязан быть успешно сконструирован с валидными `properties_`;
-  * Метод `solve()` является константным (`const`) и идемпотентным (повторный вызов дает идентичный результат).
+* **Invocation Invariants:**
+  * Prior to calling `solve()`, the object must be successfully initialized with validated `properties_`;
+  * `solve()` is `const` and idempotent (repeated invocations yield identical numerical results).
 
 ---
 
-## 5. Обоснование проектных решений
+## 5. Design Decision Justification
 
-1. **Мотивация выбора:**
-   * Проверка ранга и решение СЛАУ выполняются в один проход через `Eigen::FullPivLU` (`lu.isInvertible()`, `lu.solve(b)`). Это гарантирует численную надежность при плохой обусловленности и исключает лишнюю повторную факторизацию $O(n^3)$.
-   * Явное вычисление обратной матрицы `A.inverse() * b` категорически запрещено из-за численной нестабильности.
-2. **Владение vs Расчет:**
-   * Входными данными владеет вызывающий модуль; солвер хранит только константную ссылку и создается по месту.
-3. **Pass only what you need:**
-   * В методы передаются только минимально необходимые структуры, без привязки к глобальному контексту приложения.
-4. **Готовность к росту (OCP):**
-   * При переходе к нелинейным законам сопротивления интерфейс `solve()` сохраняет сигнатуру, а нелинейная итерация инкапсулируется внутри приватных методов солвера.
+1. **Motivation of Choices:**
+   * Singularity rank checking and system solving are conducted in a single pass using `Eigen::FullPivLU` (`lu.isInvertible()`, `lu.solve(b)`). This guarantees numerical stability for ill-conditioned systems and eliminates redundant $O(n^3)$ factorizations.
+   * Explicit matrix inversion (`A.inverse() * b`) is strictly prohibited.
+2. **Ownership vs Calculation:**
+   * Input data is owned by the calling code; the solver holds only a `const` reference and is created on demand.
+3. **Pass Only What You Need:**
+   * Interfaces accept only minimal required data structures, eliminating coupling to global application state.
+4. **Open/Closed Principle (OCP):**
+   * If nonlinear friction models are introduced, the public `solve()` signature remains intact; iterations are encapsulated inside private solver routines.
 
 ---
 
-## 6. Поведение на ошибках и граничных случаях
+## 6. Error Handling & Edge Cases
 
-| Ситуация / Ошибка | Реакция кода | Обоснование |
+| Condition / Error | Response | Justification |
 |---|---|---|
-| Несогласованность размерностей графа и векторов | Исключение `std::invalid_argument` | Нарушение предусловия контракта до начала вычислений |
-| Неположительное сопротивление ветви ($r_i \le 0$) | Исключение `std::invalid_argument` | Физическая невозможность пассивной диссипации |
-| Отсутствие опорных $P$-узлов ($m_P = 0$) | Исключение `std::invalid_argument` | Гидростатическая незакрепленность цепи |
-| Сингулярность матрицы цепи ($\operatorname{rank} < N$) | Исключение `std::runtime_error` | Система не имеет единственного решения |
-| Невязка превышает допуск ($\varepsilon > 10^{-8}$) | Флаг `is_converged = false` | Предупреждение о потере численной точности |
+| Topology vector dimension mismatch | Throw `std::invalid_argument` | Contract precondition violation prior to solve |
+| Non-positive branch resistance ($r_i \le 0$) | Throw `std::invalid_argument` | Violation of physical passive dissipation invariant |
+| Missing reference $P$-nodes ($m_P = 0$) | Throw `std::invalid_argument` | Network is hydrostatically ungrounded |
+| Singular matrix rank ($\operatorname{rank} < N$) | Throw `std::runtime_error` | System lacks a unique mathematical solution |
+| Residual exceeds tolerance ($\varepsilon > 10^{-8}$) | Set `is_converged = false` | Warning of numerical precision degradation |
 
 ---
 
-## 7. Размещение кода по файлам
+## 7. Project File Placement
 
 ```text
 <lab>/
 ├── include/
-│   ├── [task_name]_types.h            # Структуры свойств и результатов (только новые)
-│   └── [task_name]_solver.h           # Заголовочный файл солвера с Doxygen-сигнатурами
+│   ├── [task_name]_types.h            # New property and result structures only
+│   └── [task_name]_solver.h           # Solver class declaration with Doxygen contracts
 ├── src/
-│   └── [task_name]_solver.cpp         # Реализация сборки СЛАУ и методов расчета
+│   └── [task_name]_solver.cpp         # System assembly and Eigen numerical routines
 └── tests/
-    ├── test_[task_name]_numerical.cpp  # Тесты точности (аналитические эталоны)
-    └── test_[task_name]_invariants.cpp # Тесты физических инвариантов и сингулярности
+    ├── test_[task_name]_numerical.cpp  # Quantitative analytical accuracy benchmarks
+    └── test_[task_name]_invariants.cpp # Physical invariants and singularity assertions
 ```
 
 > [!NOTE]
-> В документе архитектуры **запрещено** приводить тела функций и длинные математические выкладки. Все альтернативы должны быть разрешены (без формулировок «можно так или иначе»).
+> Architecture specifications **must not** contain function body implementations or long mathematical derivations. All design options must be firmly resolved (avoiding ambiguous "either this or that" phrases).

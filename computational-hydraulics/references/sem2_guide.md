@@ -1,71 +1,71 @@
-# 2-й Семестр: Гидравлика трубопроводных систем и современный C++
-## Систематизированное руководство по лекциям и лабораторным работам (Sem2 Knowledge Base)
+# Pipeline Hydraulics & Modern C++ (Semester 2 Guide)
+## Systematic Reference for Lectures & Laboratory Assignments (`sem2_guide.md`)
 
-> Источники:
-> * Курс лекций: `sem2/lecture` (Лекции 01–11)
-> * Практикум и лабораторные работы: `sem2/lab` (ЛР 04–10)
-> * Литература: М. В. Лурье (2003, 2012), И. Е. Идельчик (1992), А. Д. Альтшуль (1977), Б. Б. Некрасов (1989).
-
----
-
-## 1. Концепция курса и профессиональные требования к коду
-
-### 1.1. Программист как специалист предметной области
-1. **Бизнес-логика (Business Logic)** в гидравлическом ПО — это физика процессов (законы сохранения массы, импульса и энергии, реология сред, характеристики агрегатов).
-2. Код должен одновременно удовлетворять двум критериям:
-   * **(I) Общепринятые подходы к разработке ПО:** модульность, инкапсуляция, разделение ответственностей, тестируемость, RAII.
-   * **(II) Специфика предметной области:** корректный физический нейминг, контроль размерностей СИ, верификация физической адекватности (проверка пределов, градиентов, балансов).
-
-### 1.2. Регламент оформления кода (Code Style и Naming)
-* **Стиль:** `snake_case` для всех сущностей (структуры, классы, методы, функции, переменные).
-* **Суффикс типов:** структуры и типы обязаны оканчиваться на `_t` (например, `pipe_geometry_t`, `fluid_properties_t`, `pipe_task_t`).
-* **Полнота имён:** категорический запрет на непонятные сокращения. Имена выражают точный физический смысл:
-  * `density` (хорошо) вместо `rho` или `r`;
-  * `kinematic_viscosity` (хорошо) вместо `nu` или `v`;
-  * `dynamic_viscosity` (хорошо) вместо `mu`;
-  * `volumetric_flow_rate` или `flow_rate` (хорошо) вместо `q`;
-  * Однобуквенные переменные допустимы только как стандартные общепринятые математические аргументы внутри локальных замкнутых формул (`d`, `l`, `g`).
-* **Правило 7 сущностей:** тело любой функции не должно перегружаться несвязанными сущностями, сложная логика обязана декомпозироваться на вспомогательные чистые функции.
+> Primary references:
+> * Lecture Course: `sem2/lecture` (Lectures 01–11)
+> * Practical Assignments: `sem2/lab` (Labs 04–10)
+> * Literature: M. V. Lurie (2003, 2012), I. E. Idelchik (1992), A. D. Altshul (1982), B. B. Nekrasov (1989).
 
 ---
 
-## 2. Архитектура сборки и инструментарий C++
+## 1. Course Concept & Engineering Code Quality Standards
 
-### 2.1. Стадии компиляции и линковки
-1. **Препроцессор (`cpp`):** обработка директив `#include`, `#define`, `#ifdef`, раскрытие макросов, удаление комментариев. Защита от повторного включения заголовков через директиву `#pragma once`.
-2. **Компиляция (`c++ / clang`):** синтаксический анализ, построение AST (абстрактного синтаксического дерева), семантическая проверка, генерация оптимизированного ассемблерного кода.
-3. **Ассемблирование (`as`):** перевод ассемблерного кода в машинно-зависимый объектный файл (`.o` / `.obj`), содержащий таблицу символов (`symtab`).
-4. **Линковка (Linker `ld`):** сборка единого исполняемого файла или библиотеки из нескольких объектных файлов:
-   * **ODR (One Definition Rule):** любая переменная или не-`inline` функция должна иметь ровно одно определение во всей программе.
-   * Разрешение внешних символов; обработка ошибок `undefined reference` (нет определения) и `multiple definition` (нарушение ODR).
-   * Ключевое слово `inline` (в C++17 для функций и переменных): сообщает линкеру, что одинаковые определения в разных единицах трансляции допустимы и должны быть слиты в одно.
+### 1.1. The Developer as a Domain Specialist
+1. **Business Logic** in computational hydraulics software embodies the physical laws of nature (conservation of mass, momentum, and energy, fluid rheology, performance characteristics of pumps and fittings).
+2. Code must simultaneously satisfy two pillars:
+   * **(I) General Software Engineering Best Practices:** modularity, encapsulation, separation of concerns, testability, RAII.
+   * **(II) Domain Specificity:** physically meaningful naming, strict SI unit consistency, physical invariant verification (monotonicity, conservation, boundary conditions).
 
-### 2.2. Современный Target-Based CMake
-Сборка осуществляется строго **Out-of-Source** (исходники отделены от артефактов сборки).
+### 1.2. Code Style & Naming Conventions
+* **Style:** Strict `snake_case` across all identifiers (structures, classes, methods, functions, variables, files).
+* **Type Suffix:** All structs, classes, and type aliases must end with `_t` (e.g., `pipe_geometry_t`, `fluid_properties_t`, `pipe_task_t`).
+* **Expressive Physical Names:** Ambiguous single-letter abbreviations are strictly prohibited:
+   * `density` instead of `rho` or `r`;
+   * `kinematic_viscosity` instead of `nu` or `v`;
+   * `dynamic_viscosity` instead of `mu`;
+   * `flow_rate` or `volumetric_flow_rate` instead of `q`;
+   * Single-letter variables are allowed only as standard mathematical parameters inside local closed-form formulas (`d`, `l`, `g`).
+* **Rule of 7 Entities:** Function bodies should not handle excessive unrelated entities; complex algorithms must be decomposed into pure helper functions.
+
+---
+
+## 2. Build Architecture & Modern C++ Tooling
+
+### 2.1. Compilation and Linking Stages
+1. **Preprocessor (`cpp`):** Handles `#include`, `#define`, `#ifdef`, macro expansions, and comment removal. Header guards are enforced via `#pragma once`.
+2. **Compilation (`c++` / `clang++`):** Lexical and syntax analysis, AST generation, semantic checks, translation to target assembly.
+3. **Assembly (`as`):** Converts assembly code into relocatable object files (`.o` / `.obj`) with symbol tables (`symtab`).
+4. **Linking (`ld`):** Resolves symbols across object files and libraries:
+   * **ODR (One Definition Rule):** Any variable or non-`inline` function must have exactly one definition across the whole program.
+   * Resolves external symbols, catching `undefined reference` and `multiple definition` errors.
+   * `inline` specifier (in C++17 for functions and variables): permits identical definitions in different translation units to be merged by the linker.
+
+### 2.2. Modern Target-Based CMake
+Builds are performed strictly **Out-of-Source**:
 
 ```cmake
 cmake_minimum_required(VERSION 3.20)
 project(HydraulicCalc LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Целевая библиотека расчетного ядра
+# Computation core static library
 add_library(calc_core STATIC
-    Src/pipe_task.cpp
-    Src/pump_task.cpp
-    Src/local_resistance_task.cpp
+    src/pipe_task.cpp
+    src/pump_task.cpp
+    src/local_resistance_task.cpp
 )
 target_include_directories(calc_core PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}/Src
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
-# Модульные тесты GoogleTest
+# GoogleTest unit test executable
 enable_testing()
 add_executable(unit_tests
-    Tests/test_main.cpp
-    Tests/test_pipe_qp_pp.cpp
-    Tests/test_pumps.cpp
+    tests/test_main.cpp
+    tests/test_pipe_qp_pp.cpp
+    tests/test_pumps.cpp
 )
 target_link_libraries(unit_tests PRIVATE
     calc_core
@@ -77,151 +77,151 @@ gtest_discover_tests(unit_tests)
 
 ---
 
-## 3. Математический аппарат гидравлики трубопроводов
+## 3. Mathematical Framework of Pipeline Hydraulics
 
-### 3.1. Базовые параметры потока
-* **Объемный расход** $Q$ [м³/с]:
+### 3.1. Fundamental Flow Parameters
+* **Volumetric Flow Rate** $Q$ [$\text{m}^3/\text{s}$]:
   $$Q = \frac{\Delta V}{\Delta t} = v \cdot S = v \cdot \frac{\pi d^2}{4}$$
-* **Массовый расход** $G$ [кг/с]:
+* **Mass Flow Rate** $G$ [$\text{kg/s}$]:
   $$G = \frac{\Delta m}{\Delta t} = \rho Q = \rho v S$$
-* **Средняя скорость течения** $v$ [м/с]:
+* **Mean Velocity** $v$ [$\text{m/s}$]:
   $$v = \frac{4 Q}{\pi d^2}$$
 
-### 3.2. Уравнение Бернулли для реальной (вязкой) жидкости
-Для двух характерных сечений 1 (начало) и 2 (конец) трубопровода:
+### 3.2. Bernoulli Equation for Real (Viscous) Fluids
+Between upstream section 1 and downstream section 2:
 
-$$z_1 + \frac{p_1}{\rho g} + \frac{\alpha_1 v_1^2}{2g} = z_2 + \frac{p_2}{\rho g} + \frac{\alpha_2 v_2^2}{2g} + h_{\text{пот}}$$
+$$z_1 + \frac{p_1}{\rho g} + \frac{\alpha_1 v_1^2}{2g} = z_2 + \frac{p_2}{\rho g} + \frac{\alpha_2 v_2^2}{2g} + h_{\text{loss}}$$
 
-где:
-* $z$ — геометрическая (геодезическая) отметка оси трубы [м].
-* $\frac{p}{\rho g}$ — пьезометрический напор [м] ($p$ — статическое давление в Па).
-* $H_{\text{пьезо}} = z + \frac{p}{\rho g}$ — пьезометрический напор [м].
-* $H = z + \frac{p}{\rho g} + \frac{\alpha v^2}{2g}$ — полный гидродинамический напор [м].
-* $\alpha$ — коэффициент Кориолиса:
-  * $\alpha = 2{,}0$ — ламинарный режим;
-  * $\alpha \approx 1{,}05 - 1{,}1$ — турбулентный режим (в практических расчетах длинных трубопроводов при $v_1 \approx v_2$ скоростными напорами часто можно пренебречь).
-* $h_{\text{пот}} = h_{\text{тр}} + \sum h_{\text{м}}$ — суммарные потери напора [м].
+where:
+* $z$ — elevation head [$\text{m}$].
+* $\frac{p}{\rho g}$ — pressure head [$\text{m}$] ($p$ is static pressure in $\text{Pa}$).
+* $H_{\text{piezo}} = z + \frac{p}{\rho g}$ — piezometric head [$\text{m}$].
+* $H = z + \frac{p}{\rho g} + \frac{\alpha v^2}{2g}$ — total hydrodynamic head [$\text{m}$].
+* $\alpha$ — Coriolis kinetic energy correction coefficient:
+  * $\alpha = 2.0$ — laminar flow;
+  * $\alpha \approx 1.05 - 1.1$ — turbulent flow (for long pipelines where $v_1 \approx v_2$, kinetic energy difference is neglected).
+* $h_{\text{loss}} = h_f + \sum h_m$ — total head loss [$\text{m}$].
 
-### 3.3. Гидравлические потери на трение по длине (Дарси — Вейсбах)
-$$h_{\text{тр}} = \lambda \frac{L}{d} \frac{v |v|}{2g} = \frac{8 \lambda L}{\pi^2 g d^5} Q |Q|$$
+### 3.3. Friction Head Loss (Darcy–Weisbach)
+$$h_f = \lambda \frac{L}{d} \frac{v |v|}{2g} = \frac{8 \lambda L}{\pi^2 g d^5} Q |Q|$$
 
-Перепад давления на трение:
-$$\Delta p_{\text{тр}} = \rho g h_{\text{тр}} = \frac{8 \lambda L \rho}{\pi^2 d^5} Q |Q|$$
+Pressure drop due to friction:
+$$\Delta p_f = \rho g h_f = \frac{8 \lambda L \rho}{\pi^2 d^5} Q |Q|$$
 
-Гидравлический уклон:
-$$i = \frac{h_{\text{тр}}}{L} = \frac{\lambda}{d} \frac{v^2}{2g}$$
+Hydraulic gradient:
+$$i = \frac{h_f}{L} = \frac{\lambda}{d} \frac{v^2}{2g}$$
 
-### 3.4. Число Рейнольдса и зоны гидравлического сопротивления
-$$Re = \frac{v d}{\nu} = \frac{4 |Q|}{\pi d \nu} = \frac{4 |G|}{\pi d \mu}$$
+### 3.4. Reynolds Number and Flow Regimes
+$$\text{Re} = \frac{v d}{\nu} = \frac{4 |Q|}{\pi d \nu} = \frac{4 |G|}{\pi d \mu}$$
 
-Критическое значение перехода ламинарный $\to$ турбулентный: $Re_{\text{кр}} \approx 2320$.
+Critical transition Reynolds number: $\text{Re}_{\text{crit}} \approx 2320$.
 
-#### Законы сопротивления $\lambda(Re, k_e/d)$:
-1. **Ламинарный режим ($Re < 2320$):**
-   $$\lambda = \frac{64}{Re}$$
-   Потери напора **строго линейны** относительно расхода:
-   $$h_{\text{тр}} = \frac{128 \nu L}{\pi g d^4} Q$$
-2. **Турбулентный режим в гидравлически гладких трубах ($2320 \le Re < 10 \frac{d}{k_e}$):**
-   * Формула Блазиуса ($Re < 10^5$):
-     $$\lambda = \frac{0{,}3164}{Re^{0{,}25}}$$
-   * Потери пропорциональны $Q^{1{,}75}$.
-3. **Зона доквадратичного / смешанного сопротивления ($10 \frac{d}{k_e} \le Re \le 500 \frac{d}{k_e}$):**
-   * Формула А. Д. Альтшуля (основная формула отечественного проектирования):
-     $$\lambda = 0{,}11 \left( \frac{k_e}{d} + \frac{68}{Re} \right)^{0{,}25}$$
-4. **Квадратичная область шероховатых труб ($Re > 500 \frac{d}{k_e}$):**
-   * Формула Шифринсона (автомодельный режим, $\lambda$ не зависит от $Re$):
-     $$\lambda = 0{,}11 \left( \frac{k_e}{d} \right)^{0{,}25}$$
-   * Потери напора **строго квадратичны** относительно расхода: $h_{\text{тр}} = s \cdot Q |Q|$.
+#### Friction Factor Laws $\lambda(\text{Re}, k_e/d)$:
+1. **Laminar Regime ($\text{Re} < 2320$):**
+   $$\lambda = \frac{64}{\text{Re}}$$
+   Head loss is **strictly linear** with respect to discharge:
+   $$h_f = \frac{128 \nu L}{\pi g d^4} Q$$
+2. **Turbulent Flow in Smooth Pipes ($2320 \le \text{Re} < 10 \frac{d}{k_e}$):**
+   * Blasius formula ($\text{Re} < 10^5$):
+     $$\lambda = \frac{0.3164}{\text{Re}^{0.25}}$$
+   * Head loss is proportional to $Q^{1.75}$.
+3. **Transition / Mixed Friction Zone ($10 \frac{d}{k_e} \le \text{Re} \le 500 \frac{d}{k_e}$):**
+   * Altshul formula (industry standard):
+     $$\lambda = 0.11 \left( \frac{k_e}{d} + \frac{68}{\text{Re}} \right)^{0.25}$$
+4. **Fully Rough Quadratic Zone ($\text{Re} > 500 \frac{d}{k_e}$):**
+   * Shifrinson formula (self-similar regime, $\lambda$ independent of $\text{Re}$):
+     $$\lambda = 0.11 \left( \frac{k_e}{d} \right)^{0.25}$$
+   * Head loss is **strictly quadratic**: $h_f = s \cdot Q |Q|$.
 
 ---
 
-## 4. Классификация гидравлических задач: QP и PP
+## 4. Pipeline Problem Classification: QP and PP Formulations
 
-### 4.1. Сосредоточенная QP-задача (Расход $\to$ Давление)
-* **Дано:** геометрия трубы ($L, d, k_e$), параметры жидкости ($\rho, \nu$), расход $Q$, давление на входе $p_1$ (или на выходе $p_2$).
-* **Найти:** давление на противоположном конце ($p_2$ или $p_1$).
-* **Алгоритм прямого аналитического решения:**
-  1. Вычисляется скорость $v = \frac{4 Q}{\pi d^2}$ и число $Re = \frac{v d}{\nu}$.
-  2. Определяется зона сопротивления и рассчитывается $\lambda$.
-  3. Вычисляются потери напора $h_{\text{тр}} = \lambda \frac{L}{d} \frac{v^2}{2g}$.
-  4. Конечное давление:
-     $$p_2 = p_1 - \rho g (z_2 - z_1) - \rho g h_{\text{тр}}$$
-  *(В случае задачи PQ при известном $p_2$: $p_1 = p_2 + \rho g (z_2 - z_1) + \rho g h_{\text{тр}}$)*.
+### 4.1. Lumped QP Problem (Flow Rate → Pressure)
+* **Given:** Pipe geometry ($L, d, k_e$), fluid properties ($\rho, \nu$), flow rate $Q$, inlet pressure $p_1$ (or outlet pressure $p_2$).
+* **Target:** Pressure at the opposite end ($p_2$ or $p_1$).
+* **Direct Analytical Algorithm:**
+  1. Calculate velocity $v = \frac{4 Q}{\pi d^2}$ and Reynolds number $\text{Re} = \frac{v d}{\nu}$.
+  2. Determine flow regime and compute $\lambda$.
+  3. Calculate friction head loss $h_f = \lambda \frac{L}{d} \frac{v^2}{2g}$.
+  4. Compute downstream pressure:
+     $$p_2 = p_1 - \rho g (z_2 - z_1) - \rho g h_f$$
+  *(For reverse problem with known $p_2$: $p_1 = p_2 + \rho g (z_2 - z_1) + \rho g h_f$)*.
 
-### 4.2. Рассредоточенная (распределенная) QP-задача
-* **Дано:** профиль трассы $x = \{x_0, x_1, \dots, x_{n-1}\}$, отметки высот $z = \{z_0, z_1, \dots, z_{n-1}\}$, давление в начале $p_{\text{нач}}$, расход $Q$.
-* **Цель:** расчет эпюры давлений $p(x)$ для проверки труб на предел прочности и исключения кавитации (давления ниже упругости насыщенных паров).
-* **Алгоритм пошагового интегрирования (по шагам $\Delta x_j = x_{j+1} - x_j$):**
-  1. Пересчет начального давления в полный напор:
-     $$H_0 = z_0 + \frac{p_{\text{нач}}}{\rho g} + \frac{\alpha v^2}{2g}$$
-  2. Расчет профиля полного напора по гидравлическому уклону $i$:
+### 4.2. Distributed QP Problem (Elevation Profiling)
+* **Given:** Pipeline profile coordinates $x = \{x_0, x_1, \dots, x_{n-1}\}$, elevation coordinates $z = \{z_0, z_1, \dots, z_{n-1}\}$, inlet pressure $p_{\text{inlet}}$, flow rate $Q$.
+* **Objective:** Compute pressure distribution $p(x)$ to verify pipe yield limits and prevent cavitation ($p(x) > p_{\text{vapor}}$).
+* **Step-by-Step Integration Algorithm ($\Delta x_j = x_{j+1} - x_j$):**
+  1. Determine inlet total head:
+     $$H_0 = z_0 + \frac{p_{\text{inlet}}}{\rho g} + \frac{\alpha v^2}{2g}$$
+  2. Calculate head profile using hydraulic slope $i$:
      $$H_{j+1} = H_j - i \cdot \Delta x_j$$
-  3. Восстановление статического давления в каждой расчетной точке профиля:
+  3. Reconstruct static pressure profile:
      $$p_j = \rho g \left( H_j - z_j - \frac{\alpha v^2}{2g} \right)$$
-  4. Экспорт расчетных массивов $\{x_j, z_j, H_j, p_j\}$ в CSV-файл для анализа и построения графиков.
+  4. Export profile array $\{x_j, z_j, H_j, p_j\}$ to CSV for validation and plotting.
 
-### 4.3. Сосредоточенная PP-задача (Давление-Давление $\to$ Расход)
-* **Дано:** геометрия трубы, свойства жидкости, давления на обоих концах $p_1, p_2$.
-* **Найти:** расход перекачки $Q$.
-* **Математическая сложность:**
-  $$\frac{p_1 - p_2}{\rho g} + (z_1 - z_2) = \lambda(Re(Q)) \cdot \frac{L}{d} \cdot \frac{8 Q |Q|}{\pi^2 g d^5}$$
-  Так как $\lambda$ зависит от $Re$, который сам пропорционален $Q$, уравнение является **нелинейным алгебраическим**.
-* **Численная постановка:** вводится функция невязки по давлению:
-  $$r(Q) = p_{2, \text{расч}}(p_1, Q) - p_{2, \text{зад}} = 0$$
-  Задача сводится к нахождению корня $r(Q) = 0$ методами бисекции или Ньютона.
+### 4.3. Lumped PP Problem (Pressures → Flow Rate)
+* **Given:** Pipe geometry, fluid properties, pressures at both ends $p_1, p_2$.
+* **Target:** Volumetric flow rate $Q$.
+* **Mathematical Complexity:**
+  $$\frac{p_1 - p_2}{\rho g} + (z_1 - z_2) = \lambda(\text{Re}(Q)) \cdot \frac{L}{d} \cdot \frac{8 Q |Q|}{\pi^2 g d^5}$$
+  Because $\lambda$ depends on $\text{Re}$, which itself is proportional to $Q$, the equation is **nonlinear algebraic**.
+* **Numerical Formulation:** Define residual function:
+  $$r(Q) = p_{2, \text{calc}}(p_1, Q) - p_{2, \text{target}} = 0$$
+  Solve root finding problem $r(Q) = 0$ via Bisection or Safeguarded Newton methods.
 
 ---
 
-## 5. Местные сопротивления и насосные станции
+## 5. Minor Losses and Pumping Stations
 
-### 5.1. Закон Вейсбаха для местных сопротивлений
-$$\Delta h_{\text{м}} = \zeta \frac{v |v|}{2g}$$
+### 5.1. Weisbach Law for Minor Losses
+$$\Delta h_m = \zeta \frac{v |v|}{2g}$$
 
-Поскольку местное сопротивление считается сосредоточенным объектом ($z_{\text{вх}} = z_{\text{вых}}$), потеря пьезометрического напора равна потере полного напора: $\Delta h_{\text{м}} = \Delta H$.
+Because minor losses are localized ($z_{\text{in}} = z_{\text{out}}$), piezometric head drop equals total head drop: $\Delta h_m = \Delta H$.
 
-* **Формула Борда — Карно (внезапное расширение $d_1 \to d_2$):**
-  $$\zeta = \left( 1 - \frac{d_1^2}{d_2^2} \right)^2 \quad (\text{отнесено к скорости } v_1)$$
-* **Диафрагма в трубе ($n = d_{\text{отв}}/d_{\text{тр}}$):**
-  $$\zeta = \left( \frac{1}{n \cdot \varepsilon} - 1 \right)^2, \quad \varepsilon = 0{,}57 + \frac{0{,}043}{1{,}1 - n}$$
+* **Borda–Carnot Sudden Expansion ($d_1 \to d_2$):**
+  $$\zeta = \left( 1 - \frac{d_1^2}{d_2^2} \right)^2 \quad (\text{referenced to } v_1)$$
+* **Orifice in Pipe ($n = d_{\text{orifice}}/d_{\text{pipe}}$):**
+  $$\zeta = \left( \frac{1}{n \cdot \varepsilon} - 1 \right)^2, \quad \varepsilon = 0.57 + \frac{0.043}{1.1 - n}$$
 
-### 5.2. Моделирование центробежных насосов
-Дифференциальный напор насоса (QH-характеристика):
-$$\Delta H_{\text{н}}(Q) = a - b \cdot Q |Q| \quad (\text{или двучлен } a - b Q^2)$$
+### 5.2. Centrifugal Pump Modeling
+Pump differential head curve ($Q\text{-}H$ characteristic):
+$$\Delta H_{\text{pump}}(Q) = a - b \cdot Q |Q| \quad (\text{or quadratic form } a - b Q^2)$$
 
-где $a$ — фиктивный нулевой напор (напор закрытой задвижки), $b$ — коэффициент крутизны кривой.
+where $a$ is shutoff head and $b$ is characteristic slope.
 
-* **QP-задача для насоса:**
-  $$p_{\text{вых}} = p_{\text{вх}} + \rho g \cdot \Delta H_{\text{н}}(Q)$$
-* **PP-задача для насоса:**
-  $$Q(\Delta H) = \operatorname{sign}(a - \Delta H) \sqrt{\left| \frac{a - \Delta H}{b} \right|}, \quad \text{где } \Delta H = \frac{p_{\text{вых}} - p_{\text{вх}}}{\rho g}$$
+* **QP Problem for Pump:**
+  $$p_{\text{outlet}} = p_{\text{inlet}} + \rho g \cdot \Delta H_{\text{pump}}(Q)$$
+* **PP Problem for Pump:**
+  $$Q(\Delta H) = \operatorname{sign}(a - \Delta H) \sqrt{\left| \frac{a - \Delta H}{b} \right|}, \quad \text{where } \Delta H = \frac{p_{\text{outlet}} - p_{\text{inlet}}}{\rho g}$$
 
-### 5.3. Групповая работа насосов
-1. **Последовательное соединение ($Q = \text{const}$):**
-   Напоры суммируются:
+### 5.3. Multiple Pump Stations
+1. **Series Configuration ($Q = \text{const}$):**
+   Heads sum up:
    $$\Delta H_{\Sigma}(Q) = \sum_{k=1}^m \Delta H_k(Q) = \left( \sum a_k \right) - \left( \sum b_k \right) Q^2$$
-2. **Параллельное соединение ($\Delta H = \text{const}$):**
-   Расходы суммируются:
+2. **Parallel Configuration ($\Delta H = \text{const}$):**
+   Flow rates sum up:
    $$Q_{\Sigma}(\Delta H) = \sum_{k=1}^m Q_k(\Delta H)$$
 
-### 5.4. Совместная работа «Насосная станция — Трубопровод» (Рабочая точка)
-Уравнение баланса напоров:
-$$H_{\text{н}}(Q) = \Delta z_{\text{геод}} + h_{\text{тр}}(Q) + h_{\text{ост}}$$
-$$a - b Q^2 = (z_{\text{кон}} - z_{\text{нач}}) + s \cdot Q^2 + h_{\text{ост}}$$
+### 5.4. Operating Point Determination
+Head balance equation:
+$$H_{\text{pump}}(Q) = \Delta z_{\text{elev}} + h_f(Q) + h_{\text{res}}$$
+$$a - b Q^2 = (z_{\text{outlet}} - z_{\text{inlet}}) + s \cdot Q^2 + h_{\text{res}}$$
 
-Аналитическое решение для квадратичной зоны:
-$$Q_{\text{раб}} = \sqrt{\frac{a - (z_{\text{кон}} - z_{\text{нач}}) - h_{\text{ост}}}{b + s}}$$
+Analytical solution for quadratic region:
+$$Q_{\text{op}} = \sqrt{\frac{a - (z_{\text{outlet}} - z_{\text{inlet}}) - h_{\text{res}}}{b + s}}$$
 
 ---
 
-## 6. Численные методы решения нелинейных уравнений
+## 6. Numerical Solvers for Nonlinear Equations
 
-### 6.1. Метод бисекции (деление отрезка пополам)
-* Основан на теореме Больцано-Коши: если $r(a) \cdot r(b) < 0$, на $[a, b]$ гарантированно существует корень.
-* На каждой итерации вычисляется середина $c = \frac{a + b}{2}$.
-* Погрешность уменьшается строго в 2 раза за шаг:
+### 6.1. Bisection Method
+* Grounded in the Bolzano–Cauchy theorem: if $r(a) \cdot r(b) < 0$, a root is guaranteed on $[a, b]$.
+* Midpoint updated at each iteration: $c = \frac{a + b}{2}$.
+* Convergence error reduces strictly by factor of 2 per step:
   $$\varepsilon_k = \frac{b_0 - a_0}{2^k}$$
 
-#### Стандартная C++ сигнатура:
+#### Standard C++ Signature:
 ```cpp
 double solve_bisection(
     const std::function<double(double)>& residual_func,
@@ -232,20 +232,20 @@ double solve_bisection(
 );
 ```
 
-### 6.2. Метод Ньютона — Рафсона (метод касательных) и Safeguarded Newton
-* Обладает квадратичной скоростью сходимости в окрестности корня:
+### 6.2. Newton–Raphson Method and Safeguarded Newton
+* Quadratic rate of convergence in the neighborhood of the root:
   $$x_{k+1} = x_k - \frac{r(x_k)}{r'(x_k)}$$
-* Производная $r'(x)$ может быть аналитической либо численной (через центральную разность):
+* Derivative $r'(x)$ can be analytical or evaluated via central difference:
   $$r'(x) \approx \frac{r(x + \delta) - r(x - \delta)}{2 \delta}$$
 
-> [!TIP] Защищенный метод Ньютона (Safeguarded Newton) в гидравлических задачах
-> Кусочно-заданная функция $\lambda(Re)$ имеет скачок около $+65\%$ на границе $Re = 2320$. Чистый метод Ньютона вблизи этой точки может зациклиться или сделать шаг за пределы физической области ($Q < 0$ при перепаде $p_1 > p_2$).
-> 
-> **Рекомендации:**
-> 1. **Локализация отрезка и гибридный шаг:** перед запуском метода определяется диапазон $[Q_{\min}, Q_{\max}]$, где невязка меняет знак ($r(Q_{\min}) \cdot r(Q_{\max}) \le 0$). Если шаг Ньютона $x_{k+1}$ выходит за пределы отрезка $[Q_{\min}, Q_{\max}]$ или не дает достаточного убывания невязки, выполняется шаг деления отрезка пополам (бисекции).
-> 2. **Гладкая аппроксимация Черчилля (1977):** при необходимости гарантированной дифференцируемости во всей области $Re > 0$ рекомендуется формула Черчилля, связывающая ламинарный и турбулентный режимы единой гладкой кривой без разрывов производной.
+> [!TIP] Safeguarded Newton Method in Hydraulic Problems
+> The piecewise function $\lambda(\text{Re})$ features a jump discontinuity of $\approx +65\%$ at $\text{Re} = 2320$. Pure Newton steps near this boundary can oscillate or produce unphysical steps ($Q < 0$ when $p_1 > p_2$).
+>
+> **Best Practices:**
+> 1. **Bracketing & Hybrid Step:** Identify interval $[Q_{\min}, Q_{\max}]$ where $r(Q_{\min}) \cdot r(Q_{\max}) \le 0$. If the proposed Newton iterate falls outside this bracket or fails to achieve sufficient decrease, fallback to a bisection step.
+> 2. **Churchill Smooth Correlation (1977):** When continuous differentiability across all $\text{Re} > 0$ is required, Churchill's correlation seamlessly spans laminar, transitional, and turbulent regimes without derivative discontinuities.
 
-#### Стандартная C++ сигнатура:
+#### Standard C++ Signatures:
 ```cpp
 double solve_newton(
     const std::function<double(double)>& residual_func,
@@ -255,7 +255,7 @@ double solve_newton(
     std::size_t max_iterations = 100
 );
 
-// Защищенный гибридный солвер с гарантированной сходимостью
+// Hybrid safeguarded solver with guaranteed global convergence
 double solve_safeguarded_newton(
     const std::function<double(double)>& residual_func,
     const std::function<double(double)>& residual_derivative_func,
@@ -268,71 +268,79 @@ double solve_safeguarded_newton(
 
 ---
 
-## 7. Эволюция ООП-архитектуры расчетного ядра
+## 7. Evolution of OOP Calculation Core Architecture
 
 ```
-ЛР5: Свободные функции -> 
-ЛР6: Структуры предметной области -> 
-ЛР8: Архитектурный паттерн Task (инкапсуляция) -> 
-ЛР10: Полиморфные гидравлические модели
+Lab 5: Free functions -> 
+Lab 6: Domain property structs -> 
+Lab 8: Task Pattern encapsulation -> 
+Lab 10: Polymorphic hydraulic pipelines
 ```
 
-### 7.1. Модель данных предметной области (ЛР6)
+### 7.1. Domain Data Model
 ```cpp
 struct pipe_geometry_t {
-    double length;              // Длина [м]
-    double diameter;            // Внутренний диаметр [м]
-    double equivalent_roughness;// Шероховатость [м]
-    double z_inlet;             // Отметка начала [м]
-    double z_outlet;            // Отметка конца [м]
+    double length{0.0};               ///< Pipe length [m]
+    double diameter{0.0};             ///< Internal diameter [m]
+    double equivalent_roughness{0.0}; ///< Equivalent roughness [m]
+    double z_inlet{0.0};              ///< Upstream elevation [m]
+    double z_outlet{0.0};             ///< Downstream elevation [m]
 };
 
 struct oil_properties_t {
-    double density;             // Плотность [кг/м3]
-    double kinematic_viscosity; // Кинематическая вязкость [м2/с]
+    double density{0.0};             ///< Fluid density [kg/m3]
+    double kinematic_viscosity{0.0}; ///< Kinematic viscosity [m2/s]
 };
 
 struct hydraulic_state_t {
-    double flow_rate;           // Объемный расход [м3/с]
-    double inlet_pressure;      // Давление на входе [Па]
-    double outlet_pressure;     // Давление на выходе [Па]
-    double head_loss;           // Потери напора [м]
+    double flow_rate{0.0};       ///< Volumetric flow rate [m3/s]
+    double inlet_pressure{0.0};  ///< Inlet static pressure [Pa]
+    double outlet_pressure{0.0}; ///< Outlet static pressure [Pa]
+    double head_loss{0.0};       ///< Total head loss [m]
 };
 ```
 
-### 7.2. Архитектурный паттерн Task (ЛР8)
-Каждый физический объект изолирует свои параметры и логику расчета в класс-задачу:
+### 7.2. Task Architectural Pattern
+Each physical domain entity encapsulates its parameters and solver logic:
 ```cpp
 class pipe_task_t {
 private:
     pipe_geometry_t geometry_;
     oil_properties_t fluid_;
+
 public:
     pipe_task_t(const pipe_geometry_t& geom, const oil_properties_t& fluid)
         : geometry_(geom), fluid_(fluid) {}
 
-    // QP-задача: по расходу и давлению входа найти давление выхода
+    /// @brief Solves QP formulation (known flow rate and inlet pressure)
+    /// @param flow_rate Volumetric flow rate [m3/s]
+    /// @param p_inlet Upstream pressure [Pa]
+    /// @return Downstream pressure [Pa]
     double solve_qp(double flow_rate, double p_inlet) const;
 
-    // PP-задача: по давлениям на концах найти расход через численный метод
+    /// @brief Solves PP formulation (known endpoint pressures)
+    /// @param p_inlet Upstream pressure [Pa]
+    /// @param p_outlet Downstream pressure [Pa]
+    /// @return Volumetric flow rate [m3/s]
     double solve_pp(double p_inlet, double p_outlet) const;
 };
 ```
 
-### 7.3. Полиморфизм и расчет составных гидравлических цепочек (ЛР10)
-Единый базовый полиморфный контракт позволяет вычислять потери напора по всей цепи объектов (трубы, задвижки, насосы):
+### 7.3. Polymorphism for Composite Pipeline Networks
+A unified polymorphic base class calculates head losses across heterogeneous elements (pipes, valves, pumps):
 
 ```cpp
 class hydraulic_element_t {
 public:
     virtual ~hydraulic_element_t() = default;
 
-    // Потери напора на элементе при заданном расходе Q
-    // Для насоса возвращает отрицательные потери (прирост напора -Delta H)
+    /// @brief Calculates head loss across element at given flow rate
+    /// @param flow_rate Volumetric flow rate [m3/s]
+    /// @return Head loss [m] (negative for pumps representing head rise)
     virtual double calc_head_loss(double flow_rate) const = 0;
 };
 
-// Расчет QP для цепочки полиморфных объектов
+// QP evaluation along polymorphic pipeline chain
 double solve_chain_qp(
     const std::vector<std::shared_ptr<hydraulic_element_t>>& chain,
     double flow_rate,
@@ -340,26 +348,30 @@ double solve_chain_qp(
     double density,
     double delta_z_total
 ) {
-    const double g = 9.80665;
+    constexpr double standard_gravity = 9.80665;
     double total_head_loss = 0.0;
     for (const auto& element : chain) {
         total_head_loss += element->calc_head_loss(flow_rate);
     }
-    double h_inlet = p_inlet / (density * g);
+    double h_inlet = p_inlet / (density * standard_gravity);
     double h_outlet = h_inlet - delta_z_total - total_head_loss;
-    return h_outlet * (density * g);
+    return h_outlet * (density * standard_gravity);
 }
 ```
-PP-задача для всей цепочки решается методом Ньютона или бисекции как внешняя итерация над `solve_chain_qp`.
+
+The PP problem for the composite chain is solved by wrapping `solve_chain_qp` in a numerical root finder.
 
 ---
 
-## 8. Требования к верификации и тестам в GoogleTest
+## 8. GoogleTest Verification & Validation Guidelines
 
-1. **Количественная верификация:**
-   * Сверка результатов вычислений функций с ручными эталонными расчетами (`EXPECT_NEAR(result, benchmark, 1e-4)`).
-2. **Качественная физическая валидация:**
-   * В задаче QP: при возрастании расхода $Q$ давление на выходе $p_2$ обязано монотонно уменьшаться ($\partial p_2 / \partial Q < 0$).
-   * В задаче PP: при увеличении входного напора $p_1$ расход $Q$ обязан монотонно расти ($\partial Q / \partial p_1 > 0$).
-   * При нулевом расходе $Q = 0$: потери на трение строго равны нулю, перепад давления обусловлен только разностью геодезических высот $p_1 - p_2 = \rho g (z_2 - z_1)$.
-   * Для насоса: увеличение противодавления сети приводит к снижению расхода в рабочей точке.
+1. **Quantitative Verification:**
+   * Benchmark against manual analytical calculations:
+     ```cpp
+     EXPECT_NEAR(result, benchmark, 1e-4);
+     ```
+2. **Qualitative Physical Validation:**
+   * In QP formulations: as flow rate $Q$ increases, downstream pressure $p_2$ must strictly decrease ($\partial p_2 / \partial Q < 0$).
+   * In PP formulations: as inlet pressure $p_1$ increases, flow rate $Q$ must strictly increase ($\partial Q / \partial p_1 > 0$).
+   * At zero flow $Q = 0$: friction loss is identically zero; differential pressure is purely hydrostatic $p_1 - p_2 = \rho g (z_2 - z_1)$.
+   * For pumps: increasing system backpressure must decrease operating flow rate.

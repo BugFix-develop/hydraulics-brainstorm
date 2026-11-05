@@ -1,290 +1,277 @@
-# 📘 Руководство пользователя: Как работать с Computational Hydraulics AI Skill
-> **Практическая инструкция для студента и разработчика: как взаимодействовать с ИИ-агентом, проходить контрольные шлюзы, писать надежный C++ код и готовиться к защите лабораторных работ на кафедре АТП.**
+# 📘 User Guide: Working with the Computational Hydraulics AI Skill
+> **Practical onboarding manual for students and developers: how to interact with the AI agent, pass mandatory control gatekeepers, develop robust C++20 simulation code, and prepare for oral lab defense in the ATP Department.**
 
 ---
 
-## 🧭 Навигация по руководству
-1. [В чем главная идея навыка](#1-в-чем-главная-идея-навыка)
-2. [Подготовка окружения (Старт за 1 минуту)](#2-подготовка-окружения-старт-за-1-минуту)
-3. [Как правильно разговаривать с агентом](#3-как-правильно-разговаривать-с-агентом)
-4. [Пошаговый регламент: от методички до сдачи](#4-пошаговый-регламент-от-методички-до-сдачи)
-   - [Стадия 0: Семинар и физика задачи (Шлюз 0)](#стадия-0-инженерный-семинар-и-физика-задачи-шлюз-0)
-   - [Стадия 1: Пакет документации docs/ (Шлюз 1)](#стадия-1-пакет-документации-docs-шлюз-1)
-   - [Стадия 2: Пошаговая реализация C++ (Шлюз 2 — «1 этап за ход»)](#стадия-2-пошаговая-реализация-c-шлюз-2--1-этап-за-ход)
-   - [Стадия 3: GoogleTest и стратегия тестов (Шлюз 3)](#стадия-3-согласование-тестов-googletest-шлюз-3)
-   - [Стадия 4: Контроль версий Git](#стадия-4-контроль-версий-git)
-   - [Стадия 5: Симулятор защиты (/mock-defense)](#стадия-5-симулятор-защиты-mock-defense)
-5. [Изучение лекций и теоретический режим](#5-изучение-лекций-и-теоретический-режим)
-6. [Шпаргалка фраз для копирования (Cheat Sheet)](#6-шпаргалка-фраз-для-копирования-cheat-sheet)
-7. [Часто задаваемые вопросы и решение проблем (FAQ)](#7-часто-задаваемые-вопросы-и-решение-проблем-faq)
+## 🧭 Navigation
+1. [Core Purpose of the Skill](#1-core-purpose-of-the-skill)
+2. [Environment Setup (1-Minute Quickstart)](#2-environment-setup-1-minute-quickstart)
+3. [How to Communicate with the Agent](#3-how-to-communicate-with-the-agent)
+4. [Step-by-Step Workflow: From Assignment to Lab Defense](#4-step-by-step-workflow-from-assignment-to-lab-defense)
+   - [Stage 0: Engineering Seminar & Model Analysis (Gatekeeper 0)](#stage-0-engineering-seminar--model-analysis-gatekeeper-0)
+   - [Stage 1: Documentation Package in docs/ (Gatekeeper 1)](#stage-1-documentation-package-in-docs-gatekeeper-1)
+   - [Stage 2: Step-by-Step C++ Implementation (Gatekeeper 2 — "One Stage Per Turn")](#stage-2-step-by-step-c-implementation-gatekeeper-2--one-stage-per-turn)
+   - [Stage 3: GoogleTest Verification Strategy (Gatekeeper 3)](#stage-3-googletest-verification-strategy-gatekeeper-3)
+   - [Stage 4: Version Control (Git)](#stage-4-version-control-git)
+   - [Stage 5: Pre-Defense Exam Simulator (/mock-defense)](#stage-5-pre-defense-exam-simulator-mock-defense)
+5. [Lecture Study and Theoretical Seminar Mode](#5-lecture-study-and-theoretical-seminar-mode)
+6. [Quick Phrases Cheat Sheet](#6-quick-phrases-cheat-sheet)
+7. [Frequently Asked Questions & Troubleshooting (FAQ)](#7-frequently-asked-questions--troubleshooting-faq)
 
 ---
 
-## 1. В чем главная идея навыка?
+## 1. Core Purpose of the Skill
 
-Обычные ИИ-ассистенты часто страдают «вайбкодингом»: получают сухое задание из методички и мгновенно вываливают кучу сложного C++ кода. В результате:
-* В коде появляются физически абсурдные ошибки (потери напора с отрицательным знаком, деление на ноль в МГГ, обращение матрицы через `A.inverse()`).
-* Тесты подгоняются под полученный ошибочный ответ (`EXPECT_EQ(solve(x), solve(x))`).
-* Студент не понимает, как устроен код, и **проваливает защиту преподавателю на первом же теоретическом вопросе**.
+Standard AI assistants often indulge in "vibecoding": they consume a terse laboratory assignment and immediately dump large blocks of unverified C++ code. This leads to critical failure points:
+* Emergence of physically absurd errors (negative friction losses, division by zero in Todini GGM, unstable explicit inversion `A.inverse()`).
+* Tautological tests that assert unverified calculations against themselves (`EXPECT_EQ(calc(x), calc(x))`).
+* The student fails to understand the underlying mechanics and **fails the oral exam on the very first theoretical question**.
 
-**Computational Hydraulics Skill кардинально меняет этот процесс:**
-1. Агент выступает в роли **опытного научного наставника и Senior C++ инженера**.
-2. Агент **заблокирован от слепой кодогенерации**: он не пишет код, пока вы вместе не разберете физику процессов и уравнения.
-3. Разработка разбита на **строгие контрольные шлюзы (Gatekeepers)**: агент останавливается после каждого ключевого шага и ждет вашего ревью.
-4. В конце агент устраивает **тренировочную предзащиту (`/mock-defense`)**, задавая вопросы преподавателя кафедры строго по одному.
+**The Computational Hydraulics Skill radically restructures this process:**
+1. The agent acts as an **expert academic mentor and Senior C++ architect**.
+2. The agent is **locked against blind code generation**: it will not write implementation code until you have jointly analyzed the governing physical equations.
+3. Development proceeds through **strict gatekeepers**: the agent pauses after every milestone to await your review.
+4. The agent provides an **interactive oral pre-defense drill (`/mock-defense`)**, asking exam questions one at a time to prepare you for faculty evaluation.
 
 ---
 
-## 2. Подготовка окружения (Старт за 1 минуту)
+## 2. Environment Setup (1-Minute Quickstart)
 
-### Вариант А. Начать работу в папке этого репозитория (Самый быстрый путь)
-1. Склонируйте репозиторий к себе:
+### Option A. Work Inside This Repository (Fastest)
+1. Clone the repository:
    ```bash
    git clone https://github.com/BugFix-develop/hydraulics-brainstorm.git my-hydraulics-lab
    cd my-hydraulics-lab
    ```
-2. Откройте проект в вашем любимом редакторе с ИИ-агентом (**Cursor, Windsurf, VS Code + Cline/Roo Code, Claude Code** или **Antigravity**).
-3. Создайте стандартные каталоги для работы:
+2. Open the directory in your agentic IDE (**Cursor, Windsurf, VS Code + Cline/Roo Code, Claude Code**, or **Antigravity**).
+3. Ensure standard directories exist:
    ```bash
    mkdir -p docs include src tests
    ```
 
-### Вариант Б. Подключить навык к существующему репозиторию лабы
-Просто скопируйте папку `computational-hydraulics` в корень вашего проекта:
+### Option B. Integrate into an Existing Project
+Copy the `computational-hydraulics` folder into your existing repository root:
 * **Linux / macOS:** `cp -r computational-hydraulics /path/to/your/lab/`
 * **Windows (PowerShell):** `Copy-Item -Recurse -Force computational-hydraulics "C:\path\to\your\lab\"`
 
-> [!IMPORTANT] Правило разделения файлов (`include/` vs `src/`)
-> * Все заголовочные файлы (`.h`, `.hpp`) размещаются строго в папке `include/`.
-> * Все файлы реализации (`.cpp`, `.c`) размещаются строго в папке `src/`.
-> * Смешивать `.h` и `.cpp` в одной директории запрещено архитектурным стандартом проекта (за исключением самодостаточных header-only библиотек).
+> [!IMPORTANT] Directory Layout Standard (`include/` vs `src/`)
+> * All header files (`.h`, `.hpp`) reside exclusively in `include/`.
+> * All implementation files (`.cpp`, `.c`) reside exclusively in `src/`.
+> * Mixing headers and source files in the same directory is prohibited by the project architectural standard (except for self-contained header-only templates).
 
 ---
 
-## 3. Как правильно разговаривать с агентом
+## 3. How to Communicate with the Agent
 
-### Главные принципы взаимодействия:
-1. **Не бойтесь задавать «глупые» вопросы:** Если вы не понимаете, откуда взялось слагаемое в уравнении Бернулли или почему в матрице Кирхгофа диагональный блок отрицательный — прямо спросите: *«Объясни простыми словами, что это за коэффициент и какой у него физический смысл?»*
-2. **Управляйте переходом между этапами:** Агент запрограммирован останавливаться. Чтобы он продолжил, достаточно написать простую команду подтверждения.
-3. **Требуйте объяснения решений:** Если агент предлагает формулу или тип данных, спросите: *«Почему мы берем здесь FullPivLU, а не PartialPivLU?»* — это лучшая подготовка к защите.
-4. **Контролируйте Git сами:** Агент никогда не коммитит и не пушит код автоматически без вашей прямой команды.
+### Key Principles:
+1. **Ask Conceptual Questions:** If you do not understand a term in the Bernoulli equation or why a block in the KKT matrix is zero, ask directly: *"Explain simply: what is the physical meaning of this coefficient?"*
+2. **Drive the Transitions:** The agent is programmed to halt at gatekeepers. To proceed, give a clear confirmation phrase.
+3. **Demand Design Rationale:** If the agent proposes an algorithm or structure, ask: *"Why do we use FullPivLU here rather than PartialPivLU?"* — this builds your exam readiness.
+4. **Control Git Yourself:** The agent never commits or pushes code automatically without your explicit command.
 
 ---
 
-## 4. Пошаговый регламент: от методички до сдачи
+## 4. Step-by-Step Workflow: From Assignment to Lab Defense
 
-Ниже описан полный путь выполнения любой лабораторной или расчетной задачи:
-
-```
-[Методичка / PDF]
+```text
+[Assignment / PDF / Notes]
        │
        ▼
 ┌────────────────────────────────────────────────────────┐
-│  Стадия 0: Семинар в чате (Физика, уравнения, граф)    │ ──► Шлюз 0: подтверждение модели
+│ Stage 0: Chat Seminar (Physics, Equations, QA Audit)   │ ──► Gatekeeper 0: Confirm model
 └────────────────────────────────────────────────────────┘
        │
        ▼
 ┌────────────────────────────────────────────────────────┐
-│  Стадия 1: Создание пакета docs/ (ТЗ, архитектура, план)│ ──► Шлюз 1: пауза на чтение документов
+│ Stage 1: Specification in docs/ (Statement & Arch)     │ ──► Gatekeeper 1: Reading pause
 └────────────────────────────────────────────────────────┘
        │
        ▼
 ┌────────────────────────────────────────────────────────┐
-│  Стадия 2: Реализация C++ ядра (СТРОГО 1 этап за ход)  │ ──► Шлюз 2: проверка каждого шага
+│ Stage 2: Step-by-Step C++ (EXACTLY 1 Stage Per Turn)   │ ──► Gatekeeper 2: Stage review
 └────────────────────────────────────────────────────────┘
        │
        ▼
 ┌────────────────────────────────────────────────────────┐
-│  Стадия 3: GoogleTest (4 уровня тестов, эталоны)       │ ──► Шлюз 3: согласование тест-плана
+│ Stage 3: GoogleTest (4-Tier Pyramid, Benchmarks)       │ ──► Gatekeeper 3: Test strategy
 └────────────────────────────────────────────────────────┘
        │
        ▼
 ┌────────────────────────────────────────────────────────┐
-│  Стадия 4: Ручной git commit и git push студентом      │
+│ Stage 4: Manual Developer Git Commit and Push          │
 └────────────────────────────────────────────────────────┘
        │
        ▼
 ┌────────────────────────────────────────────────────────┐
-│  Стадия 5: Симулятор защиты (/mock-defense)            │
+│ Stage 5: Mock Defense Simulator (/mock-defense)        │
 └────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-### Стадия 0: Инженерный семинар и физика задачи (Шлюз 0)
+### Stage 0: Engineering Seminar & Model Analysis (Gatekeeper 0)
 
-#### Что сделать:
-Отправьте агенту файл задания (PDF, фото, текст методички или описание варианта):
-> *«Привет! Вот методичка к лабораторной работе №2 (Расчет сложного разветвленного трубопровода). Мой вариант №4. Давай разберем задачу.»*
+#### What to Do:
+Attach your laboratory assignment (PDF, photo, or prompt):
+> *"Hello! Here is the assignment for Lab 2 (Branched Pipeline Flow Distribution). My variant is #4. Let's analyze the problem."*
 
-#### Что сделает агент:
-1. **Сам проявит инициативу:** Агент не станет молча генерировать файлы. Он поприветствует вас и предложит содержательное обсуждение физики.
-2. **Проведет аудит задания:** Проверит, все ли данные заданы (длины, диаметры, шероховатость, свойства жидкости $\rho, \nu$, граничные давления). Если в методичке есть опечатка или забыт $P$-узел — агент сразу предупредит.
-3. **Объяснит физику и уравнения:** Нарисует схему сети или граф, выпишет уравнения сохранения массы (1-й закон Кирхгофа) и импульса (2-й закон Кирхгофа), определит гидравлический режим (ламинарный, переходный, турбулентный).
-4. **Задаст наводящие вопросы:** Убедится, что вы понимаете базовые концепции.
+#### What the Agent Does:
+1. **Takes the Initiative:** The agent will not generate code immediately. It welcomes you and initiates a substantive discussion of the physics.
+2. **Performs a QA Audit:** Verifies if all boundary conditions are present (pipe lengths, diameters, roughness, fluid properties $\rho, \nu$, boundary pressures). If the problem statement contains typos or lacks a reference $P$-node, the agent highlights this immediately.
+3. **Explains Physics and Formulations:** Sketches the graph, formulates mass conservation (1st Kirchhoff Law) and momentum balance (2nd Kirchhoff Law), and identifies flow regimes ($Re$).
+4. **Asks Guiding Questions:** Ensures you grasp core concepts before coding.
 
-#### Как открыть Шлюз 0:
-Когда вам все понятно, скомандуйте агенту:
-> *«Физику процесса и математическую модель понял. Формируй пакет документации docs/.»*
-
----
-
-### Стадия 1: Пакет документации `docs/` (Шлюз 1)
-
-#### Что сделает агент:
-Агент создаст стандартизированные документы:
-1. `docs/<n>_<topic>.md` — **Описание бизнес-логики (ТЗ):** Самодостаточный, компактный документ без академической «воды» («как в научной статье») и без C++ кода. Содержит только технологический смысл задачи, границы текущей итерации, строгие уравнения, параметры в СИ и контрольные допуски.
-2. `docs/<n>_<topic>_architecture.md` — **Описание архитектуры C++:** Типы данных, структуры входных/выходных параметров, класс-солвер, строгие Doxygen-сигнатуры, инварианты вызова и обработка ошибок.
-   * *Анализ существующей кодовой базы:* Агент явно разделяет **переиспользуемые сущности** (ранее созданные в проекте) и **новые типы**. Пересоздавать существующий код «с нуля» категорически запрещено!
-3. `docs/<n>_<topic>_plan.md` — пошаговый чек-лист разработки (от CMake до тестов).
-
-> [!IMPORTANT] Наличие AGENTS.md в корне репозитория
-> Агент проверяет наличие `AGENTS.md` в корне проекта. Если файла нет — агент создает его из шаблона. Если файл есть — прочитывает и дополняет недостающими регламентами. Без этого файла в Git работа в агентном режиме считается оформленной некорректно.
-
-#### Обязательная пауза (Шлюз 1):
-Создав эти файлы, агент **ПОЛНОСТЬЮ ОСТАНАВЛИВАЕТСЯ**. Написание кода в `src/` строго заблокировано!
-
-#### Что сделать вам:
-1. Откройте созданные файлы в папке `docs/` и бегло прочитайте их.
-2. Обратите внимание на единицы измерения: давления строго в Паскалях [Па], расходы в [$м^3/с$].
-3. Если хотите что-то изменить (например, использовать другой алгоритм или сигнатуру) — напишите об этом агенту.
-
-#### Как открыть Шлюз 1:
-> *«Документы в docs/ проверил и утвердил. Начинаем реализацию по плану.»*
+#### How to Clear Gatekeeper 0:
+When the model is clear to you, command:
+> *"I understand the model and governing equations. Please generate the docs/ package."*  
+> *(or in Russian: "Физику процесса и математическую модель понял. Формируй пакет документации docs/.")*
 
 ---
 
-### Стадия 2: Пошаговая реализация C++ (Шлюз 2 — «1 этап за ход»)
+### Stage 1: Documentation Package in `docs/` (Gatekeeper 1)
 
-#### Железное правило One Stage Per Turn:
-Агенту категорически запрещено реализовывать весь код проекта в одной реплике. В каждом сообщении агент делает **ровно один этап** из `plan.md` (например, только сборку `CMakeLists.txt` или только структуры данных).
+#### What the Agent Generates:
+1. `docs/<n>_<topic>.md` — **Business Logic Specification:** A concise, self-contained document stating the technological objective, scope of the current iteration, equations, SI parameter tables with examples, and verification tolerances. It contains **no C++ code and no article-style bloat**.
+2. `docs/<n>_<topic>_architecture.md` — **C++20 Architecture Specification:** Data types, solver contracts, strict Doxygen signatures, call invariants, and error policies.
+   * *Codebase Inspection:* Explicitly separates **reused existing entities** from **new types**. Recreating existing types from scratch is strictly forbidden.
+3. `docs/<n>_<topic>_plan.md` — Atomic checklist of implementation stages.
 
-#### Порядок шагов:
-* **Этап 1 (CMake):** Агент создает `CMakeLists.txt` со строгими флагами компилятора (`-Wall -Wextra -Wpedantic`), стандартом C++20 и подключением Eigen3/GoogleTest.
-  * *Пауза:* Агент отчитывается и возвращает управление вам.
-  * *Ваш ответ:* *«CMake посмотрел. Переходи к следующему этапу (структуры данных).»*
-* **Этап 2 (Типы и структуры):** Агент создает заголовочные файлы в `include/` с лаконичным Doxygen и единицами СИ.
-  * *Пауза.*
-  * *Ваш ответ:* *«Структуры проверил. Реализуй класс-солвер.»*
-* **Этап 3 (Солвер):** Агент реализует солвер в `src/` (валидация входных данных, метод `assemble_system`, факторизация `FullPivLU`, расчет невязок).
-  * *Пауза.*
+> [!IMPORTANT] Repository Root AGENTS.md
+> The agent verifies that `AGENTS.md` exists in the repository root. If missing, it creates it from `templates/AGENTS.md`. Without this file in Git, coursework is considered improperly formatted.
 
-> [!TIP] Быстрый режим для опытных пользователей (`/expert-mode`)
-> Если вы уже опытный разработчик и хотите выполнить реализацию ядра без промежуточных остановок между шагами плана, напишите:
-> > *«Включи /expert-mode»* или *«Реализуй расчетное ядро без остановок»*.
+#### Mandatory Pause (Gatekeeper 1):
+After creating these documents, the agent **STOPS COMPLETELY**. Code generation in `src/` is locked.
+
+#### How to Clear Gatekeeper 1:
+> *"Documents in docs/ reviewed and approved. Proceed with implementation according to the plan."*  
+> *(or: "Документы в docs/ проверил и утвердил. Начинаем реализацию по плану.")*
+
+---
+
+### Stage 2: Step-by-Step C++ Implementation (Gatekeeper 2 — "One Stage Per Turn")
+
+#### The One Stage Per Turn Rule:
+The agent is strictly prohibited from implementing the entire project in a single response. In each turn, the agent implements **exactly one stage** from `plan.md`.
+
+#### Sequential Progression:
+* **Stage 1 (CMake):** Generates `CMakeLists.txt` with strict flags (`-Wall -Wextra -Wpedantic`), C++20 standard, and dependencies.
+  * *Pause:* Agent reports and relinquishes control.
+  * *Your Response:* *"CMake looks good. Proceed to data structures."*
+* **Stage 2 (Types & Headers):** Generates header files in `include/` with concise Doxygen contracts.
+  * *Pause.*
+  * *Your Response:* *"Headers reviewed. Proceed to solver implementation."*
+* **Stage 3 (Solver):** Implements solver logic in `src/` (validation, KKT assembly, `FullPivLU` factorization, residual tracking).
+  * *Pause.*
+
+> [!TIP] Expert Override (`/expert-mode`)
+> If you are an experienced developer and want the computational core generated in a single pass without intermediate pauses, prompt:
+> > *"Enable /expert-mode"* or *"Implement computational core without stage pauses"*.
 > 
-> В этом режиме агент объединит шаги реализации ядра, но **все равно обязательно остановится перед написанием тестов** и никогда не сделает git commit автоматически.
+> The agent will synthesize the core in one pass, but **will still halt before writing tests** and will never commit to Git automatically.
 
 ---
 
-### Стадия 3: Согласование тестов GoogleTest (Шлюз 3)
+### Stage 3: GoogleTest Verification Strategy (Gatekeeper 3)
 
-#### Почему здесь снова обязательная пауза?
-Самая распространенная ошибка генерации тестов нейросетями — **тесты-тавтологии** (когда код функции сравнивается с самим собой: `EXPECT_EQ(calc(x), calc(x))`). Такие тесты всегда «зеленые», но не проверяют физику и гарантируют провал на защите.
+#### Why another mandatory pause?
+The most pervasive error in AI code generation is **tautological testing** (asserting a function against its own output: `EXPECT_EQ(calc(x), calc(x))`). Such tests pass blindly but fail to verify physical reality.
 
-#### Что сделает агент перед написанием тестов:
-Агент остановится и презентует вам стратегию тестов по 4-уровневой пирамиде:
-1. **Уровень 1 (Количественные эталоны):** Сверка с независимым ручным расчетом из ТЗ. Для узловых давлений [Па] используется относительный допуск `rtol = 1e-4 ... 1e-5`, а для расходов [$м^3/с$] — абсолютный допуск $10^{-8}$.
-2. **Уровень 2 (Физические инварианты):** Проверка баланса Кирхгофа в узлах ($\|Ax - Q\|_\infty < 10^{-8}$), нулевых потерь при нулевом расходе ($Q=0 \implies \Delta h=0$), монотонности гидравлического сопротивления и диссипации при реверсе ($Q |Q|$).
-3. **Уровень 3 (Граничные условия и сингулярность):** Проверка падения ранга матрицы и генерации `std::invalid_argument` при отсутствии $P$-узла.
-4. **Уровень 4 (Контракты и валидация):** `EXPECT_THROW` на отрицательные диаметры, нулевые плотности или некорректные размеры матриц.
+#### What the Agent Presents:
+A 4-tier testing pyramid:
+1. **Level 1 (Analytical Benchmarks):** Comparison against independent hand calculations. For nodal pressures [Pa], relative tolerance $\text{rtol} \le 10^{-4}$ is used; for flow rates [$\text{m}^3/\text{s}$], absolute tolerance $10^{-8}$ is applied. Linear system residual must satisfy $\frac{\Vert \mathcal{A}z - b \Vert_\infty}{\Vert \mathcal{A} \Vert_\infty \Vert z \Vert_\infty + \Vert b \Vert_\infty} < 10^{-12}$.
+2. **Level 2 (Physical Invariants):** Kirchhoff mass balance ($\Vert Ax - Q \Vert_\infty < 10^{-8}$), zero loss at zero flow ($Q=0 \implies \Delta h=0$), monotonic dissipation ($h_f \propto Q|Q|$).
+3. **Level 3 (Boundary Singularities):** Verifying that removing all $P$-nodes causes `FullPivLU` to detect rank deficiency and throw `std::runtime_error`.
+4. **Level 4 (Contracts):** `EXPECT_THROW` on negative diameters, lengths, or non-positive resistances.
 
-#### Как открыть Шлюз 3:
-> *«Тест-план и допуски согласовал. Генерируй файлы GoogleTest в tests/.»*
-
-После этого агент напишет тесты и покажет команду для запуска:
-```bash
-cmake -B build -S .
-cmake --build build
-ctest --test-dir build --output-on-failure
-```
+#### How to Clear Gatekeeper 3:
+> *"Test plan and tolerances approved. Generate GoogleTest files in tests/."*  
+> *(or: "Тест-план и допуски согласовал. Генерируй файлы GoogleTest в tests/.")*
 
 ---
 
-### Стадия 4: Контроль версий Git
+### Stage 4: Version Control (Git)
 
-Согласно **Золотому правилу Git проекта**, агент не коммитит изменения автоматически. Вы лично сохраняете контроль над историей своего репозитория:
+Following the **Golden Rule of Git**, the agent never auto-commits. You retain full control over your branch history:
 
 ```bash
 git status
-git add include/ src/ tests/ CMakeLists.txt docs/
-git commit -m "feat: implement pipeline nodal solver with FullPivLU and GoogleTest suite"
+git add include/ src/ tests/ CMakeLists.txt docs/ AGENTS.md
+git commit -m "feat: implement linear nodal solver with single-pass FullPivLU and gtest suite"
 git push origin main
 ```
-*(Если вы хотите, чтобы агент сам выполнил коммит, прямо скомандуйте ему: «Закоммить и запушь изменения сам»).*
+*(If you want the agent to execute the commit on your behalf, explicitly command: "Commit and push current changes yourself".)*
 
 ---
 
-### Стадия 5: Симулятор защиты (`/mock-defense`)
+### Stage 5: Pre-Defense Exam Simulator (`/mock-defense`)
 
-Когда код написан, тесты зеленые, а коммит сделан, наступает самый ценный этап — **генеральная репетиция защиты перед преподавателем**.
+When tests are green, initiate your exam rehearsal.
 
-#### Как запустить:
-> *«Запусти /mock-defense»* или *«Давай проведем предзащиту лабораторной»*.
+#### How to Launch:
+> *"Run /mock-defense"* or *"Let's rehearse the lab defense"*.
 
-#### Как проходит защита:
-1. Агент надевает маску строгого преподавателя кафедры АТП.
-2. Задает вопросы **строго по одному за раз** из 4 предметных раундов:
-   * **Раунд 1 (Физика):** законы Бернулли, Дарси-Вейсбаха, режимы течения, кавитация, гидроудар.
-   * **Раунд 2 (Математика и ТГЦ):** топология графа, свойства матрицы инцидентности, почему ранг $m-1$, блочная структура KKT, метод Тодини (МГГ).
-   * **Раунд 3 (C++ и Eigen):** почему $LU$-разложение (`lu.solve()`), а не `A.inverse() * b`, Move-семантика, кэш-локальность, почему `FullPivLU`.
-   * **Раунд 4 (Тесты и верификация):** как доказан баланс массы, почему относительный допуск для давлений и абсолютный для расходов, что будет при снятии опорного давления.
-3. Вы отвечаете своими словами в чате.
-4. Агент беспристрастно разбирает ваш ответ: хвалит за точные формулировки, мягко исправляет ошибки и показывает эталонную академическую аргументацию.
-5. В конце выставляет объективную оценку по 5-балльной шкале и формирует список слабых мест, которые стоит повторить перед реальной сдачей.
-
----
-
-## 5. Изучение лекций и теоретический режим
-
-Навык умеет работать не только в режиме «реши лабу», но и как **персональный репетитор по гидродинамике и моделированию**.
-
-### Как загрузить и обсудить лекцию:
-1. Прикрепите конспект, PDF лекции или фото слайдов/доски в чат.
-2. Напишите:
-   > *«Вот свежая лекция по переходным процессам и формуле Жуковского. Давай разберем её: в чем физический смысл скорости ударной волны $c$ и как на неё влияет податливость стенок трубы?»*
-3. Агент проанализирует материал, свяжет его с фундаментальными учебниками (Лурье М.В., Идельчик И.Е.) и разложит теорию «по полочкам»: с выводами формул, размерностями и практическими примерами.
+#### How It Works:
+1. The agent adopts the persona of an exacting professor from the Gubkin ATP Department.
+2. Questions are posed **strictly one at a time** across 4 rounds:
+   * **Round 1 (Physics):** Bernoulli equation, Darcy-Weisbach 4 friction regimes, cavitation, water hammer waves.
+   * **Round 2 (Math & TGC):** Network graph topology, incidence matrix rank $m-1$, KKT saddle blocks, Todini GGM regularization.
+   * **Round 3 (C++ & Architecture):** Why LU factorization (`lu.solve()`) rather than `A.inverse() * b`, backward stability, Task pattern, code reuse.
+   * **Round 4 (Verification):** Mass conservation proof, why relative tolerance for pressure vs absolute for flow rate, singular rank assertions.
+3. You answer in your own words.
+4. The agent critiques your response, reinforces accurate phrasing, and issues an objective grade with topics to review.
 
 ---
 
-## 6. Шпаргалка фраз для копирования (Cheat Sheet)
+## 5. Lecture Study and Theoretical Seminar Mode
 
-| Ситуация / Этап | Что написать агенту |
-|---|---|
-| **Старт работы** | *«Привет! Помоги сделать лабораторную работу по этой методичке. Мой вариант №3. Давай сначала обсудим физику.»* |
-| **Утверждение модели (Шлюз 0)** | *«Физическую картину и уравнения понял. Переходи к формированию docs/.»* |
-| **Утверждение документов (Шлюз 1)** | *«Документы ТЗ, архитектуру и план в docs/ проверил и утвердил. Начинаем реализацию расчетного ядра.»* |
-| **Переход к следующему шагу C++ (Шлюз 2)** | *«Код текущего этапа проверил, все чисто. Переходим к этапу [Название следующего этапа].»* |
-| **Быстрый режим без остановок ядра** | *«Включи /expert-mode и реализуй расчетное ядро целиком до этапа тестов.»* |
-| **Согласование тестов (Шлюз 3)** | *«Тест-план и 4 уровня тестов согласовал. Генерируй код тестов в tests/.»* |
-| **Запуск симулятора защиты** | *«Код и тесты готовы. Запусти /mock-defense, погоняй меня по вопросам к защите.»* |
-| **Разбор непонятного момента** | *«Объясни подробнее: почему мы в этой задаче обязаны регуляризировать диагональ в методе Тодини?»* |
-| **Команда на коммит** | *«Закоммить и запушь текущие изменения сам с понятным сообщением.»* |
+The skill functions not only as a lab solver, but also as a **dedicated private tutor in fluid mechanics and numerical methods**.
+
+### How to Discuss a Lecture:
+1. Upload your lecture slides, notes, or board photos.
+2. Prompt:
+   > *"Here is our lecture on transient pipeline dynamics and Joukowsky shock waves. Let's analyze it: what is the physical meaning of wave speed $c$ and how does pipe wall elasticity affect it?"*
+3. The agent reviews the material against foundational literature (M.V. Lurie, I.E. Idelchik) and explains formulas, derivations, and engineering implications step-by-step.
 
 ---
 
-## 7. Часто задаваемые вопросы и решение проблем (FAQ)
+## 6. Quick Phrases Cheat Sheet
 
-### Вопрос: «Агент сразу написал весь код проекта и не остановился. Что делать?»
-**Ответ:** Напомните ему о регламенте:
-> *«Соблюдай правило 'Ровно один этап плана за один ответ' (One Stage Per Turn). Остановись, удали лишнее и отчитайся только по текущему этапу!»*
+| Milestone / Situation | What to Say (English) | What to Say (Russian) |
+|---|---|---|
+| **Start Assignment** | *"Hello! Help me solve this lab assignment. My variant is #3. Let's analyze the physics first."* | *«Привет! Помоги сделать лабораторную работу по этой методичке. Мой вариант №3. Давай сначала обсудим физику.»* |
+| **Approve Model (Gate 0)** | *"I understand the model and equations. Proceed to generate docs/."* | *«Физическую картину и уравнения понял. Переходи к формированию docs/.»* |
+| **Approve Docs (Gate 1)** | *"Specifications in docs/ approved. Proceed with implementation according to plan."* | *«Документы ТЗ, архитектуру и план в docs/ проверил и утвердил. Начинаем реализацию расчетного ядра.»* |
+| **Next Stage (Gate 2)** | *"Current stage verified. Proceed to [Next Stage Name]."* | *«Код текущего этапа проверил. Переходим к этапу [Название следующего этапа].»* |
+| **Expert Fast Mode** | *"Enable /expert-mode and implement the computational core without pauses."* | *«Включи /expert-mode и реализуй расчетное ядро целиком до этапа тестов.»* |
+| **Approve Tests (Gate 3)** | *"Test plan and tolerances approved. Generate GoogleTest files in tests/."* | *«Тест-план и 4 уровня тестов согласовал. Генерируй код тестов в tests/.»* |
+| **Launch Mock Defense** | *"Implementation done. Run /mock-defense and test my knowledge."* | *«Код и тесты готовы. Запусти /mock-defense, погоняй меня по вопросам к защите.»* |
+| **Clarify Detail** | *"Explain in detail: why must the diagonal be regularized in the Todini GGM method?"* | *«Объясни подробнее: почему мы обязаны регуляризировать диагональ в методе Тодини?»* |
+| **Request Git Commit** | *"Commit and push current changes yourself with a descriptive message."* | *«Закоммить и запушь текущие изменения сам с понятным сообщением.»* |
 
-### Вопрос: «В методичке преподавателя опечатка в размерности или формуле. Как быть?»
-**Ответ:** Агент во время аудита на Стадии 0 подсветит это расхождение. Вы можете явно сказать агенту:
-> *«Да, в методичке опечатка. Давай в `docs/statement.md` зафиксируем правильную формулу по справочнику Лурье, а в комментариях отметим опечатку методички, чтобы я предупредил преподавателя на защите.»*
+---
 
-### Вопрос: «Тест упал при вычислении давлений. Почему?»
-**Ответ:** Проверьте тип допуска: если в тесте для давления в $10^6\text{ Па}$ случайно поставлен абсолютный допуск `EXPECT_NEAR(..., 1e-8)`, он неизбежно упадет из-за машинного эпсилон `double`. Замените проверку на относительную погрешность:
+## 7. Frequently Asked Questions & Troubleshooting (FAQ)
+
+### Q: "The agent generated too much code at once and ignored the pause. What should I do?"
+**A:** Enforce the quality protocol:
+> *"Adhere strictly to the 'One Stage Per Turn' rule. Halt immediately, clean up unreviewed stages, and report only on the current stage!"*
+
+### Q: "The assignment contains a typo in a formula or dimension. How should we proceed?"
+**A:** During the Stage 0 QA audit, the agent will flag the inconsistency. Instruct the agent:
+> *"Yes, that is an erratum in the manual. Document the correct physical formula according to Lurie in `docs/statement.md` and add a brief note about the typo so I can explain it during lab defense."*
+
+### Q: "A GoogleTest pressure assertion failed unexpectedly. Why?"
+**A:** Check the tolerance specification. If an absolute tolerance like `EXPECT_NEAR(..., 1e-8)` was applied to pressures around $10^6\text{ Pa}$, it requires relative precision near $10^{-14}$ (at the edge of machine epsilon for `double`). Update the test to relative tolerance:
 ```cpp
-double rel_err = std::abs(p_calc - p_bench) / p_bench;
+double rel_err = std::abs(p_calc - p_bench) / std::abs(p_bench);
 EXPECT_LT(rel_err, 1e-4);
 ```
 
-### Вопрос: «Где лежат полные справочные материалы по гидравлике и формулам?»
-**Ответ:** Вся кумулятивная база знаний хранится в каталоге `computational-hydraulics/references/`:
-* [hydraulics_core.md](file:///home/muslim/Coding/hydraulics-brain/computational-hydraulics/references/hydraulics_core.md) — 1D формулы, вязкость, Дарси-Вейсбах, гидроудар.
-* [sem2_guide.md](file:///home/muslim/Coding/hydraulics-brain/computational-hydraulics/references/sem2_guide.md) — профилирование, Бернулли, QP/PP задачи, насосы.
-* [sem3_guide.md](file:///home/muslim/Coding/hydraulics-brain/computational-hydraulics/references/sem3_guide.md) — сети, ТГЦ, блочные матрицы, метод Тодини (МГГ).
-* [circuits_and_agentic.md](file:///home/muslim/Coding/hydraulics-brain/computational-hydraulics/references/circuits_and_agentic.md) — теория гидравлических цепей по Южанину.
-* [pitfalls_and_antipatterns.md](file:///home/muslim/Coding/hydraulics-brain/computational-hydraulics/references/pitfalls_and_antipatterns.md) — 15 критических ловушек гидродинамики и C++.
-* [mock_defense_protocol.md](file:///home/muslim/Coding/hydraulics-brain/computational-hydraulics/references/mock_defense_protocol.md) — сценарий тренировочной защиты.
+### Q: "Where are the underlying engineering references located?"
+**A:** All foundational knowledge is organized inside `computational-hydraulics/references/`:
+* [hydraulics_core.md](file:///home/muslim/Coding/hydraulics-brain/computational-hydraulics/references/hydraulics_core.md) — 1D hydraulics, fluid properties, Darcy-Weisbach, Joukowsky water hammer.
+* [sem2_guide.md](file:///home/muslim/Coding/hydraulics-brain/computational-hydraulics/references/sem2_guide.md) — profiling, Bernoulli, QP/PP problems, pump curves, Task pattern.
+* [sem3_guide.md](file:///home/muslim/Coding/hydraulics-brain/computational-hydraulics/references/sem3_guide.md) — TGC networks, KKT block systems, Todini GGM regularization, FullPivLU solver.
+* [circuits_and_agentic.md](file:///home/muslim/Coding/hydraulics-brain/computational-hydraulics/references/circuits_and_agentic.md) — Yuzhanin circuit theory and ATP agentic standards.
+* [pitfalls_and_antipatterns.md](file:///home/muslim/Coding/hydraulics-brain/computational-hydraulics/references/pitfalls_and_antipatterns.md) — top-15 hydraulic and C++ antipatterns.
+* [mock_defense_protocol.md](file:///home/muslim/Coding/hydraulics-brain/computational-hydraulics/references/mock_defense_protocol.md) — complete oral exam rehearsal questions.

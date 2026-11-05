@@ -1,176 +1,185 @@
-# 3-й Семестр: Линейная алгебра в Eigen, теория графов и расчет гидравлических цепей
-## Систематизированное руководство по лекциям, лабораторным работам и ТГЦ (Sem3 Knowledge Base)
+# Linear Algebra in Eigen, Graph Theory & Hydraulic Networks (Semester 3 Guide)
+## Systematic Reference for Lectures, Labs & Circuit Theory (`sem3_guide.md`)
 
-> Источники:
-> * Курс лекций: `sem3/lecture` (Лекции 4, 5, 6)
-> * Практикум и лабораторные работы: `sem3/lab` (ЛР 0, ЛР 1, ЛР 2)
-> * Теория гидравлических цепей: `yuzhanin-circuits-essentials.md` (Южанин)
-> * Регламент агентной разработки: `agentic_development_requirements.md`
+> Primary references:
+> * Lecture Course: `sem3/lecture` (Lectures 4, 5, 6)
+> * Practical Assignments: `sem3/lab` (Labs 0, 1, 2)
+> * Theory of Hydraulic Circuits: `yuzhanin-circuits-essentials.md` (V. V. Yuzhanin)
+> * Agentic Development Requirements: `agentic_development_requirements.md`
 
 ---
 
-## 1. Регламент агентной разработки и управление контекстом
+## 1. Agentic Development Regulation & Context Management
 
-### 1.1. Разработчик как менеджер контекста
-В агентном режиме разработки основная задача программиста — **устранение когнитивных рисков**.
-Риск состоит в том, что сгенерированный ИИ-агентом код решит частную задачу некорректно или нарушит инварианты предметной области. Разработчик обязан формализовать физику, математику и архитектуру системы до момента написания кода.
+### 1.1. Developer as Context Manager
+In agentic pair programming, the developer's core responsibility is **mitigating cognitive risks**.
+The risk is that AI-generated code might solve an isolated scenario incorrectly or violate core physical invariants. The developer must formalize the physics, mathematics, and architecture before code implementation begins.
 
-### 1.2. Стандарт разделения проектных документов
-Вся проектная документация строго разделяется на три независимых документа:
+### 1.2. Project Documentation Separation Standard
+All project documentation is strictly decomposed into three independent artifacts:
 
-| Артефакт | Путь к файлу | Содержание | Что категорически запрещено включать |
+| Artifact | File Path | Content | Strictly Prohibited |
 |---|---|---|---|
-| **Бизнес-логика и математика (ТЗ)** | `docs/*-tz.md` или `docs/*-math.md` | Математическая модель, постановка задачи, физические уравнения, законы сохранения, размерности величин, допустимые диапазоны, краевые условия | Детали реализации C++, сигнатуры классов, раскладка файлов |
-| **Архитектурный дизайн** | `docs/*-architecture.md` | Структуры данных (`*_properties_t`, `*_result_t`), классы солверов, владение памятью, Doxygen-сигнатуры методов, контракты вызова, обработка ошибок | Развернутые выводы математических формул |
-| **План реализации** | `docs/*-plan.md` | Пошаговый чек-лист этапов разработки, список модифицируемых файлов, этапы тестирования и верификации | Избыточные теоретические рассуждения |
-| **Регламент агентов** | `AGENTS.md` (в корне) | Правила оформления кода, стандарты безопасности, требования к тестированию для ИИ-агентов | — |
+| **Business Logic & Mathematics (Spec)** | `docs/*-tz.md` or `docs/*-math.md` | Mathematical model, problem formulation, physical equations, conservation laws, SI units, physical ranges, boundary conditions | C++ implementation details, class declarations, file layouts |
+| **Architectural Design** | `docs/*-architecture.md` | Data structures (`*_properties_t`, `*_result_t`), solver classes, memory ownership, Doxygen method signatures, call contracts, exception handling | Mathematical formula derivations |
+| **Implementation Plan** | `docs/*-plan.md` | Step-by-step atomic checklist, modified files list, testing and verification checkpoints | Redundant theoretical narratives |
+| **Agent Regulation** | `AGENTS.md` (root) | Code formatting rules, safety standards, verification and test requirements for AI agents | — |
 
 ---
 
-## 2. Линейная алгебра и библиотека Eigen
+## 2. Linear Algebra and the Eigen Library
 
-### 2.1. Системы линейных алгебраических уравнений (СЛАУ)
-В матричной форме СЛАУ имеет вид:
+### 2.1. Systems of Linear Algebraic Equations (SLAE)
+In matrix form:
 $$A x = b$$
-где $A \in \mathbb{R}^{m \times n}$ — матрица коэффициентов, $x \in \mathbb{R}^n$ — вектор неизвестных, $b \in \mathbb{R}^m$ — вектор правой части.
+where $A \in \mathbb{R}^{m \times n}$ is the coefficient matrix, $x \in \mathbb{R}^n$ is the unknown vector, and $b \in \mathbb{R}^m$ is the right-hand side vector.
 
-### 2.2. Метод Гаусса vs Обращение матрицы: алгоритмическая сложность
-1. **Метод исключения Гаусса:**
-   * Прямой ход (приведение к верхнетреугольному виду): $\sim \frac{2}{3} n^3$ операций (FMA — fused multiply-add).
-   * Обратный ход (обратная подстановка): $\sim n^2$ операций.
-   * Суммарная сложность решения СЛАУ: $\sim \frac{2}{3} n^3$.
-2. **Решение через вычисление обратной матрицы ($x = A^{-1} b$):**
-   * Вычисление $A^{-1}$ эквивалентно решению $n$ систем уравнений с единичными правыми частями: $\sim 2 n^3$ операций.
-   * Умножение $A^{-1} b$: $\sim 2 n^2$ операций.
-   * **Вывод курса:** решение через явную матрицу $A^{-1}$ в **3 раза медленнее** и приводит к катастрофическому накоплению ошибок округления чисел с плавающей точкой.
-   > **КАТЕГОРИЧЕСКИЙ ЗАПРЕТ:** Вызовы вида `A.inverse() * b` в коде расчетных модулей **запрещены**.
+### 2.2. Gaussian Elimination vs. Matrix Inversion: Algorithmic Complexity
+1. **Gaussian Elimination (LU Factorization):**
+   * Forward elimination (reduction to upper triangular form): $\sim \frac{2}{3} n^3$ operations (FMA — fused multiply-add).
+   * Back substitution: $\sim n^2$ operations.
+   * Total complexity: $\sim \frac{2}{3} n^3$.
+2. **Solution via Explicit Matrix Inversion ($x = A^{-1} b$):**
+   * Computing $A^{-1}$ is equivalent to solving $n$ systems with identity RHS vectors: $\sim 2 n^3$ operations.
+   * Matrix-vector multiplication $A^{-1} b$: $\sim 2 n^2$ operations.
+   * **Conclusion:** Solving via explicit $A^{-1}$ is **3 times slower** and induces catastrophic round-off error accumulation.
+   > **STRICT BAN:** Calls like `A.inverse() * b` are **strictly prohibited** in solver code.
 
-### 2.3. $LU$-разложение с частичным выбором ведущего элемента ($PA = LU$)
-Для многократного решения СЛАУ с постоянной матрицей $A$ и переменными векторами правых частей $b$:
+### 2.3. $LU$ Factorization with Partial Pivoting ($PA = LU$)
+For repeated solutions with constant matrix $A$ and varying RHS vectors $b$:
 $$A = L \cdot U$$
-где $L$ — нижнетреугольная матрица с единицами на диагонали, $U$ — верхнетреугольная матрица.
-* **Проблема малых и нулевых ведущих элементов (pivots):** деление на ноль или потерю точности предотвращает перестановка строк с помощью матрицы перестановок $P$:
+where $L$ is unit lower triangular and $U$ is upper triangular.
+* **Pivoting for numerical stability:** Row permutations using permutation matrix $P$ avoid zero/small pivots and division by near-zero:
   $$P A = L \cdot U$$
-* **Решение в два быстрых этапа ($O(n^2)$ операций):**
-  1. $L y = P b$ (прямая подстановка);
-  2. $U x = y$ (обратная подстановка).
+* **Two-step rapid back/forward solve ($O(n^2)$ operations):**
+  1. $L y = P b$ (forward substitution);
+  2. $U x = y$ (back substitution).
 
-### 2.4. Анализ корректности постановки СЛАУ (ЛР 1)
-Перед запуском решения квадратной системы $n \times n$ солвер обязан исследовать ранг матрицы коэффициентов $A$ и расширенной матрицы $(A \mid b)$:
+### 2.4. Well-Posedness and Rank Analysis of SLAE
+Before solving an $n \times n$ system, the solver verifies the rank of coefficient matrix $A$ and augmented matrix $(A \mid b)$:
 
 ```
-                  ┌─── rank(A) == n ───────────────────> КОРРЕКТНАЯ СИСТЕМА
-                  │                                      (Единственное решение через PartialPivLU::solve)
+                  ┌─── rank(A) == n ───────────────────> WELL-POSED SYSTEM
+                  │                                      (Unique solution via PartialPivLU::solve)
                   │
-Квадратная СЛАУ ──┼─── rank(A) < n && rank(A) == rank(A|b) ─> НЕДООПРЕДЕЛЕННАЯ СИСТЕМА
-(n x n)           │                                           (Бесконечно много решений, отказ)
+Square SLAE ──────┼─── rank(A) < n && rank(A) == rank(A|b) ─> UNDERDETERMINED SYSTEM
+(n x n)           │                                           (Infinite solutions, reject)
                   │
-                  └─── rank(A) != rank(A|b) ───────────> ПРОТИВОРЕЧИВАЯ СИСТЕМА
-                                                         (Решений нет, физический конфликт балансов, отказ)
+                  └─── rank(A) != rank(A|b) ───────────> INCONSISTENT / CONFLICTING SYSTEM
+                                                         (No solution, physical mass/head imbalance, reject)
 ```
 
-#### Использование классов Eigen:
+#### Proper Eigen Classes Usage:
 * `Eigen::FullPivLU<Eigen::MatrixXd> lu(A);`
-  * Метод `lu.rank()` вычисляет численный ранг матрицы с полным выбором ведущего элемента и пороговым отсечением малых сингулярных чисел.
-* `Eigen::PartialPivLU<Eigen::MatrixXd> solver(A);`
-  * Метод `solver.solve(b)` выполняет быстрое и устойчивое решение $PA = LU$.
+  * `lu.isInvertible()` and `lu.rank()` determine system well-posedness with complete pivoting and singular value thresholding.
+* In single-pass execution:
+  ```cpp
+  Eigen::FullPivLU<Eigen::MatrixXd> lu(A);
+  if (!lu.isInvertible()) {
+      throw std::runtime_error("Singular system: non-invertible matrix");
+  }
+  Eigen::VectorXd x = lu.solve(b);
+  ```
 
-### 2.5. Архитектурный мост (Bridge) к `fixed_solvers`
-В кодовой базе проекта присутствует специализированный заголовочный файл `fixed_linear_solver.h`, реализующий аналитическое решение по формулам Крамера для систем фиксированных размеров $N=2$ и $N=3$ на базе `std::array<std::array<double, N>, N>`.
-* Архитектура солвера СЛАУ включает шаблонный адаптер-мост: если размерность задачи $N \le 3$, решение проверяется перекрестно между `Eigen::PartialPivLU` и `fixed_solvers::solve_linear_system`.
+### 2.5. Architectural Bridge to `fixed_solvers`
+The project codebase may include a specialized header `fixed_linear_solver.h`, implementing closed-form Cramer's rule solutions for fixed dimensions $N=2$ and $N=3$ using `std::array<std::array<double, N>, N>`.
+* The solver architecture supports a cross-verification adapter bridge: for dimensions $N \le 3$, results can be cross-checked between `Eigen::FullPivLU` and `fixed_solvers::solve_linear_system`.
 
 ---
 
-## 3. Теория графов в моделировании гидравлических сетей
+## 3. Graph Theory in Hydraulic Network Simulation
 
-### 3.1. Структура ориентированного графа цепи
-Гидравлическая сеть представляется связанным ориентированным графом $G = (V, E)$, где:
-* $V$ — множество вершин (узлов) сети, $|V| = m$;
-* $E$ — множество ориентированных дуг (ветвей, труб, насосов, задвижек), $|E| = n$.
-* Реализация графа в кодовой базе опирается на структуру `basic_graph_t` из библиотеки `graph_solvers`.
+### 3.1. Directed Network Graph Structure
+A hydraulic circuit is modeled as a connected directed graph $G = (V, E)$, where:
+* $V$ — set of vertices (network nodes), $|V| = m$;
+* $E$ — set of directed edges (branches: pipes, pumps, valves), $|E| = n$.
+* Graph representation leverages `basic_graph_t` from `graph_solvers`.
 
-### 3.2. Матрицы инцидентности графа
-1. **Полная матрица инцидентности $\bar{A}$ размера $m \times n$:**
-   Элементы матрицы определяются направлением дуги относительно узла:
-   $$\bar{A}_{j, i} = \begin{cases}
-   +1, & \text{если дуга } i \text{ выходит из узла } j; \\
-   -1, & \text{если дуга } i \text{ входит в узел } j; \\
-   0, & \text{если дуга } i \text{ не инцидентна узлу } j.
-   \end{cases}$$
-   * **Свойство линейной зависимости:** сумма элементов каждого столбца $\sum_{j=1}^m \bar{A}_{j, i} = 0$, следовательно, строки матрицы $\bar{A}$ линейно зависимы, а её ранг равен $\operatorname{rank}(\bar{A}) = m - 1$.
-2. **Разбиение узлов цепи по типу граничных условий:**
-   * **$Q$-узлы ($m_Q$ шт.):** внутренние узлы, в которых заданы притоки/отборы $Q_j$ [м³/с], а потенциалы (давления) $P_j$ являются **неизвестными**.
-   * **$P$-узлы ($m_P$ шт.):** граничные опорные узлы, в которых потенциалы (давления) $P_{p, k}$ **зафиксированы**, а узловой баланс расходов замыкается внешней средой.
-   * Суммарное число узлов: $m = m_Q + m_P$. Для устранения вырожденности по гидростатическому уровню требуется наличие хотя бы одного $P$-узла ($m_P \ge 1$).
-3. **Сокращенные матрицы инцидентности:**
-   Матрица $\bar{A}$ разбивается по строкам на две подматрицы:
+### 3.2. Incidence Matrices
+1. **Full Incidence Matrix $\bar{A}$ ($m \times n$):**
+   Defined according to edge orientation:
+   $$
+   \bar{A}_{j, i} = \begin{cases}
+   +1, & \text{if edge } i \text{ leaves node } j; \\
+   -1, & \text{if edge } i \text{ enters node } j; \\
+   0, & \text{if edge } i \text{ is not incident to node } j.
+   \end{cases}
+   $$
+   * **Linear Dependence Property:** Every column sum is zero ($\sum_{j=1}^m \bar{A}_{j, i} = 0$), so rows are linearly dependent and $\operatorname{rank}(\bar{A}) = m - 1$.
+2. **Node Classification by Boundary Condition:**
+   * **$Q$-nodes ($m_Q$ count):** Internal nodes with prescribed inflows/outflows $Q_j$ [$\text{m}^3/\text{s}$], where pressures $P_j$ are **unknowns**.
+   * **$P$-nodes ($m_P$ count):** Boundary reference nodes with fixed pressures $P_{p, k}$, where mass balance closes through external boundary supplies.
+   * Total nodes: $m = m_Q + m_P$. To eliminate hydrostatic singularity, at least one $P$-node is mandatory ($m_P \ge 1$).
+3. **Partitioned Incidence Matrices:**
+   Matrix $\bar{A}$ partitions row-wise into two blocks:
    $$\bar{A} = \begin{pmatrix} A \\ A_p \end{pmatrix}$$
-   * $A \in \mathbb{R}^{m_Q \times n}$ — матрица инцидентности внутренних $Q$-узлов.
-   * $A_p \in \mathbb{R}^{m_P \times n}$ — матрица инцидентности граничных $P$-узлов.
+   * $A \in \mathbb{R}^{m_Q \times n}$ — incidence matrix of internal $Q$-nodes.
+   * $A_p \in \mathbb{R}^{m_P \times n}$ — incidence matrix of boundary reference $P$-nodes.
 
 ---
 
-## 4. Линейная узловая краевая задача потокораспределения (КЗП)
+## 4. Linear Nodal Boundary Value Flow Distribution Problem
 
-### 4.1. Законы Кирхгофа для гидравлической цепи
-1. **Первый закон Кирхгофа (сохранение массы в $Q$-узлах):**
+### 4.1. Kirchhoff's Laws for Hydraulic Networks
+1. **Kirchhoff's First Law (Mass Conservation at $Q$-nodes):**
    $$A x = Q$$
-   где $x \in \mathbb{R}^n$ — вектор объемных расходов в ветвях, $Q \in \mathbb{R}^{m_Q}$ — вектор узловых притоков/отборов (приток $> 0$, отбор $< 0$).
-2. **Второй закон Кирхгофа (баланс напоров/давлений по ветвям):**
-   Разность потенциалов на концах дуги равна падению напора в этой дуге:
-   $$\Delta P_{\text{ветви}} = \bar{A}^T \begin{pmatrix} P \\ P_p \end{pmatrix} = A^T P + A_p^T P_p$$
-   Уравнение импульса ветвей:
+   where $x \in \mathbb{R}^n$ is branch volumetric flow rates, and $Q \in \mathbb{R}^{m_Q}$ is nodal demand/supply vector (inflow $> 0$, outflow $< 0$).
+2. **Kirchhoff's Second Law (Head/Pressure Balance along Branches):**
+   Potential difference across branch endpoints equals head drop:
+   $$\Delta P_{\text{branch}} = \bar{A}^T \begin{pmatrix} P \\ P_p \end{pmatrix} = A^T P + A_p^T P_p$$
+   Branch momentum relation:
    $$A^T P + A_p^T P_p = F(x)$$
-   где $F(x) \in \mathbb{R}^n$ — вектор замыкающих соотношений ветвей.
+   where $F(x) \in \mathbb{R}^n$ is branch closure relationship vector.
 
-### 4.2. Линейные замыкающие соотношения
-Для ламинарного (стоксова) режима течения или линеаризованных элементов сети потери давления зависят от расхода строго линейно:
+### 4.2. Linear Closure Relations
+For laminar flow or linearized pipe elements, pressure drop is strictly linear with flow:
 $$F_i(x_i) = -r_i x_i + H_i$$
-где:
-* $r_i > 0$ — гидравлическое сопротивление ветви (для круглой трубы по формуле Пуазейля: $r_i = \frac{128 \mu L_i}{\pi d_i^4}$);
-* $H_i$ — активный перепад давления (напор насоса, встроенного в ветвь $i$).
+where:
+* $r_i > 0$ — hydraulic branch resistance (by Poiseuille: $r_i = \frac{128 \mu L_i}{\pi d_i^4}$);
+* $H_i$ — active head (pump differential pressure in branch $i$).
 
-В векторной форме:
+In matrix form:
 $$F(x) = -R x + H$$
-где $R = \operatorname{diag}(r_1, r_2, \dots, r_n)$ — положительно определённая диагональная матрица сопротивлений дуг.
+where $R = \operatorname{diag}(r_1, r_2, \dots, r_n)$ is a positive definite diagonal resistance matrix.
 
-### 4.3. Единая блочная система линейной узловой КЗП (ЛР 2)
-Подставляя замыкающее соотношение во 2-й закон Кирхгофа:
+### 4.3. Unified Block KKT Linear Nodal System
+Substituting closure relations into Kirchhoff's Second Law:
 $$A^T P + A_p^T P_p = -R x + H \quad \iff \quad R x + A^T P = H - A_p^T P_p$$
 
-Объединяя с 1-м законом Кирхгофа ($A x = Q$), получаем блочную СЛАУ размера $N \times N$, где $N = n + m_Q$:
+Combined with Kirchhoff's First Law ($A x = Q$), we obtain the coupled $N \times N$ block system ($N = n + m_Q$):
 
 $$\begin{pmatrix} R & A^T \\ A & 0 \end{pmatrix} \begin{pmatrix} x \\ P \end{pmatrix} = \begin{pmatrix} H - A_p^T P_p \\ Q \end{pmatrix}$$
 
-#### Структура блочной системы $\mathcal{A} z = b$:
-* Блочная матрица $\mathcal{A}$:
+#### Structure of Block System $\mathcal{A} z = b$:
+* Block coefficient matrix $\mathcal{A}$:
   $$\mathcal{A} = \begin{pmatrix} R_{n \times n} & A^T_{n \times m_Q} \\ A_{m_Q \times n} & 0_{m_Q \times m_Q} \end{pmatrix}$$
-  *(Симметричная седловая матрица типа Карруша — Куна — Таккера / KKT)*.
-* Вектор неизвестных $z$:
+  *(Symmetric Karush–Kuhn–Tucker / KKT saddle-point matrix)*.
+* Unknown vector $z$:
   $$z = \begin{pmatrix} x \\ P \end{pmatrix} \in \mathbb{R}^{n + m_Q}$$
-* Вектор правой части $b$:
+* Right-hand side vector $b$:
   $$b = \begin{pmatrix} H - A_p^T P_p \\ Q \end{pmatrix} \in \mathbb{R}^{n + m_Q}$$
 
-### 4.4. Архитектурный шаблон решения линейной КЗП
+### 4.4. C++ Architecture Pattern for Linear Nodal Solver
 ```cpp
 struct linear_nodal_properties_t {
-    basic_graph_t graph;                     // Топология цепи
-    std::vector<double> resistances;          // Вектор сопротивлений r_i > 0
-    std::vector<double> active_heads;         // Вектор активных напоров H_i
-    std::vector<double> nodal_flows;          // Вектор отборов Q_j на Q-узлах
-    std::vector<double> boundary_pressures;   // Вектор давлений P_{p, k} на P-узлах
+    basic_graph_t graph;                     ///< Circuit topology
+    std::vector<double> resistances;          ///< Resistance vector r_i > 0
+    std::vector<double> active_heads;         ///< Active head vector H_i
+    std::vector<double> nodal_flows;          ///< Inflow/outflow vector Q_j at Q-nodes
+    std::vector<double> boundary_pressures;   ///< Boundary pressure vector P_{p, k} at P-nodes
 };
 
 struct linear_nodal_result_t {
-    std::vector<double> branch_flows;         // Найденный вектор расходов x
-    std::vector<double> nodal_pressures;      // Найденный вектор давлений P
-    double max_residual;                      // Невязка ||A*z - b||_inf
+    std::vector<double> branch_flows;         ///< Solved branch flow vector x
+    std::vector<double> nodal_pressures;      ///< Solved nodal pressure vector P
+    double max_residual{0.0};                 ///< Residual ||A*z - b||_inf
 };
 
 class linear_nodal_solver_t {
 public:
     explicit linear_nodal_solver_t(const linear_nodal_properties_t& props);
     linear_nodal_result_t solve() const;
+
 private:
     void assemble_system(Eigen::MatrixXd& A_block, Eigen::VectorXd& b_vec) const;
 };
@@ -178,61 +187,61 @@ private:
 
 ---
 
-## 5. Общая теория гидравлических цепей (ТГЦ по Южанину)
+## 5. Theory of Hydraulic Circuits (Yuzhanin Formulation)
 
-В реальных сетях (турбулентный режим) замыкающие соотношения ветвей **нелинейны**:
+In turbulent network regimes, branch closure equations are **nonlinear**:
 $$F_i(x_i) = -s_i |x_i| x_i + H_i(x_i)$$
-где $s_i = \frac{8 \lambda_i L_i \rho}{\pi^2 d_i^5}$ — модуль гидравлического сопротивления.
+where $s_i = \frac{8 \lambda_i L_i \rho}{\pi^2 d_i^5}$ is hydraulic resistance modulus.
 
-Для решения нелинейных сетевых задач применяются два основных метода:
+Two primary solution methods are applied:
 
-### 5.1. Метод узловых давлений (МУД / Nodal Pressure Method)
-1. Выражение расходов ветвей через разность узловых давлений $\Delta P_i = (A^T P + A_p^T P_p)_i$:
+### 5.1. Nodal Pressure Method (NPM)
+1. Express branch flows via nodal pressure differences $\Delta P_i = (A^T P + A_p^T P_p)_i$:
    $$x_i = f_i(\Delta P_i) = \operatorname{sign}(\Delta P_i - H_i) \sqrt{\frac{|\Delta P_i - H_i|}{s_i}}$$
-2. Подстановка выражений $x_i(P)$ в первый закон Кирхгофа формирует систему $m_Q$ нелинейных уравнений относительно вектора неизвестных узловых давлений $P$:
+2. Substitute $x_i(P)$ into Kirchhoff's First Law to obtain $m_Q$ nonlinear equations in terms of unknown pressures $P$:
    $$r(P) = A \cdot x(P) - Q = 0$$
-3. Решение методом Ньютона — Рафсона:
+3. Solve via Newton–Raphson iteration:
    $$P^{(k+1)} = P^{(k)} - J(P^{(k)})^{-1} r(P^{(k)})$$
-   где матрица Якоби невязок вычисляется аналитически:
+   with analytical Jacobian:
    $$J = \frac{\partial r}{\partial P} = A \cdot \operatorname{diag}\left( \frac{\partial x_i}{\partial \Delta P_i} \right) \cdot A^T$$
 
-### 5.2. Метод глобального градиента (МГГ / Todini Global Gradient Method)
-В методе глобального градиента на каждой итерации линеаризуются оба закона Кирхгофа одновременно.
-На шаге $k$ вектор поправок расходов $\Delta x$ и давлений $P^{(k+1)}$ вычисляется из решения блочной седловой системы (блочной системы KKT):
+### 5.2. Todini Global Gradient Method (GGM)
+The Global Gradient Method linearizes both Kirchhoff laws simultaneously at each iteration.
+At step $k$, flow correction vector $\Delta x$ and pressure vector $P^{(k+1)}$ are solved from the block KKT system:
 $$\begin{pmatrix} D^{(k)} & A^T \\ A & 0 \end{pmatrix} \begin{pmatrix} \Delta x \\ P^{(k+1)} \end{pmatrix} = \begin{pmatrix} -F(x^{(k)}) + A_p^T P_p \\ Q - A x^{(k)} \end{pmatrix}$$
-где $D^{(k)} = \operatorname{diag}\left( \frac{\partial F_i}{\partial x_i} \right)_{x = x^{(k)}}$. Для квадратичного закона сопротивления $F_i(x_i) = s_i x_i |x_i|$, поэтому диагональные элементы равны $d_i = 2 s_i |x_i|$.
+where $D^{(k)} = \operatorname{diag}\left( \frac{\partial F_i}{\partial x_i} \right)_{x = x^{(k)}}$. For quadratic friction $F_i(x_i) = s_i x_i |x_i|$, diagonal entries are $d_i = 2 s_i |x_i|$.
 
-> [!WARNING] Регуляризация деления на ноль в МГГ
-> Классическая редукция системы к уравнениям относительно давлений использует матрицу $M = A D^{-1} A^T$. При нулевом расходе в любой ветви ($x_i \to 0$) элемент $d_i \to 0$, и обращение $D^{-1}$ приводит к **делению на ноль** (`NaN`/`Inf`).
-> 
-> **Обязательные требования к реализации:**
-> 1. **Регуляризация диагонали:** диагональные элементы $D$ обязаны ограничиваться снизу порогом регуляризации:
+> [!WARNING] Division-by-Zero Regularization in GGM
+> Classical reduction to pressure equations forms matrix $M = A D^{-1} A^T$. When flow in any pipe approaches zero ($x_i \to 0$), diagonal entry $d_i \to 0$, causing $D^{-1}$ to trigger **division-by-zero** (`NaN`/`Inf`).
+>
+> **Mandatory Implementation Requirements:**
+> 1. **Diagonal Regularization:** Diagonal entries of $D$ must be bounded from below:
 >    $$d_i = \max\left(2 s_i |x_i|,\, d_{\min}\right), \quad d_{\min} \sim 10^{-6} \dots 10^{-8}$$
->    либо гладкой регуляризацией $d_i = 2 s_i \sqrt{x_i^2 + \varepsilon^2}$.
-> 2. **Ненулевое начальное приближение:** категорически запрещено задавать $x^{(0)} = 0$. Начальные расходы инициализируются по нормативной скорости потока $v_0 \approx 1{,}0\text{--}1{,}5\text{ м/с}$ ($x_i^{(0)} = v_0 \cdot \frac{\pi d_i^2}{4}$).
+>    or via smooth regularization $d_i = 2 s_i \sqrt{x_i^2 + \varepsilon^2}$.
+> 2. **Non-Zero Initial Guess:** Never set $x^{(0)} = 0$. Initialize flow rates based on nominal flow velocity $v_0 \approx 1.0 - 1.5\text{ m/s}$ ($x_i^{(0)} = v_0 \cdot \frac{\pi d_i^2}{4}$).
 
-### 5.3. Формализм с висячими дугами (Pendant Edges Formalism)
-Инженерное обобщение ТГЦ, устраняющее необходимость разделения узлов на внутренние и граничные:
-* **Регулярные дуги:** обычные трубы, задвижки, насосы, соединяющие две вершины сети.
-* **Висячие $P$-дуги:** внешние дуги, привязанные к источникам постоянного давления (резервуары, скважины).
-* **Висячие $Q$-дуги:** внешние дуги притоков/отборов с заданным граничным расходом.
-* **Преимущество:** топология цепи описывается единой универсальной матрицей инцидентности, а смена типа граничного условия (например, переход узла из режима поддержания давления в режим фиксированного отбора) не требует перестроения графа.
+### 5.3. Pendant Edges Formalism
+An engineering generalization of hydraulic network theory eliminating node classification:
+* **Regular Edges:** Internal pipes, pumps, valves connecting internal nodes.
+* **Pendant $P$-Edges:** External branches connected to constant pressure reservoirs/wells.
+* **Pendant $Q$-Edges:** External branches connected to prescribed nodal demand/inflow sources.
+* **Benefit:** Circuit topology is represented by a single universal incidence matrix, and switching boundary conditions requires no graph restructuring.
 
 ---
 
-## 6. Требования к верификации и контрольным автотестам
+## 6. Verification Requirements & Automated Tests
 
-1. **Невязка решения СЛАУ:**
-   * Относительная нормализованная невязка блочной седловой системы:
+1. **SLAE Solution Residual:**
+   * Relative normalized residual of block saddle-point system:
      $$\frac{\|\mathcal{A} z - b\|_{\infty}}{\|\mathcal{A}\|_{\infty} \|z\|_{\infty} + \|b\|_{\infty}} < 10^{-12}$$
-   * Проверка ранга матрицы выполняется за один проход с решением через единый объект `Eigen::FullPivLU<MatrixXd>` (без дублирования факторизаций и без вызова `.inverse()`).
-2. **Баланс Кирхгофа в узлах:**
-   * Абсолютная невязка закона сохранения объемного расхода: $\|A x - Q\|_{\infty} < 10^{-8}\text{ м}^3/\text{с}$.
-3. **Относительная точность узловых давлений:**
-   * Сверка узловых давлений с ручными аналитическими эталонами ТЗ выполняется по относительной погрешности:
+   * Rank verification and solve are executed in a single pass via `Eigen::FullPivLU<MatrixXd>` (no duplicate factorizations, no `.inverse()`).
+2. **Kirchhoff Mass Balance at Nodes:**
+   * Absolute residual of volumetric flow conservation: $\|A x - Q\|_{\infty} < 10^{-8}\text{ m}^3/\text{s}$.
+3. **Relative Tolerance for Nodal Pressures:**
+   * Verification against manual analytical benchmarks uses relative tolerance:
      $$\frac{|P_{\text{calc}} - P_{\text{bench}}|}{P_{\text{bench}}} < 10^{-4} \dots 10^{-5}$$
-     (абсолютный допуск $10^{-8}$ для давлений порядка $10^6\text{ Па}$ математически некорректен, так как требует точности $10^{-14}$, лежащей на пределе машинной точности `double`).
-4. **Физические инварианты сети:**
-   * Вектор расходов $x$ направлен в сторону падения пьезометрического напора (для пассивных дуг).
-   * При нулевом расходе ($x_i = 0$) гидравлические потери на трение строго равны нулю ($\Delta h_i = 0$).
-   * Изолированное отключение $P$-узла (снятие граничного условия) приводит к вырождению матрицы $\mathcal{A}$ ($\operatorname{rank} < N$), что солвер обязан обнаружить с генерацией диагностического исключения (`std::invalid_argument` / `std::runtime_error`).
+     (absolute tolerance $10^{-8}$ for pressures of order $10^6\text{ Pa}$ is numerically invalid, as it demands $10^{-14}$ precision near the limit of double precision).
+4. **Network Physical Invariants:**
+   * Flow vector $x$ directs towards decreasing piezometric head for passive branches.
+   * At zero flow ($x_i = 0$), friction head loss is identically zero ($\Delta h_i = 0$).
+   * Disconnecting all $P$-nodes causes matrix $\mathcal{A}$ to become singular ($\operatorname{rank} < N$), which the solver must detect and report via diagnostic exception (`std::invalid_argument` / `std::runtime_error`).

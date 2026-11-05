@@ -1,160 +1,160 @@
-# Руководство по верификации и тестированию на GoogleTest в вычислительной гидродинамике
-## Стандарты качества и защиты тестов для ИИ-агентов и разработчиков (GoogleTest Guide)
+# Verification & GoogleTest Methodology in Computational Hydraulics
+## Test Quality & Defense Guidelines for Developers & AI Agents (`googletest_verification_guide.md`)
 
-> **Назначение документа:** Обеспечить строгий инженерный подход к модульному и интеграционному тестированию расчетных гидравлических модулей на C++. Исключить «тавтологические тесты-подгонки» и подготовить студента к защите тестового набора перед преподавателем.
-
----
-
-## 1. Философия тестирования расчетных гидродинамических систем
-
-### 1.1. Верификация vs Валидация
-* **Верификация (Verification):** *«Правильно ли мы решаем математические уравнения?»* — проверка того, что численный алгоритм точно и устойчиво находит решение заданной системы уравнений (невязка $\|\mathcal{A}z - b\| < 10^{-8}$, совпадение с эталоном).
-* **Валидация (Validation):** *«Правильные ли уравнения мы решаем?»* — проверка соответствия математической модели физической реальности (выполнение законов сохранения массы и энергии, неотрицательность диссипации, монотонность потерь).
-
-### 1.2. Категорический запрет на «тавтологические тесты» (Тесты-пустышки)
-> **Главная болезнь ИИ-генерации:** Агент запускает написанный им код с ошибкой, получает ошибочное число (например, $Q = 0{,}0314$) и пишет в тесте: `EXPECT_NEAR(flow, 0.0314, 1e-4)`. Тест «зеленый», но он фиксирует и узаконивает ошибку в кодовой базе.
-
-#### Правило независимого эталона:
-Все эталонные значения для тестов берутся **строго из независимых источников**:
-1. Ручной аналитический расчет из ТЗ (`docs/<n>_<topic>.md`);
-2. Расчет независимым внешним скриптом (`scripts/solve_reference.py`);
-3. Фундаментальные физические инварианты (баланс массы $\sum Q = 0$).
-
-### 1.3. Обязательный диалоговый стоп перед созданием тестов
-Агенту **категорически запрещено** сразу приступать к написанию файлов тестов (`tests/*_tests.cpp`). Перед генерацией тестов агент обязан остановиться в чате и разобрать со студентом:
-* Какие сценарии входят в 4-уровневую пирамиду и почему именно они выбраны;
-* Откуда взяты эталонные числа и как они были посчитаны;
-* Какие физические инварианты (Кирхгоф, монотонность, нулевой расход) и краевые случаи (вырожденность ранга) проверяются;
-* Почему выбраны именно такие погрешности ($\Vert Ax - Q \Vert_\infty < 10^{-8}\text{ м}^3/\text{с}$, относительная невязка СЛАУ $< 10^{-12}$, относительный допуск давлений $\text{rtol} \le 10^{-4}$);
-* Убедиться, что студент понимает логику каждого теста и готов защитить её перед преподавателем.
-Кодогенерация тестов запускается **строго после подтверждения студента**.
+> **Purpose:** Ensure a rigorous engineering methodology for unit and integration testing of computational hydraulics C++ modules. Eliminate "tautological curve-fitting tests" and prepare the student to defend the test suite during oral examination.
 
 ---
 
-## 2. Четырехуровневая пирамида тестирования
+## 1. Testing Philosophy for Fluid Systems
 
-Тесты расчетного модуля делятся на 4 обязательных уровня:
+### 1.1. Verification vs. Validation
+* **Verification:** *"Are we solving the mathematical equations correctly?"* — Confirms that numerical algorithms accurately and stably solve the discrete equations (residual $\|\mathcal{A}z - b\|_\infty < 10^{-8}$, agreement with independent benchmark).
+* **Validation:** *"Are we solving the right equations?"* — Confirms that the mathematical model represents physical reality (mass conservation, positive energy dissipation, monotonic head loss).
+
+### 1.2. Strict Prohibition of Tautological Tests
+> **Common AI Failure Mode:** An agent executes flawed code, obtains an erroneous numerical result (e.g., $Q = 0.0314$), and writes: `EXPECT_NEAR(flow, 0.0314, 1e-4)`. The test passes, but it permanently enshrines the error in the codebase.
+
+#### Independent Benchmark Rule:
+All reference benchmark values must originate from **strictly independent sources**:
+1. Hand analytical calculations from the specification (`docs/<n>_<topic>.md`);
+2. Independent reference scripts (`scripts/solve_reference.py`);
+3. Fundamental physical conservation laws (nodal mass balance $\sum Q = 0$).
+
+### 1.3. Mandatory Discussion Pause Before Creating Tests
+The agent is **strictly prohibited** from immediately generating test files (`tests/*_tests.cpp`). Before writing test code, the agent must pause in chat and review with the student:
+* The 4 tiers of the test pyramid and why specific scenarios were chosen;
+* The lineage of benchmark values and how they were derived;
+* Physical invariants (Kirchhoff balance, dissipation monotonicity, zero friction at zero flow) and edge cases (rank deficiency);
+* Rationale for tolerances ($\Vert Ax - Q \Vert_\infty < 10^{-8}\text{ m}^3/\text{s}$, relative SLAE residual $< 10^{-12}$, relative pressure tolerance $\text{rtol} \le 10^{-4}$);
+* Confirmation that the student understands every test assertion and is prepared to defend it.
+Test code generation proceeds **only after explicit student confirmation**.
+
+---
+
+## 2. Four-Tier Testing Pyramid
+
+Test suites for calculation modules are structured into 4 mandatory tiers:
 
 ```
                       ┌──────────────────────────────────────────────┐
-                      │ Уровень 4: Валидация контрактов и исключений │
+                      │ Tier 4: Contract Validation & Exceptions     │
                       │ (EXPECT_THROW: r <= 0, d <= 0, rho <= 0)     │
                       ├──────────────────────────────────────────────┤
-                      │ Уровень 3: Граничные условия и топология     │
-                      │ (Отключение P-узла, вырожденный ранг)        │
+                      │ Tier 3: Boundary Conditions & Topology       │
+                      │ (Disconnected P-node, rank deficiency)       │
                       ├──────────────────────────────────────────────┤
-                      │ Уровень 2: Качественные физические инварианты│
-                      │ (Кирхгоф ||Ax - Q|| < 1e-8, монотонность,    │
-                      │ реверс Q|Q|, нулевой расход h_tr(0) = 0)     │
+                      │ Tier 2: Qualitative Physical Invariants      │
+                      │ (Kirchhoff ||Ax - Q|| < 1e-8, monotonicity,  │
+                      │ directional Q|Q|, zero flow h_f(0) = 0)      │
                       ├──────────────────────────────────────────────┤
-                      │ Уровень 1: Количественная точность           │
-                      │ (Сверка с эталоном: rtol <= 1e-4,            │
-                      │ невязка СЛАУ ||Az-b|| / ||A||||z|| < 1e-12)  │
+                      │ Tier 1: Quantitative Accuracy                │
+                      │ (Independent benchmark: rtol <= 1e-4,        │
+                      │ SLAE residual ||Az-b|| / ||A||||z|| < 1e-12) │
                       └──────────────────────────────────────────────┘
 ```
 
 ---
 
-## 3. Правила работы с вещественными числами (`double`)
+## 3. Numerical Rules for Floating-Point Precision (`double`)
 
-### 3.1. Запрет на `EXPECT_EQ` для вещественных чисел
-Числа с плавающей точкой (`float`, `double`) содержат погрешность машинного округления. Сравнение через `EXPECT_EQ(a, b)` на разных платформах, компиляторах или при разных флагах оптимизации (`-O0` vs `-O3`) непредсказуемо падает.
+### 3.1. Prohibition of `EXPECT_EQ` for Floating-Point Values
+Floating-point values (`float`, `double`) contain machine round-off errors. Comparing via `EXPECT_EQ(a, b)` produces unpredictable failures across compilers, platforms, or optimization levels (`-O0` vs `-O3`).
 
-### 3.2. Выбор макросов и обоснование допусков ($\varepsilon$)
-* **`EXPECT_NEAR(actual, expected, tolerance)` — основной рабочий инструмент:**
-  * Допуск обязан иметь физико-математическое обоснование:
-    * Для линейных СЛАУ в Eigen (прямой метод $PA = LU$): допуск $\varepsilon = 10^{-8}$;
-    * Для нелинейных задач методом Ньютона: допуск согласуется с критерием останова итераций ($\varepsilon = 10^{-6} - 10^{-8}$).
-* **`EXPECT_LT(val, threshold)` — для контроля норм невязок:**
-  * Проверка чебышевской нормы невязки вектора:
+### 3.2. Assertion Macros & Tolerance Justifications ($\varepsilon$)
+* **`EXPECT_NEAR(actual, expected, tolerance)` — Primary Assertion Tool:**
+  * Tolerances require physical and mathematical justification:
+    * For linear systems in Eigen ($PA = LU$ direct solve): $\varepsilon = 10^{-8}$;
+    * For nonlinear Newton solvers: tolerance matches iteration stopping criteria ($\varepsilon = 10^{-6} - 10^{-8}$).
+* **`EXPECT_LT(val, threshold)` — Residual Norm Checks:**
+  * Validating infinity-norm of equation residuals:
     ```cpp
     double residual = (A_block * z - b_vec).lpNorm<Eigen::Infinity>();
     EXPECT_LT(residual, 1e-8) << "Residual exceeds tolerance: " << residual;
     ```
 * **`EXPECT_DOUBLE_EQ(a, b)`:**
-  * Допустим только тогда, когда величины получены абсолютно идентичной цепочкой арифметических операций (разница не более 4 единиц ULP).
+  * Permissible only when values stem from an identical sequence of operations (within 4 ULPs).
 
 ---
 
-## 4. Готовые шаблоны тестовых наборов (C++ GoogleTest)
+## 4. GoogleTest Suite Templates (C++20)
 
-### 4.1. Уровень 1: Тест точности на эталоне варианта
+### 4.1. Tier 1: Quantitative Accuracy on Variant Benchmark
 ```cpp
 #include <gtest/gtest.h>
 #include <Eigen/Dense>
 #include "linear_nodal_solver.h"
 
 TEST(LinearNodalSolverTest, NumericalBenchmarkVariant) {
-    // 1. Инициализация параметров по утвержденному ТЗ варианта
+    // 1. Initialize parameters according to approved specification
     linear_nodal_properties_t props;
-    // ... заполнение графа, сопротивлений r, напоров H, притоков Q, давлений P_p ...
+    // ... populate graph, resistances r, heads H, flows Q, pressures P_p ...
 
-    // 2. Эталонные значения, рассчитанные независимо (в ТЗ или аналитически)
+    // 2. Reference values derived independently (in specification or analytical derivation)
     const std::vector<double> expected_flows = { 0.04251234, -0.01523412, 0.02727822 };
     const std::vector<double> expected_pressures = { 512345.0, 489120.0 };
 
-    // 3. Вызов солвера
+    // 3. Invoke solver
     linear_nodal_solver_t solver(props);
     linear_nodal_result_t result = solver.solve();
 
-    // 4. Проверка сходимости и невязки блочной системы
+    // 4. Verify convergence and KKT residual
     EXPECT_TRUE(result.is_converged);
-    EXPECT_LT(result.max_equation_residual, 1e-8) 
-        << "Уравнение системы KKT не сошлось: невязка = " << result.max_equation_residual;
+    EXPECT_LT(result.max_equation_residual, 1e-8)
+        << "KKT system equation failed to converge: residual = " << result.max_equation_residual;
 
-    // 5. Поэлементная проверка расходов в дугах
+    // 5. Component-wise branch flow check (absolute tolerance)
     ASSERT_EQ(result.branch_flow_rates.size(), expected_flows.size());
     for (std::size_t i = 0; i < expected_flows.size(); ++i) {
         EXPECT_NEAR(result.branch_flow_rates[i], expected_flows[i], 1e-8)
-            << "Расхождение в расходе дуги " << i;
+            << "Discrepancy in branch flow " << i;
     }
 
-    // 6. Поэлементная проверка узловых давлений (относительная погрешность)
+    // 6. Component-wise nodal pressure check (relative tolerance)
     ASSERT_EQ(result.nodal_pressures.size(), expected_pressures.size());
     for (std::size_t j = 0; j < expected_pressures.size(); ++j) {
-        double rel_err = std::abs(result.nodal_pressures[j] - expected_pressures[j]) / std::abs(expected_pressures[j]);
-        EXPECT_LT(rel_err, 1e-4)
-            << "Относительное расхождение в давлении узла " << j << " превысило 1e-4";
+        double relative_error = std::abs(result.nodal_pressures[j] - expected_pressures[j]) / std::abs(expected_pressures[j]);
+        EXPECT_LT(relative_error, 1e-4)
+            << "Relative error in nodal pressure " << j << " exceeded 1e-4";
     }
 }
 ```
 
 ---
 
-### 4.2. Уровень 2: Тесты физических инвариантов сети
+### 4.2. Tier 2: Physical Network Invariants
 ```cpp
-// Тест выполнения первого закона Кирхгофа (баланс массы во внутренних узлах)
+// Verification of Kirchhoff's First Law (mass balance at internal nodes)
 TEST(LinearNodalSolverTest, InvariantFirstKirchhoffLaw) {
     linear_nodal_properties_t props = create_test_network_properties();
     linear_nodal_solver_t solver(props);
     linear_nodal_result_t result = solver.solve();
 
-    // Невязка первого закона Кирхгофа: ||A * x - Q||_inf < 1e-8
+    // Kirchhoff's First Law residual: ||A * x - Q||_inf < 1e-8
     EXPECT_LT(result.max_kirchhoff_residual, 1e-8)
-        << "Закон сохранения массы нарушен во внутренних узлах сети!";
+        << "Conservation of mass violated at internal network nodes!";
 }
 
-// Тест на корректность реверса потока (проверка формулы Q|Q| против Q^2)
+// Verification of flow reversal behavior (Q|Q| vs Q^2)
 TEST(PipelineHydraulicsTest, InvariantReverseFlowDissipation) {
     pipe_properties_t pipe{1000.0, 0.5, 0.0001, 0.0, 0.0};
     fluid_properties_t oil{850.0, 15e-6};
     pipe_task_t task(pipe, oil);
 
-    double flow_forward = 0.2;  // м3/с
-    double flow_reverse = -0.2; // м3/с
-    double p_inlet = 2.0e6;     // 2 МПа
+    double flow_forward = 0.2;  // m3/s
+    double flow_reverse = -0.2; // m3/s
+    double p_inlet = 2.0e6;     // 2 MPa
 
     double p_outlet_forward = task.solve_qp(flow_forward, p_inlet);
     double p_outlet_reverse = task.solve_qp(flow_reverse, p_inlet);
 
-    // При прямом токе давление на выходе меньше входного (потери на трение)
+    // Forward flow: downstream pressure is lower than inlet pressure
     EXPECT_LT(p_outlet_forward, p_inlet);
 
-    // При обратном токе (жидкость течет от выхода к входу) 
-    // входное сечение является потребителем, давление выхода обязано быть ВЫШЕ входа:
+    // Reverse flow (fluid travels from outlet to inlet):
+    // Upstream cross-section acts as receiver, so outlet pressure must EXCEED inlet pressure:
     EXPECT_GT(p_outlet_reverse, p_inlet);
 
-    // По модулю перепады давлений обязаны строго совпадать (симметрия диссипации):
+    // Magnitude of differential pressure must be symmetric:
     double delta_p_fwd = std::abs(p_inlet - p_outlet_forward);
     double delta_p_rev = std::abs(p_inlet - p_outlet_reverse);
     EXPECT_NEAR(delta_p_fwd, delta_p_rev, 1e-8);
@@ -163,45 +163,44 @@ TEST(PipelineHydraulicsTest, InvariantReverseFlowDissipation) {
 
 ---
 
-### 4.3. Уровень 3 и 4: Граничные условия, вырожденность и исключения
+### 4.3. Tiers 3 & 4: Boundary Conditions, Rank Deficiency & Contract Exceptions
 ```cpp
-// Тест на обнаружение гидростатической незакрепленности (снятие опорного P-узла)
+// Verification of floating network detection (missing reference P-node)
 TEST(LinearNodalSolverTest, ExceptionWhenNoPressureNodes) {
     linear_nodal_properties_t props = create_test_network_properties();
-    // Очищаем вектор опорных давлений P_p
+    // Clear reference pressures vector
     props.boundary_pressures.clear();
 
     linear_nodal_solver_t solver(props);
-    // Солвер обязан диагностировать вырожденность ранга и выбросить исключение:
+    // Solver must detect rank deficiency and throw runtime_error:
     EXPECT_THROW(solver.solve(), std::runtime_error)
-        << "Солвер должен выбросить std::runtime_error при гидростатически незакрепленной цепи!";
+        << "Solver must throw std::runtime_error when no reference pressure nodes exist!";
 }
 
-// Тест на валидацию некорректных параметров (отрицательное сопротивление ветви)
+// Verification of domain contract validation (negative branch resistance)
 TEST(LinearNodalSolverTest, ExceptionOnNegativeResistance) {
     linear_nodal_properties_t props = create_test_network_properties();
-    props.branch_resistances[0] = -100.0; // Нефизичное отрицательное сопротивление
+    props.branch_resistances[0] = -100.0; // Unphysical negative resistance
 
-    // Конструктор или метод solve обязан отказать:
     EXPECT_THROW({
         linear_nodal_solver_t solver(props);
         solver.solve();
     }, std::invalid_argument)
-        << "Отрицательное сопротивление ветви обязано вызывать std::invalid_argument!";
+        << "Negative branch resistance must throw std::invalid_argument!";
 }
 ```
 
 ---
 
-## 5. Вопросы преподавателя по тестам на защите (Шпаргалка для студента)
+## 5. Defense Questions on Test Suites (Cheat Sheet for Oral Exam)
 
-Преподаватели кафедры АТП часто проверяют понимание кода именно через тесты:
+Faculty members frequently test code comprehension through test cases:
 
-1. **Вопрос:** *«Покажи тест, подтверждающий, что твоя система удовлетворяет первому закону Кирхгофа?»*
-   * **Ответ:** *«В файле `test_invariants.cpp` тест `InvariantFirstKirchhoffLaw`. Он берет рассчитанный вектор расходов $x$, умножает его на матрицу инцидентности $A$ и проверяет чебышевскую норму $\Vert Ax - Q \Vert_\infty < 10^{-8}$. Это доказывает, что баланс массы строго сошелся во всех $Q$-узлах»*.
-2. **Вопрос:** *«Почему в тестах точности для расходов используется абсолютный допуск $10^{-8}$, а для давлений — относительный `1e-4`, и почему нельзя использовать `EXPECT_EQ`?»*
-   * **Ответ:** *«`EXPECT_EQ` для чисел с плавающей точкой использовать нельзя из-за ошибок машинного эпсилон. Для объемного расхода [$м^3/с$] абсолютный допуск $10^{-8}$ гарантирует сходимость законов Кирхгофа при решении прямой факторизацией LU. Для давлений [Па] абсолютный допуск $10^{-8}$ при значениях порядка $10^6\text{ Па}$ означал бы завышенное требование точности $10^{-14}$ (предел `double`), в то время как аналитические эталоны из ТЗ рассчитаны вручную с точностью 4-5 значащих цифр. Поэтому для давлений используется относительный допуск $\text{rtol} \le 10^{-4}$»*.
-3. **Вопрос:** *«Как в тестах доказано, что при реверсе потока жидкость не разгоняется сама собой?»*
-   * **Ответ:** *«Тестом `InvariantReverseFlowDissipation`. Мы задаем отрицательный расход $Q = -0{,}2$ и проверяем, что формула потерь со знаковым умножением $Q |Q|$ сохраняет диссипацию энергии, а модуль перепада давления в точности равен прямому току»*.
-4. **Вопрос:** *«Что делает тест `ExceptionWhenNoPressureNodes`?»*
-   * **Ответ:** *«Он моделирует физическую аварийную ситуацию, когда у сети нет связи с внешним источником постоянного давления. Он проверяет, что метод `FullPivLU::rank()` обнаруживает неполный ранг матрицы и код выбрасывает контролируемое исключение `std::runtime_error`, а не падает с `NaN` или мусором в памяти»*.
+1. **Question:** *"Which test confirms that your solver satisfies Kirchhoff's First Law?"*
+   * **Answer:** *"In `test_invariants.cpp`, test `InvariantFirstKirchhoffLaw`. It multiplies the calculated branch flow vector $x$ by incidence matrix $A$ and validates the infinity-norm $\Vert Ax - Q \Vert_\infty < 10^{-8}$. This verifies that nodal mass balance closes across all $Q$-nodes."*
+2. **Question:** *"Why does flow rate verification use an absolute tolerance of $10^{-8}$, while pressure verification uses a relative tolerance of `1e-4`, and why is `EXPECT_EQ` forbidden?"*
+   * **Answer:** *"`EXPECT_EQ` cannot be used on floating-point values due to machine precision limitations. For volumetric discharge [$\text{m}^3/\text{s}$], absolute tolerance $10^{-8}$ ensures convergence of mass conservation under direct LU factorization. For pressure [$\text{Pa}$], an absolute tolerance of $10^{-8}$ at operational pressures of $10^6\text{ Pa}$ would demand an impossible $10^{-14}$ precision near the limit of double precision. Reference pressures are hand-calculated with 4-5 significant figures, justifying a relative tolerance of $\text{rtol} \le 10^{-4}$."*
+3. **Question:** *"How does your test suite prove that fluid does not spontaneously accelerate under flow reversal?"*
+   * **Answer:** *"Through test `InvariantReverseFlowDissipation`. We impose negative flow rate $Q = -0.2$ and assert that the signed formulation $Q |Q|$ dissipates energy, with the differential pressure magnitude matching forward flow."*
+4. **Question:** *"What does `ExceptionWhenNoPressureNodes` test?"*
+   * **Answer:** *"It models an unanchored hydraulic network without connection to an external reservoir. It verifies that `FullPivLU::isInvertible()` detects matrix singularity and throws a controlled `std::runtime_error` rather than producing `NaN` or unhandled numerical corruption."*
