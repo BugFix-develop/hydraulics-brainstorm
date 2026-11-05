@@ -62,14 +62,14 @@ hydraulics-brain/
 ## 🚀 Руководство по установке и использованию навыка
 
 <p align="center">
-  <img src="assets/logos/openai.svg" width="40" height="40" alt="OpenAI" title="OpenAI Codex & ChatGPT" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  <img src="assets/logos/google.svg" width="40" height="40" alt="Google" title="Google Antigravity & Open Agent Skills" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  <img src="assets/logos/claude.svg" width="40" height="40" alt="Anthropic Claude" title="Anthropic Claude Code" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  <img src="assets/logos/cursor.svg" width="40" height="40" alt="Cursor AI" title="Cursor AI IDE" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  <img src="assets/logos/windsurf.svg" width="40" height="40" alt="Windsurf Codeium" title="Windsurf (Codeium)" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  <img src="assets/logos/vscode.svg" width="40" height="40" alt="Roo Code & Cline" title="Roo Code & Cline" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  <img src="assets/logos/copilot.svg" width="40" height="40" alt="GitHub Copilot" title="GitHub Copilot" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  <img src="assets/logos/terminal.svg" width="40" height="40" alt="Aider CLI" title="Aider Terminal CLI" />
+  <img src="https://raw.githubusercontent.com/BugFix-develop/hydraulics-brainstorm/1e7646d/assets/logos/openai.svg" width="40" height="40" alt="OpenAI" title="OpenAI Codex & ChatGPT" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="https://raw.githubusercontent.com/BugFix-develop/hydraulics-brainstorm/1e7646d/assets/logos/google.svg" width="40" height="40" alt="Google" title="Google Antigravity & Open Agent Skills" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="https://raw.githubusercontent.com/BugFix-develop/hydraulics-brainstorm/1e7646d/assets/logos/claude.svg" width="40" height="40" alt="Anthropic Claude" title="Anthropic Claude Code" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="https://raw.githubusercontent.com/BugFix-develop/hydraulics-brainstorm/1e7646d/assets/logos/cursor.svg" width="40" height="40" alt="Cursor AI" title="Cursor AI IDE" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="https://raw.githubusercontent.com/BugFix-develop/hydraulics-brainstorm/1e7646d/assets/logos/windsurf.svg" width="40" height="40" alt="Windsurf Codeium" title="Windsurf (Codeium)" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="https://raw.githubusercontent.com/BugFix-develop/hydraulics-brainstorm/1e7646d/assets/logos/vscode.svg" width="40" height="40" alt="Roo Code & Cline" title="Roo Code & Cline" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="https://raw.githubusercontent.com/BugFix-develop/hydraulics-brainstorm/1e7646d/assets/logos/copilot.svg" width="40" height="40" alt="GitHub Copilot" title="GitHub Copilot" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="https://raw.githubusercontent.com/BugFix-develop/hydraulics-brainstorm/1e7646d/assets/logos/terminal.svg" width="40" height="40" alt="Aider CLI" title="Aider Terminal CLI" />
 </p>
 
 ---
@@ -96,12 +96,12 @@ mkdir docs src tests
 #### Способ Б. Скопировать навык в уже существующую лабораторную работу
 Если у вас уже есть начатый репозиторий с кодом, просто скопируйте в него папку `computational-hydraulics`:
 
-<img src="assets/logos/linux.svg" width="18" height="18" align="absmiddle" /> **Linux** / <img src="assets/logos/apple.svg" width="18" height="18" align="absmiddle" /> **macOS**:
+<img src="https://raw.githubusercontent.com/BugFix-develop/hydraulics-brainstorm/1e7646d/assets/logos/linux.svg" width="18" height="18" align="absmiddle" /> **Linux** / <img src="https://raw.githubusercontent.com/BugFix-develop/hydraulics-brainstorm/1e7646d/assets/logos/apple.svg" width="18" height="18" align="absmiddle" /> **macOS**:
 ```bash
 cp -r computational-hydraulics /path/to/my-lab/
 ```
 
-<img src="assets/logos/windows.svg" width="18" height="18" align="absmiddle" /> **Windows** (PowerShell):
+<img src="https://raw.githubusercontent.com/BugFix-develop/hydraulics-brainstorm/1e7646d/assets/logos/windows.svg" width="18" height="18" align="absmiddle" /> **Windows** (PowerShell):
 ```powershell
 Copy-Item -Recurse -Force computational-hydraulics "C:\path\to\my-lab\"
 ```
@@ -125,12 +125,12 @@ cd hydraulics-brainstorm
 #### ⚡ Шаг 2. Запустите автоустановку (в 1 клик)
 Скрипт сам определит системные пути вашей ОС и настроит окружение:
 
-<img src="assets/logos/linux.svg" width="18" height="18" align="absmiddle" /> **Linux** / <img src="assets/logos/apple.svg" width="18" height="18" align="absmiddle" /> **macOS** (Bash / Zsh):
+<img src="https://raw.githubusercontent.com/BugFix-develop/hydraulics-brainstorm/1e7646d/assets/logos/linux.svg" width="18" height="18" align="absmiddle" /> **Linux** / <img src="https://raw.githubusercontent.com/BugFix-develop/hydraulics-brainstorm/1e7646d/assets/logos/apple.svg" width="18" height="18" align="absmiddle" /> **macOS** (Bash / Zsh):
 ```bash
 ./computational-hydraulics/scripts/install_skill.sh
 ```
 
-<img src="assets/logos/windows.svg" width="18" height="18" align="absmiddle" /> **Windows** (PowerShell):
+<img src="https://raw.githubusercontent.com/BugFix-develop/hydraulics-brainstorm/1e7646d/assets/logos/windows.svg" width="18" height="18" align="absmiddle" /> **Windows** (PowerShell):
 ```powershell
 .\computational-hydraulics\scripts\install_skill.ps1
 ```
@@ -141,19 +141,19 @@ cd hydraulics-brainstorm
 Если вы предпочитаете скопировать файлы вручную без скрипта, выберите вашу среду:
 
 <details open>
-<summary><img src="assets/logos/openai.svg" width="24" height="24" align="absmiddle" /> &nbsp;<b><font size="+1">OpenAI (Codex Agent & ChatGPT)</font></b></summary>
+<summary><img src="https://raw.githubusercontent.com/BugFix-develop/hydraulics-brainstorm/1e7646d/assets/logos/openai.svg" width="24" height="24" align="absmiddle" /> &nbsp;<b><font size="+1">OpenAI (Codex Agent & ChatGPT)</font></b></summary>
 
 <br/>
 
 **Codex Agent:**
 
-<img src="assets/logos/linux.svg" width="18" height="18" align="absmiddle" /> **Linux** / <img src="assets/logos/apple.svg" width="18" height="18" align="absmiddle" /> **macOS**:
+<img src="https://raw.githubusercontent.com/BugFix-develop/hydraulics-brainstorm/1e7646d/assets/logos/linux.svg" width="18" height="18" align="absmiddle" /> **Linux** / <img src="https://raw.githubusercontent.com/BugFix-develop/hydraulics-brainstorm/1e7646d/assets/logos/apple.svg" width="18" height="18" align="absmiddle" /> **macOS**:
 ```bash
 mkdir -p ~/.codex/skills
 cp -r computational-hydraulics ~/.codex/skills/
 ```
 
-<img src="assets/logos/windows.svg" width="18" height="18" align="absmiddle" /> **Windows** (PowerShell):
+<img src="https://raw.githubusercontent.com/BugFix-develop/hydraulics-brainstorm/1e7646d/assets/logos/windows.svg" width="18" height="18" align="absmiddle" /> **Windows** (PowerShell):
 ```powershell
 New-Item -ItemType Directory -Force -Path "$HOME\.codex\skills"
 Copy-Item -Recurse -Force computational-hydraulics "$HOME\.codex\skills\"
@@ -164,17 +164,17 @@ Copy-Item -Recurse -Force computational-hydraulics "$HOME\.codex\skills\"
 </details>
 
 <details>
-<summary><img src="assets/logos/google.svg" width="24" height="24" align="absmiddle" /> &nbsp;<b><font size="+1">Google Antigravity & Open Agent Skills</font></b></summary>
+<summary><img src="https://raw.githubusercontent.com/BugFix-develop/hydraulics-brainstorm/1e7646d/assets/logos/google.svg" width="24" height="24" align="absmiddle" /> &nbsp;<b><font size="+1">Google Antigravity & Open Agent Skills</font></b></summary>
 
 <br/>
 
-<img src="assets/logos/linux.svg" width="18" height="18" align="absmiddle" /> **Linux** / <img src="assets/logos/apple.svg" width="18" height="18" align="absmiddle" /> **macOS**:
+<img src="https://raw.githubusercontent.com/BugFix-develop/hydraulics-brainstorm/1e7646d/assets/logos/linux.svg" width="18" height="18" align="absmiddle" /> **Linux** / <img src="https://raw.githubusercontent.com/BugFix-develop/hydraulics-brainstorm/1e7646d/assets/logos/apple.svg" width="18" height="18" align="absmiddle" /> **macOS**:
 ```bash
 mkdir -p ~/.agents/skills
 cp -r computational-hydraulics ~/.agents/skills/
 ```
 
-<img src="assets/logos/windows.svg" width="18" height="18" align="absmiddle" /> **Windows** (PowerShell):
+<img src="https://raw.githubusercontent.com/BugFix-develop/hydraulics-brainstorm/1e7646d/assets/logos/windows.svg" width="18" height="18" align="absmiddle" /> **Windows** (PowerShell):
 ```powershell
 New-Item -ItemType Directory -Force -Path "$HOME\.agents\skills"
 Copy-Item -Recurse -Force computational-hydraulics "$HOME\.agents\skills\"
@@ -182,18 +182,18 @@ Copy-Item -Recurse -Force computational-hydraulics "$HOME\.agents\skills\"
 </details>
 
 <details>
-<summary><img src="assets/logos/claude.svg" width="24" height="24" align="absmiddle" /> &nbsp;<b><font size="+1">Anthropic Claude Code (CLI)</font></b></summary>
+<summary><img src="https://raw.githubusercontent.com/BugFix-develop/hydraulics-brainstorm/1e7646d/assets/logos/claude.svg" width="24" height="24" align="absmiddle" /> &nbsp;<b><font size="+1">Anthropic Claude Code (CLI)</font></b></summary>
 
 <br/>
 
-<img src="assets/logos/linux.svg" width="18" height="18" align="absmiddle" /> **Linux** / <img src="assets/logos/apple.svg" width="18" height="18" align="absmiddle" /> **macOS**:
+<img src="https://raw.githubusercontent.com/BugFix-develop/hydraulics-brainstorm/1e7646d/assets/logos/linux.svg" width="18" height="18" align="absmiddle" /> **Linux** / <img src="https://raw.githubusercontent.com/BugFix-develop/hydraulics-brainstorm/1e7646d/assets/logos/apple.svg" width="18" height="18" align="absmiddle" /> **macOS**:
 ```bash
 mkdir -p ~/.claude/skills
 cp -r computational-hydraulics ~/.claude/skills/
 echo -e "\n# Computational Hydraulics Skill\nAlways refer to ~/.claude/skills/computational-hydraulics/SKILL.md when solving hydraulics tasks.\n" >> ~/.claude/CLAUDE.md
 ```
 
-<img src="assets/logos/windows.svg" width="18" height="18" align="absmiddle" /> **Windows** (PowerShell):
+<img src="https://raw.githubusercontent.com/BugFix-develop/hydraulics-brainstorm/1e7646d/assets/logos/windows.svg" width="18" height="18" align="absmiddle" /> **Windows** (PowerShell):
 ```powershell
 New-Item -ItemType Directory -Force -Path "$HOME\.claude\skills"
 Copy-Item -Recurse -Force computational-hydraulics "$HOME\.claude\skills\"
@@ -202,89 +202,89 @@ Add-Content -Path "$HOME\.claude\CLAUDE.md" -Value "`n# Computational Hydraulics
 </details>
 
 <details>
-<summary><img src="assets/logos/cursor.svg" width="24" height="24" align="absmiddle" /> &nbsp;<b><font size="+1">Cursor AI IDE (Cursor Rules 2.0)</font></b></summary>
+<summary><img src="https://raw.githubusercontent.com/BugFix-develop/hydraulics-brainstorm/1e7646d/assets/logos/cursor.svg" width="24" height="24" align="absmiddle" /> &nbsp;<b><font size="+1">Cursor AI IDE (Cursor Rules 2.0)</font></b></summary>
 
 <br/>
 
 Скопируйте навык `SKILL.md` в правила вашего проекта:
 
-<img src="assets/logos/linux.svg" width="18" height="18" align="absmiddle" /> **Linux** / <img src="assets/logos/apple.svg" width="18" height="18" align="absmiddle" /> **macOS**:
+<img src="https://raw.githubusercontent.com/BugFix-develop/hydraulics-brainstorm/1e7646d/assets/logos/linux.svg" width="18" height="18" align="absmiddle" /> **Linux** / <img src="https://raw.githubusercontent.com/BugFix-develop/hydraulics-brainstorm/1e7646d/assets/logos/apple.svg" width="18" height="18" align="absmiddle" /> **macOS**:
 ```bash
 cp computational-hydraulics/SKILL.md /path/to/my-lab/.cursorrules
 ```
 
-<img src="assets/logos/windows.svg" width="18" height="18" align="absmiddle" /> **Windows** (PowerShell):
+<img src="https://raw.githubusercontent.com/BugFix-develop/hydraulics-brainstorm/1e7646d/assets/logos/windows.svg" width="18" height="18" align="absmiddle" /> **Windows** (PowerShell):
 ```powershell
 Copy-Item -Force computational-hydraulics\SKILL.md "C:\path\to\my-lab\.cursorrules"
 ```
 </details>
 
 <details>
-<summary><img src="assets/logos/windsurf.svg" width="24" height="24" align="absmiddle" /> &nbsp;<b><font size="+1">Windsurf (Codeium)</font></b></summary>
+<summary><img src="https://raw.githubusercontent.com/BugFix-develop/hydraulics-brainstorm/1e7646d/assets/logos/windsurf.svg" width="24" height="24" align="absmiddle" /> &nbsp;<b><font size="+1">Windsurf (Codeium)</font></b></summary>
 
 <br/>
 
 Скопируйте навык `SKILL.md` в правила рабочего пространства:
 
-<img src="assets/logos/linux.svg" width="18" height="18" align="absmiddle" /> **Linux** / <img src="assets/logos/apple.svg" width="18" height="18" align="absmiddle" /> **macOS**:
+<img src="https://raw.githubusercontent.com/BugFix-develop/hydraulics-brainstorm/1e7646d/assets/logos/linux.svg" width="18" height="18" align="absmiddle" /> **Linux** / <img src="https://raw.githubusercontent.com/BugFix-develop/hydraulics-brainstorm/1e7646d/assets/logos/apple.svg" width="18" height="18" align="absmiddle" /> **macOS**:
 ```bash
 cp computational-hydraulics/SKILL.md /path/to/my-lab/.windsurfrules
 ```
 
-<img src="assets/logos/windows.svg" width="18" height="18" align="absmiddle" /> **Windows** (PowerShell):
+<img src="https://raw.githubusercontent.com/BugFix-develop/hydraulics-brainstorm/1e7646d/assets/logos/windows.svg" width="18" height="18" align="absmiddle" /> **Windows** (PowerShell):
 ```powershell
 Copy-Item -Force computational-hydraulics\SKILL.md "C:\path\to\my-lab\.windsurfrules"
 ```
 </details>
 
 <details>
-<summary><img src="assets/logos/vscode.svg" width="24" height="24" align="absmiddle" /> &nbsp;<b><font size="+1">Roo Code & Cline (VS Code Extensions)</font></b></summary>
+<summary><img src="https://raw.githubusercontent.com/BugFix-develop/hydraulics-brainstorm/1e7646d/assets/logos/vscode.svg" width="24" height="24" align="absmiddle" /> &nbsp;<b><font size="+1">Roo Code & Cline (VS Code Extensions)</font></b></summary>
 
 <br/>
 
 Скопируйте навык `SKILL.md` в системные инструкции:
 
-<img src="assets/logos/linux.svg" width="18" height="18" align="absmiddle" /> **Linux** / <img src="assets/logos/apple.svg" width="18" height="18" align="absmiddle" /> **macOS**:
+<img src="https://raw.githubusercontent.com/BugFix-develop/hydraulics-brainstorm/1e7646d/assets/logos/linux.svg" width="18" height="18" align="absmiddle" /> **Linux** / <img src="https://raw.githubusercontent.com/BugFix-develop/hydraulics-brainstorm/1e7646d/assets/logos/apple.svg" width="18" height="18" align="absmiddle" /> **macOS**:
 ```bash
 cp computational-hydraulics/SKILL.md /path/to/my-lab/.clinerules
 ```
 
-<img src="assets/logos/windows.svg" width="18" height="18" align="absmiddle" /> **Windows** (PowerShell):
+<img src="https://raw.githubusercontent.com/BugFix-develop/hydraulics-brainstorm/1e7646d/assets/logos/windows.svg" width="18" height="18" align="absmiddle" /> **Windows** (PowerShell):
 ```powershell
 Copy-Item -Force computational-hydraulics\SKILL.md "C:\path\to\my-lab\.clinerules"
 ```
 </details>
 
 <details>
-<summary><img src="assets/logos/terminal.svg" width="24" height="24" align="absmiddle" /> &nbsp;<b><font size="+1">Aider CLI (Terminal Pair Programmer)</font></b></summary>
+<summary><img src="https://raw.githubusercontent.com/BugFix-develop/hydraulics-brainstorm/1e7646d/assets/logos/terminal.svg" width="24" height="24" align="absmiddle" /> &nbsp;<b><font size="+1">Aider CLI (Terminal Pair Programmer)</font></b></summary>
 
 <br/>
 
-<img src="assets/logos/linux.svg" width="18" height="18" align="absmiddle" /> **Linux** / <img src="assets/logos/apple.svg" width="18" height="18" align="absmiddle" /> **macOS**:
+<img src="https://raw.githubusercontent.com/BugFix-develop/hydraulics-brainstorm/1e7646d/assets/logos/linux.svg" width="18" height="18" align="absmiddle" /> **Linux** / <img src="https://raw.githubusercontent.com/BugFix-develop/hydraulics-brainstorm/1e7646d/assets/logos/apple.svg" width="18" height="18" align="absmiddle" /> **macOS**:
 ```bash
 aider --read ~/.agents/skills/computational-hydraulics/SKILL.md
 ```
 
-<img src="assets/logos/windows.svg" width="18" height="18" align="absmiddle" /> **Windows** (PowerShell):
+<img src="https://raw.githubusercontent.com/BugFix-develop/hydraulics-brainstorm/1e7646d/assets/logos/windows.svg" width="18" height="18" align="absmiddle" /> **Windows** (PowerShell):
 ```powershell
 aider --read "$HOME\.agents\skills\computational-hydraulics\SKILL.md"
 ```
 </details>
 
 <details>
-<summary><img src="assets/logos/copilot.svg" width="24" height="24" align="absmiddle" /> &nbsp;<b><font size="+1">GitHub Copilot (VS Code / JetBrains / CLI)</font></b></summary>
+<summary><img src="https://raw.githubusercontent.com/BugFix-develop/hydraulics-brainstorm/1e7646d/assets/logos/copilot.svg" width="24" height="24" align="absmiddle" /> &nbsp;<b><font size="+1">GitHub Copilot (VS Code / JetBrains / CLI)</font></b></summary>
 
 <br/>
 
 Скопируйте навык `SKILL.md` в инструкции репозитория:
 
-<img src="assets/logos/linux.svg" width="18" height="18" align="absmiddle" /> **Linux** / <img src="assets/logos/apple.svg" width="18" height="18" align="absmiddle" /> **macOS**:
+<img src="https://raw.githubusercontent.com/BugFix-develop/hydraulics-brainstorm/1e7646d/assets/logos/linux.svg" width="18" height="18" align="absmiddle" /> **Linux** / <img src="https://raw.githubusercontent.com/BugFix-develop/hydraulics-brainstorm/1e7646d/assets/logos/apple.svg" width="18" height="18" align="absmiddle" /> **macOS**:
 ```bash
 mkdir -p /path/to/my-lab/.github
 cp computational-hydraulics/SKILL.md /path/to/my-lab/.github/copilot-instructions.md
 ```
 
-<img src="assets/logos/windows.svg" width="18" height="18" align="absmiddle" /> **Windows** (PowerShell):
+<img src="https://raw.githubusercontent.com/BugFix-develop/hydraulics-brainstorm/1e7646d/assets/logos/windows.svg" width="18" height="18" align="absmiddle" /> **Windows** (PowerShell):
 ```powershell
 New-Item -ItemType Directory -Force -Path "C:\path\to\my-lab\.github"
 Copy-Item -Force computational-hydraulics\SKILL.md "C:\path\to\my-lab\.github\copilot-instructions.md"
