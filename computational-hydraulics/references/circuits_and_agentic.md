@@ -162,7 +162,7 @@ Engineering concept by Yuzhanin & Fomina unifying boundary conditions and intern
 * **Mandatory Sections:**
   1. *Context Binding:* Reference to business logic document; clear scope division ("in scope" vs "out of scope").
   2. *Data Types:* Property structs (`*_properties_t`), result structs (`*_result_t`), configuration structs. Explicit inventory of reused types vs new types.
-  3. *Interfaces & Contracts:* Strict C++ method signatures with concise Doxygen (`@brief`, `@param`, `@return`), access specifiers (`public` / `private`), call invariants.
+  3. *Interfaces & Contracts:* Strict C++ method signatures with concise Doxygen using single-line `///` per line (`@brief`, `@param`, `@return`, `@throw`; multi-line `/** ... */` is strictly forbidden), access specifiers (`public` / `private`), call invariants.
   4. *Error Handling:* Exception strategy (`std::invalid_argument`, `std::runtime_error`) vs return codes.
   5. *File Layout:* Complete list of files to create and edit (`.h`, `.cpp`, `_tests.cpp`).
 * **Design Principles:**

@@ -13,7 +13,7 @@
 - [ ] **Stage 1: Domain Types and Interfaces Setup**
   - [ ] Inspect existing codebase for reusable types; do not re-implement existing components.
   - [ ] Create header file `include/[task_name]_types.h` with new `*_properties_t` and `*_result_t` structures.
-  - [ ] Create header file `include/[task_name]_solver.h` with method declarations and concise Doxygen contracts.
+  - [ ] Create header file `include/[task_name]_solver.h` with method declarations and concise Doxygen contracts (using single-line `///` per line, no `/** ... */`).
   - [ ] Verify adherence to code style (`snake_case`, `_t` suffix, explicit SI parameter names).
 
 - [ ] **Stage 2: Solver Implementation Logic**

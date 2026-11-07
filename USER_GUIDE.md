@@ -157,7 +157,7 @@ The agent is strictly prohibited from implementing the entire project in a singl
 * **Stage 1 (CMake):** Generates `CMakeLists.txt` with strict flags (`-Wall -Wextra -Wpedantic`), C++20 standard, and dependencies.
   * *Pause:* Agent reports and relinquishes control.
   * *Your Response:* *"CMake looks good. Proceed to data structures."*
-* **Stage 2 (Types & Headers):** Generates header files in `include/` with concise Doxygen contracts.
+* **Stage 2 (Types & Headers):** Generates header files in `include/` with concise Doxygen contracts (using single-line `///` per line; `/** ... */` is strictly forbidden).
   * *Pause.*
   * *Your Response:* *"Headers reviewed. Proceed to solver implementation."*
 * **Stage 3 (Solver):** Implements solver logic in `src/` (validation, KKT assembly, `FullPivLU` factorization, residual tracking).

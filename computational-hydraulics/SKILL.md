@@ -100,7 +100,7 @@ Follow the strict 6-stage development protocol with mandatory gatekeepers:
   - Advance to the next stage only in a subsequent turn after user confirmation: *"Stage verified, proceed to next stage"* (*"Этап проверил, переходим к следующему"*).
 - *Expert Override:* If the user specifies `/expert-mode` or *"без остановок"*, the one-stage-per-turn limit is lifted for core computation, but the test pause (Gatekeeper 3) and Git control rule remain mandatory.
 - **Code reuse:** `#include` and call existing project functions; never duplicate code.
-- **Code standards:** Use C++20, RAII, stateless solvers, concise Doxygen comments (`///< Description [units]`), and fail-fast constructor validation.
+- **Code standards:** Use C++20, RAII, stateless solvers, concise Doxygen comments (`///< Description [units]` for members; line-by-line `/// @brief`, `/// @param`, `/// @return`, `/// @throw` for methods — multi-line `/** ... */` is strictly forbidden), and fail-fast constructor validation.
 
 ### Stage 3: GoogleTest Verification Strategy (Gatekeeper 3)
 - **Mandatory pause before tests:** Never generate test files without first reviewing the test plan in chat.

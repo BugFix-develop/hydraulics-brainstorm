@@ -353,7 +353,7 @@ Project documentation is created in `docs/`:
 - **Strict Directory Separation:** All header files (`.h`, `.hpp`) reside exclusively in `include/`. All implementation files (`.cpp`, `.c`) reside exclusively in `src/`. Mixing headers and source files in the same directory is strictly forbidden.
 - **Stage Approval:** Moving to the next stage is permitted only in the next turn after the user reviews the code and issues: *"Stage verified, proceed to next stage"*.
 - **Strict Architectural Conformance:** Code adheres strictly to data types and signatures defined in `architecture.md`.
-- **Concise Doxygen:** Strict single-line Doxygen blocks, SI units in brackets `[...]`, zero redundant comments.
+- **Concise Doxygen:** Strict Doxygen blocks prefixed with single-line `///` on every line (multi-line `/** ... */` is strictly forbidden), trailing `///<` for struct members, SI units in brackets `[...]`, zero redundant comments.
 
 ### 4. Golden Rule of Version Control
 > **Important**: The agent never commits or pushes code automatically. The developer manually executes `git add`, `git commit`, and `git push`, maintaining full control over repository history.

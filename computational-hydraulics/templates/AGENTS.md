@@ -59,11 +59,20 @@
 6. **Header Guards:** `#pragma once` as the first line of every header file.
 7. **Strict Concise Doxygen Documentation:**
    * Verbose "walls of text" and comments explaining self-evident operations are forbidden.
-   * Structure fields are documented strictly in one line with SI units in square brackets:
+   * Multi-line block comments (`/** ... */`) are **strictly prohibited**. All Doxygen comments must use single-line `///` on every line for a cleaner, unified visual style.
+   * Structure fields are documented strictly in one line with trailing `///<` and SI units in square brackets:
      ```cpp
      double pipe_diameter{0.0}; ///< Internal pipeline diameter [m]
      ```
-   * Class methods feature concise Doxygen blocks:
+   * Class methods feature concise Doxygen blocks prefixed with `///` on each line:
+     ```cpp
+     /// @brief Solves QP formulation: calculates downstream pressure from flow rate
+     /// @param pressure_in Upstream static pressure [Pa]
+     /// @param volumetric_flow Volumetric flow rate [m3/s]
+     /// @param density Fluid density [kg/m3]
+     /// @return Downstream static pressure [Pa]
+     /// @throw std::invalid_argument On non-positive physical parameters
+     ```
      * `@brief` — brief 1-line purpose;
      * `@param` — parameter purpose and SI unit in 1 line;
      * `@return` — physical meaning of the return value in 1 line;

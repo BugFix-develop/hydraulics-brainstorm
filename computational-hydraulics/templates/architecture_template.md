@@ -68,24 +68,22 @@ struct [task_name]_result_t {
 
 ## 4. Class Interfaces & Contracts
 
+> **Doxygen Standard:** Multi-line block comments (`/** ... */`) are forbidden. Always format Doxygen blocks using single-line `///` per line for clean consistency (`/// @brief`, `/// @param`, `/// @return`, `/// @throw`). Field documentation uses trailing `///< Description [units]`.
+
 ### 4.1. Solver Class (`[task_name]_solver_t`)
 The solver executes pure mathematical computations and holds no mutable state across calls.
 
 ```cpp
 class [task_name]_solver_t {
 public:
-    /**
-     * @brief Constructs solver with fail-fast input validation
-     * @param properties Immutable problem parameters
-     * @throw std::invalid_argument on dimension mismatch or r_i <= 0
-     */
+    /// @brief Constructs solver with fail-fast input validation
+    /// @param properties Immutable problem parameters
+    /// @throw std::invalid_argument On dimension mismatch or r_i <= 0
     explicit [task_name]_solver_t(const [task_name]_properties_t& properties);
 
-    /**
-     * @brief Computes network flow and pressure distribution
-     * @return Computed branch flow rates, nodal pressures, and residuals
-     * @throw std::runtime_error on singular network matrix (rank deficient)
-     */
+    /// @brief Computes network flow and pressure distribution
+    /// @return Computed branch flow rates, nodal pressures, and residuals
+    /// @throw std::runtime_error On singular network matrix (rank deficient)
     [task_name]_result_t solve() const;
 
 private:
